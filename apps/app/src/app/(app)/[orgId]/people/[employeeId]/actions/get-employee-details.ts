@@ -4,7 +4,8 @@ import { authActionClient } from '@/actions/safe-action';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { headers } from 'next/headers';
-import { type AppError, appErrors, employeeDetailsInputSchema } from '../types';
+import { type AppError, getAppErrors, employeeDetailsInputSchema } from '../types';
+import { getGT } from 'gt-next/server';
 
 // Type-safe action response
 export type ActionResponse<T> = Promise<
@@ -22,6 +23,8 @@ export const getEmployeeDetails = authActionClient
   })
   .action(async ({ parsedInput }) => {
     const { employeeId } = parsedInput;
+    const t = await getGT();
+    const appErrors = getAppErrors(t);
 
     const session = await auth.api.getSession({
       headers: await headers(),
@@ -51,7 +54,7 @@ export const getEmployeeDetails = authActionClient
       if (!employee) {
         return {
           success: false,
-          error: appErrors.NOT_FOUND.message,
+          error: appErrors.NOT_FOUND,
         };
       }
 
@@ -63,7 +66,7 @@ export const getEmployeeDetails = authActionClient
       console.error('Error fetching employee details:', error);
       return {
         success: false,
-        error: appErrors.UNEXPECTED_ERROR.message,
+        error: appErrors.UNEXPECTED_ERROR,
       };
     }
   });

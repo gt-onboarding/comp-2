@@ -1,6 +1,7 @@
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
+import { T } from 'gt-next';
 import { headers } from 'next/headers';
 import { cache } from 'react';
 import { StatusChart } from './status-chart';
@@ -16,7 +17,7 @@ export async function RisksByStatus() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{'Risks by Status'}</CardTitle>
+        <CardTitle><T>Risks by Status</T></CardTitle>
       </CardHeader>
       <CardContent>
         <StatusChart data={data} />

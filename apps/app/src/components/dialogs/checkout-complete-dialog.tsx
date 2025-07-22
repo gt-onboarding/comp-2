@@ -15,6 +15,7 @@ import { useQueryState } from 'nuqs';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { zaraz } from 'zaraz-ts';
+import { T, useGT } from 'gt-next';
 
 type PlanType = 'starter' | 'done-for-you';
 
@@ -36,6 +37,7 @@ export function CheckoutCompleteDialog({ orgId }: { orgId: string }) {
   const [open, setOpen] = useState(false);
   const [planType, setPlanType] = useState<PlanType | null>('done-for-you');
   const posthog = usePostHog();
+  const t = useGT();
 
   useEffect(() => {
     if (checkoutComplete === 'starter' || checkoutComplete === 'done-for-you') {
@@ -98,27 +100,31 @@ export function CheckoutCompleteDialog({ orgId }: { orgId: string }) {
   };
 
   // Different content based on plan type
-  const content: Record<PlanType, PlanContent> = {
-    'done-for-you': {
-      title: 'Payment Successful! 🎉',
-      description:
-        'Your invoice has been paid. To get started, please continue with the onboarding so our AI can get to work.',
-      badge: 'Invoice Paid',
-      badgeClass: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-      iconClass: 'bg-green-100 dark:bg-green-900/30',
-      iconColor: 'text-green-600 dark:text-green-400',
-      buttonText: 'Continue',
-    },
-    starter: {
-      title: 'Payment Successful! 🎉',
-      description: 'Your Starter subscription is now active.',
-      badge: 'Invoice Paid',
-      badgeClass: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-      iconClass: 'bg-blue-100 dark:bg-blue-900/30',
-      iconColor: 'text-blue-600 dark:text-blue-400',
-      buttonText: 'Complete Onboarding',
-    },
+  const getContent = (t: (content: string) => string): Record<PlanType, PlanContent> => {
+    return {
+      'done-for-you': {
+        title: t('Payment Successful! 🎉'),
+        description: t(
+          'Your invoice has been paid. To get started, please continue with the onboarding so our AI can get to work.',
+        ),
+        badge: t('Invoice Paid'),
+        badgeClass: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
+        iconClass: 'bg-green-100 dark:bg-green-900/30',
+        iconColor: 'text-green-600 dark:text-green-400',
+        buttonText: t('Continue'),
+      },
+      starter: {
+        title: t('Payment Successful! 🎉'),
+        description: t('Your Starter subscription is now active.'),
+        badge: t('Invoice Paid'),
+        badgeClass: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+        iconClass: 'bg-blue-100 dark:bg-blue-900/30',
+        iconColor: 'text-blue-600 dark:text-blue-400',
+        buttonText: t('Complete Onboarding'),
+      },
+    };
   };
+  const content = getContent(t);
 
   // Only render content if we have a valid plan type stored
   if (!planType) {

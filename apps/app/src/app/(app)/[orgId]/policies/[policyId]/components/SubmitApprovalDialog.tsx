@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@comp/ui/dialog';
 import { Loader2 } from 'lucide-react';
+import { T } from 'gt-next';
 
 interface SubmitApprovalDialogProps {
   isOpen: boolean;
@@ -36,8 +37,10 @@ export const SubmitApprovalDialog = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Submit for Approval</DialogTitle>
-          <DialogDescription>Please select an approver for this policy.</DialogDescription>
+          <T>
+            <DialogTitle>Submit for Approval</DialogTitle>
+            <DialogDescription>Please select an approver for this policy.</DialogDescription>
+          </T>
         </DialogHeader>
         <SelectAssignee
           assignees={assignees}
@@ -47,11 +50,11 @@ export const SubmitApprovalDialog = ({
         />
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            <T>Cancel</T>
           </Button>
           <Button onClick={onConfirm} disabled={isSubmitting || !selectedApproverId}>
             {isSubmitting ? <Loader2 className="mr-2 animate-spin" /> : null}
-            Confirm & Submit
+            <T>Confirm & Submit</T>
           </Button>
         </DialogFooter>
       </DialogContent>

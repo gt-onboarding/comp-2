@@ -2,6 +2,7 @@ import { db } from '@comp/db';
 import { VendorCategory } from '@comp/db/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
 import { VendorCategoryChart } from './category-chart';
+import { T } from 'gt-next';
 
 const VENDOR_CATEGORIES = Object.values(VendorCategory);
 
@@ -55,7 +56,7 @@ export async function VendorsByCategory({ organizationId }: Props) {
   return (
     <Card className="h-full w-full">
       <CardHeader>
-        <CardTitle>{'Vendors by Category'}</CardTitle>
+        <CardTitle><T>Vendors by Category</T></CardTitle>
       </CardHeader>
       <CardContent className="w-full">
         <VendorCategoryChart data={categoriesToShow} showEmptyDepartments={true} />

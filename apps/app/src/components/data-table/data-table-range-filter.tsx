@@ -6,6 +6,7 @@ import * as React from 'react';
 import type { ExtendedColumnFilter } from '@/types/data-table';
 import { cn } from '@comp/ui/cn';
 import { Input } from '@comp/ui/input';
+import { useGT } from 'gt-next';
 
 interface DataTableRangeFilterProps<TData> extends React.ComponentProps<'div'> {
   filter: ExtendedColumnFilter<TData>;
@@ -26,6 +27,7 @@ export function DataTableRangeFilter<TData>({
   ...props
 }: DataTableRangeFilterProps<TData>) {
   const meta = column.columnDef.meta;
+  const t = useGT();
 
   const [min, max] = React.useMemo(() => {
     const range = column.columnDef.meta?.range;
@@ -78,7 +80,7 @@ export function DataTableRangeFilter<TData>({
       <Input
         id={`${inputId}-min`}
         type="number"
-        aria-label={`${meta?.label} minimum value`}
+        aria-label={t('{label} minimum value', { label: meta?.label })}
         aria-valuemin={min}
         aria-valuemax={max}
         data-slot="range-min"
@@ -93,7 +95,7 @@ export function DataTableRangeFilter<TData>({
       <Input
         id={`${inputId}-max`}
         type="number"
-        aria-label={`${meta?.label} maximum value`}
+        aria-label={t('{label} maximum value', { label: meta?.label })}
         aria-valuemin={min}
         aria-valuemax={max}
         data-slot="range-max"

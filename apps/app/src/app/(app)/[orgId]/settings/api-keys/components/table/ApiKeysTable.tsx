@@ -7,10 +7,12 @@ import { Button } from '@comp/ui/button';
 import { Plus } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import { useMemo } from 'react';
+import { T, useGT } from 'gt-next';
 import { CreateApiKeyDialog } from '../CreateApiKeyDialog';
 import { columns as getColumns } from './ApiKeysColumns';
 
 export function ApiKeysTable({ apiKeys }: { apiKeys: ApiKey[] }) {
+  const t = useGT();
   const columns = useMemo(() => getColumns(), []);
   const { table } = useDataTable({
     data: apiKeys,
@@ -37,7 +39,7 @@ export function ApiKeysTable({ apiKeys }: { apiKeys: ApiKey[] }) {
             onClick={() => setOpenSheet('true')}
           >
             <Plus className="h-4 w-4" />
-            Add API Key
+            <T>Add API Key</T>
           </Button>
         </DataTableToolbar>
       </DataTable>

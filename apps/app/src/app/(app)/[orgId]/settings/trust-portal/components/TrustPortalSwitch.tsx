@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@comp/ui/switch';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ExternalLink } from 'lucide-react';
+import { T, useGT } from 'gt-next';
 import { useAction } from 'next-safe-action/hooks';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -60,12 +61,13 @@ export function TrustPortalSwitch({
   gdprStatus: 'started' | 'in_progress' | 'compliant';
   friendlyUrl: string | null;
 }) {
+  const t = useGT();
   const trustPortalSwitch = useAction(trustPortalSwitchAction, {
     onSuccess: () => {
-      toast.success('Trust portal status updated');
+      toast.success(t('Trust portal status updated'));
     },
     onError: () => {
-      toast.error('Failed to update trust portal status');
+      toast.error(t('Failed to update trust portal status'));
     },
   });
 
@@ -187,7 +189,7 @@ export function TrustPortalSwitch({
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <CardTitle className="flex items-center gap-2">
-                  Trust Portal
+                  <T>Trust Portal</T>
                   <Link
                     href={portalUrl}
                     target="_blank"
@@ -196,9 +198,11 @@ export function TrustPortalSwitch({
                     <ExternalLink className="h-4 w-4" />
                   </Link>
                 </CardTitle>
-                <p className="text-muted-foreground text-sm">
-                  Create a public trust portal for your organization.
-                </p>
+                <T>
+                  <p className="text-muted-foreground text-sm">
+                    Create a public trust portal for your organization.
+                  </p>
+                </T>
               </div>
               <FormField
                 control={form.control}
@@ -220,14 +224,14 @@ export function TrustPortalSwitch({
           <CardContent className="space-y-6 pt-0">
             {form.watch('enabled') && (
               <div className="pt-2">
-                <h3 className="mb-4 text-sm font-medium">Trust Portal Settings</h3>
+                <T><h3 className="mb-4 text-sm font-medium">Trust Portal Settings</h3></T>
                 <div className="grid grid-cols-1 gap-x-4 lg:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="friendlyUrl"
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>Custom URL</FormLabel>
+                        <T><FormLabel>Custom URL</FormLabel></T>
                         <FormControl>
                           <div>
                             <div className="relative flex w-full items-center">
@@ -249,13 +253,13 @@ export function TrustPortalSwitch({
                             </div>
                             {friendlyUrlValue && (
                               <div className="mt-1 min-h-[18px] text-xs">
-                                {friendlyUrlStatus === 'checking' && 'Checking availability...'}
+                                {friendlyUrlStatus === 'checking' && t('Checking availability...')}
                                 {friendlyUrlStatus === 'available' && (
-                                  <span className="text-green-600">{'This URL is available!'}</span>
+                                  <span className="text-green-600">{t('This URL is available!')}</span>
                                 )}
                                 {friendlyUrlStatus === 'unavailable' && (
                                   <span className="text-red-600">
-                                    {'This URL is already taken.'}
+                                    {t('This URL is already taken.')}
                                   </span>
                                 )}
                               </div>
@@ -270,7 +274,7 @@ export function TrustPortalSwitch({
                     name="contactEmail"
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>Contact Email</FormLabel>
+                        <T><FormLabel>Contact Email</FormLabel></T>
                         <FormControl>
                           <Input
                             {...field}
@@ -298,10 +302,12 @@ export function TrustPortalSwitch({
               <div className="">
                 {/* Compliance Frameworks Section */}
                 <div>
-                  <h3 className="mb-2 text-sm font-medium">Compliance Frameworks</h3>
-                  <p className="text-muted-foreground mb-4 text-sm">
-                    Share the frameworks your organization is compliant with or working towards.
-                  </p>
+                  <T><h3 className="mb-2 text-sm font-medium">Compliance Frameworks</h3></T>
+                  <T>
+                    <p className="text-muted-foreground mb-4 text-sm">
+                      Share the frameworks your organization is compliant with or working towards.
+                    </p>
+                  </T>
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
                     {/* SOC 2 */}
                     <ComplianceFramework
@@ -315,9 +321,9 @@ export function TrustPortalSwitch({
                             orgId,
                             soc2Status: value as 'started' | 'in_progress' | 'compliant',
                           });
-                          toast.success('SOC 2 status updated');
+                          toast.success(t('SOC 2 status updated'));
                         } catch (error) {
-                          toast.error('Failed to update SOC 2 status');
+                          toast.error(t('Failed to update SOC 2 status'));
                         }
                       }}
                       onToggle={async (checked) => {
@@ -326,9 +332,9 @@ export function TrustPortalSwitch({
                             orgId,
                             soc2: checked,
                           });
-                          toast.success('SOC 2 status updated');
+                          toast.success(t('SOC 2 status updated'));
                         } catch (error) {
-                          toast.error('Failed to update SOC 2 status');
+                          toast.error(t('Failed to update SOC 2 status'));
                         }
                       }}
                     />
@@ -344,9 +350,9 @@ export function TrustPortalSwitch({
                             orgId,
                             iso27001Status: value as 'started' | 'in_progress' | 'compliant',
                           });
-                          toast.success('ISO 27001 status updated');
+                          toast.success(t('ISO 27001 status updated'));
                         } catch (error) {
-                          toast.error('Failed to update ISO 27001 status');
+                          toast.error(t('Failed to update ISO 27001 status'));
                         }
                       }}
                       onToggle={async (checked) => {
@@ -355,9 +361,9 @@ export function TrustPortalSwitch({
                             orgId,
                             iso27001: checked,
                           });
-                          toast.success('ISO 27001 status updated');
+                          toast.success(t('ISO 27001 status updated'));
                         } catch (error) {
-                          toast.error('Failed to update ISO 27001 status');
+                          toast.error(t('Failed to update ISO 27001 status'));
                         }
                       }}
                     />
@@ -373,9 +379,9 @@ export function TrustPortalSwitch({
                             orgId,
                             gdprStatus: value as 'started' | 'in_progress' | 'compliant',
                           });
-                          toast.success('GDPR status updated');
+                          toast.success(t('GDPR status updated'));
                         } catch (error) {
-                          toast.error('Failed to update GDPR status');
+                          toast.error(t('Failed to update GDPR status'));
                         }
                       }}
                       onToggle={async (checked) => {
@@ -384,9 +390,9 @@ export function TrustPortalSwitch({
                             orgId,
                             gdpr: checked,
                           });
-                          toast.success('GDPR status updated');
+                          toast.success(t('GDPR status updated'));
                         } catch (error) {
-                          toast.error('Failed to update GDPR status');
+                          toast.error(t('Failed to update GDPR status'));
                         }
                       }}
                     />
@@ -417,6 +423,7 @@ function ComplianceFramework({
   onStatusChange: (value: string) => Promise<void>;
   onToggle: (checked: boolean) => Promise<void>;
 }) {
+  const t = useGT();
   const logo =
     title === 'SOC 2' ? (
       <SOC2 className="h-16 w-16" />
@@ -447,32 +454,32 @@ function ComplianceFramework({
               {isEnabled ? (
                 <Select defaultValue={status} onValueChange={onStatusChange}>
                   <SelectTrigger className="min-w-[180px] text-base font-medium">
-                    <SelectValue placeholder="Select status" className="w-auto" />
+                    <SelectValue placeholder={t('Select status')} className="w-auto" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="started">
                       <span className="flex items-center gap-2">
                         <span className="inline-block h-4 w-4 rounded-sm bg-gray-300" />
-                        Started
+                        <T>Started</T>
                       </span>
                     </SelectItem>
                     <SelectItem value="in_progress">
                       <span className="flex items-center gap-2">
                         <span className="inline-block h-4 w-4 rounded-sm bg-yellow-400" />
-                        In Progress
+                        <T>In Progress</T>
                       </span>
                     </SelectItem>
                     <SelectItem value="compliant">
                       <span className="flex items-center gap-2">
                         <span className="inline-block h-4 w-4 rounded-sm bg-green-500" />
-                        Compliant
+                        <T>Compliant</T>
                       </span>
                     </SelectItem>
                   </SelectContent>
                 </Select>
               ) : (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">Disabled</span>
+                  <T><span className="text-sm font-medium">Disabled</span></T>
                 </div>
               )}
             </div>

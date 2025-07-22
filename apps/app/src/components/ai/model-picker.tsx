@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@comp/ui/select';
+import { useGT } from 'gt-next';
 
 interface ModelPickerProps {
   selectedModel: modelID;
@@ -20,11 +21,21 @@ const MODELS: Record<modelID, string> = {
 };
 
 export const ModelPicker = ({ selectedModel, setSelectedModel }: ModelPickerProps) => {
+  const t = useGT();
+  
+  const getModelLabel = (modelId: modelID): string => {
+    switch (modelId) {
+      case 'deepseek-r1-distill-llama-70b':
+        return t('A reasoning model');
+      default:
+        return modelId;
+    }
+  };
   return (
     <div className="absolute bottom-2 left-2 flex flex-col gap-2">
       <Select value={selectedModel} onValueChange={setSelectedModel}>
         <SelectTrigger className="">
-          <SelectValue placeholder="Select a model" />
+          <SelectValue placeholder={t('Select a model')} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>

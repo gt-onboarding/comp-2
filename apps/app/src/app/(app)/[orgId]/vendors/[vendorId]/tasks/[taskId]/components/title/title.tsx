@@ -8,11 +8,12 @@ import { Sheet, SheetContent } from '@comp/ui/sheet';
 import { PencilIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useQueryState } from 'nuqs';
+import { T } from 'gt-next';
 
 // Dynamically import the UpdateTaskSheet component
 const UpdateTaskSheet = dynamic(
   () => import('./update-task-sheet').then((mod) => mod.UpdateTaskSheet),
-  { ssr: false, loading: () => <div>Loading...</div> },
+  { ssr: false, loading: () => <div><T>Loading...</T></div> },
 );
 
 interface TitleProps {

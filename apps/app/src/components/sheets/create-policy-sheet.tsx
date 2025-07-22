@@ -5,6 +5,7 @@ import { Drawer, DrawerContent, DrawerTitle } from '@comp/ui/drawer';
 import { useMediaQuery } from '@comp/ui/hooks';
 import { ScrollArea } from '@comp/ui/scroll-area';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@comp/ui/sheet';
+import { useGT } from 'gt-next';
 import { X } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import { CreateNewPolicyForm } from '../forms/policies/create-new-policy';
@@ -13,6 +14,7 @@ export function CreatePolicySheet() {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [open, setOpen] = useQueryState('create-policy-sheet');
   const isOpen = Boolean(open);
+  const t = useGT();
 
   const handleOpenChange = (open: boolean) => {
     setOpen(open ? 'true' : null);
@@ -23,7 +25,7 @@ export function CreatePolicySheet() {
       <Sheet open={isOpen} onOpenChange={handleOpenChange}>
         <SheetContent stack>
           <SheetHeader className="mb-8 flex flex-row items-center justify-between">
-            <SheetTitle>{'Create New Policy'}</SheetTitle>
+            <SheetTitle>{t('Create New Policy')}</SheetTitle>
             <Button
               size="icon"
               variant="ghost"
@@ -44,7 +46,7 @@ export function CreatePolicySheet() {
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-      <DrawerTitle hidden>{'Create New Policy'}</DrawerTitle>
+      <DrawerTitle hidden>{t('Create New Policy')}</DrawerTitle>
       <DrawerContent className="p-6">
         <CreateNewPolicyForm />
       </DrawerContent>

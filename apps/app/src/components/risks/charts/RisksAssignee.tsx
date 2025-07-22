@@ -4,9 +4,11 @@ import { db } from '@comp/db';
 import { Avatar, AvatarFallback, AvatarImage } from '@comp/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
 import { ScrollArea } from '@comp/ui/scroll-area';
+import { getGT } from 'gt-next/server';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { cache } from 'react';
+import type { InlineTranslationOptions } from 'gt-next/types';
 
 interface UserRiskStats {
   user: {
@@ -30,6 +32,7 @@ const riskStatusColors = {
 };
 
 export async function RisksAssignee() {
+  const t = await getGT();
   const userStats = await userData();
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -56,7 +59,7 @@ export async function RisksAssignee() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{'Risks by Assignee'}</CardTitle>
+        <CardTitle>{t('Risks by Assignee')}</CardTitle>
       </CardHeader>
       <CardContent>
         <ScrollArea>
@@ -67,17 +70,17 @@ export async function RisksAssignee() {
                   <Avatar>
                     <AvatarImage src={stat.user.image || undefined} />
                     <AvatarFallback>
-                      {getInitials(stat.user.name || stat.user.email || 'Unknown User')}
+                      {getInitials(stat.user.name || stat.user.email || t('Unknown User'))}
                     </AvatarFallback>
                   </Avatar>
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
                       <p className="truncate text-sm leading-none font-medium">
-                        {stat.user.name || stat.user.email || 'Unknown User'}
+                        {stat.user.name || stat.user.email || t('Unknown User')}
                       </p>
                       <span className="text-muted-foreground text-sm">
-                        {stat.totalRisks} {'risks'}
+                        {stat.totalRisks} {t('risks')}
                       </span>
                     </div>
 
@@ -90,7 +93,7 @@ export async function RisksAssignee() {
                               style={{
                                 width: `${(stat.openRisks / stat.totalRisks) * 100}%`,
                               }}
-                              title={`${'Open'}: ${stat.openRisks}`}
+                              title={`${t('Open')}: ${stat.openRisks}`}
                             />
                           )}
                           {stat.pendingRisks > 0 && (
@@ -99,7 +102,7 @@ export async function RisksAssignee() {
                               style={{
                                 width: `${(stat.pendingRisks / stat.totalRisks) * 100}%`,
                               }}
-                              title={`${'Pending'}: ${stat.pendingRisks}`}
+                              title={`${t('Pending')}: ${stat.pendingRisks}`}
                             />
                           )}
                           {stat.closedRisks > 0 && (
@@ -108,7 +111,7 @@ export async function RisksAssignee() {
                               style={{
                                 width: `${(stat.closedRisks / stat.totalRisks) * 100}%`,
                               }}
-                              title={`${'Closed'}: ${stat.closedRisks}`}
+                              title={`${t('Closed')}: ${stat.closedRisks}`}
                             />
                           )}
                           {stat.archivedRisks > 0 && (
@@ -117,7 +120,7 @@ export async function RisksAssignee() {
                               style={{
                                 width: `${(stat.archivedRisks / stat.totalRisks) * 100}%`,
                               }}
-                              title={`${'Archived'}: ${stat.archivedRisks}`}
+                              title={`${t('Archived')}: ${stat.archivedRisks}`}
                             />
                           )}
                         </div>
@@ -129,7 +132,7 @@ export async function RisksAssignee() {
                         <div className="flex items-center gap-1">
                           <div className={`size-2 rounded-full ${riskStatusColors.open}`} />
                           <span>
-                            {'Open'} ({stat.openRisks})
+                            {t('Open')} ({stat.openRisks})
                           </span>
                         </div>
                       )}
@@ -137,7 +140,7 @@ export async function RisksAssignee() {
                         <div className="flex items-center gap-1">
                           <div className={`size-2 rounded-full ${riskStatusColors.pending}`} />
                           <span>
-                            {'Pending'} ({stat.pendingRisks})
+                            {t('Pending')} ({stat.pendingRisks})
                           </span>
                         </div>
                       )}
@@ -145,7 +148,7 @@ export async function RisksAssignee() {
                         <div className="flex items-center gap-1">
                           <div className={`size-2 rounded-full ${riskStatusColors.closed}`} />
                           <span>
-                            {'Closed'} ({stat.closedRisks})
+                            {t('Closed')} ({stat.closedRisks})
                           </span>
                         </div>
                       )}
@@ -153,7 +156,7 @@ export async function RisksAssignee() {
                         <div className="flex items-center gap-1">
                           <div className={`size-2 rounded-full ${riskStatusColors.archived}`} />
                           <span>
-                            {'Archived'} ({stat.archivedRisks})
+                            {t('Archived')} ({stat.archivedRisks})
                           </span>
                         </div>
                       )}

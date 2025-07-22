@@ -2,6 +2,7 @@
 
 import { env } from '@/env.mjs';
 import axios from 'axios';
+import { getGT } from 'gt-next/server';
 import { authActionClient } from './safe-action';
 import { sendFeedbackSchema } from './schema';
 
@@ -12,8 +13,12 @@ export const sendFeebackAction = authActionClient
   })
   .action(async ({ parsedInput: { feedback }, ctx: { user } }) => {
     if (env.DISCORD_WEBHOOK_URL) {
+      const t = await getGT();
       await axios.post(process.env.DISCORD_WEBHOOK_URL as string, {
-        content: `New feedback from ${user?.email}: \n\n ${feedback}`,
+        content: t('New feedback from {email}: \n\n {feedback}', {
+          email: user?.email,
+          feedback: feedback
+        }),
       });
     }
 

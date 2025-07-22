@@ -3,6 +3,7 @@
 import { db } from '@comp/db';
 import { logger } from '@trigger.dev/sdk/v3';
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { getGT } from 'gt-next/server';
 import { authActionClient } from '../safe-action';
 import { updatePolicySchema } from '../schema';
 
@@ -65,18 +66,19 @@ export const updatePolicyAction = authActionClient
     const { id, content } = parsedInput;
     const { activeOrganizationId } = ctx.session;
     const { user } = ctx;
+    const t = await getGT();
 
     if (!activeOrganizationId) {
       return {
         success: false,
-        error: 'Not authorized',
+        error: t('Not authorized'),
       };
     }
 
     if (!user) {
       return {
         success: false,
-        error: 'Not authorized',
+        error: t('Not authorized'),
       };
     }
 
@@ -88,7 +90,7 @@ export const updatePolicyAction = authActionClient
       if (!policy) {
         return {
           success: false,
-          error: 'Policy not found',
+          error: t('Policy not found'),
         };
       }
 

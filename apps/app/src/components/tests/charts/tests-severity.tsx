@@ -3,6 +3,7 @@
 import { PieChart } from '@/components/ui/pie-chart';
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
 import { cn } from '@comp/ui/cn';
+import { T } from 'gt-next';
 
 interface Props {
   totalTests: number;
@@ -64,7 +65,9 @@ export function TestsSeverity({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{'Test Severity Distribution'}</CardTitle>
+        <T>
+          <CardTitle>Test Severity Distribution</CardTitle>
+        </T>
       </CardHeader>
       <CardContent>
         <PieChart data={data} />

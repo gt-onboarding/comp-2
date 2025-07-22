@@ -2,6 +2,7 @@
 
 import { authClient } from '@/utils/auth-client';
 import { Avatar, AvatarFallback, AvatarImageNext } from '@comp/ui/avatar';
+import { T, useGT } from 'gt-next';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,7 @@ interface MinimalUserMenuProps {
 export function MinimalUserMenu({ user }: MinimalUserMenuProps) {
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const t = useGT();
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
@@ -65,12 +67,14 @@ export function MinimalUserMenu({ user }: MinimalUserMenuProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <div className="flex flex-row items-center justify-between p-2">
-          <p className="text-sm">Theme</p>
+          <T>
+            <p className="text-sm">Theme</p>
+          </T>
           <ThemeSwitch />
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} disabled={isSigningOut}>
-          {isSigningOut ? 'Signing out...' : 'Sign out'}
+          {isSigningOut ? t('Signing out...') : t('Sign out')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

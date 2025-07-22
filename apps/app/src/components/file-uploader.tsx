@@ -5,6 +5,7 @@ import Image from 'next/image';
 import * as React from 'react';
 import Dropzone, { type DropzoneProps, type FileRejection } from 'react-dropzone';
 import { toast } from 'sonner';
+import { T, Var, useGT } from 'gt-next';
 
 import { useControllableState } from '@/hooks/use-controllable-state';
 import { Button } from '@comp/ui/button';
@@ -108,6 +109,8 @@ export function FileUploader(props: FileUploaderProps) {
     ...dropzoneProps
   } = props;
 
+  const t = useGT();
+
   const [files, setFiles] = useControllableState({
     prop: valueProp,
     onChange: onValueChange,
@@ -116,17 +119,17 @@ export function FileUploader(props: FileUploaderProps) {
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (!multiple && maxFileCount === 1 && acceptedFiles.length > 1) {
-        toast.error('Cannot upload more than 1 file at a time');
+        toast.error(t('Cannot upload more than 1 file at a time'));
         return;
       }
 
       if ((files?.length ?? 0) + acceptedFiles.length > maxFileCount) {
-        toast.error('Cannot upload more files than the maximum allowed');
+        toast.error(t('Cannot upload more files than the maximum allowed'));
         return;
       }
 
       if (acceptedFiles.length === 0) {
-        toast.error('No files selected');
+        toast.error(t('No files selected'));
         return;
       }
 
@@ -142,25 +145,25 @@ export function FileUploader(props: FileUploaderProps) {
 
       if (rejectedFiles.length > 0) {
         for (const { file } of rejectedFiles) {
-          toast.error(`File ${file.name} was rejected`);
+          toast.error(t('File {fileName} was rejected', { fileName: file.name }));
         }
       }
 
       if (onUpload && updatedFiles.length > 0 && updatedFiles.length <= maxFileCount) {
-        const target = updatedFiles.length > 0 ? `${updatedFiles.length} files` : 'a file';
+        const target = updatedFiles.length > 0 ? t('{fileCount} files', { fileCount: updatedFiles.length }) : t('a file');
 
         toast.promise(onUpload(updatedFiles), {
-          loading: `Uploading ${target}...`,
+          loading: t('Uploading {target}...', { target }),
           success: () => {
             setFiles([]);
-            return 'Files uploaded';
+            return t('Files uploaded');
           },
-          error: 'Failed to upload files',
+          error: t('Failed to upload files'),
         });
       }
     },
 
-    [files, maxFileCount, multiple, onUpload, setFiles],
+    [files, maxFileCount, multiple, onUpload, setFiles, t],
   );
 
   function onRemove(index: number) {
@@ -212,7 +215,9 @@ export function FileUploader(props: FileUploaderProps) {
                 <div className="rounded-full border border-dashed p-3">
                   <Upload className="text-muted-foreground size-7" aria-hidden="true" />
                 </div>
-                <p className="text-muted-foreground font-medium">{'Drop the files here'}</p>
+                <T>
+                  <p className="text-muted-foreground font-medium">Drop the files here</p>
+                </T>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
@@ -220,12 +225,16 @@ export function FileUploader(props: FileUploaderProps) {
                   <Upload className="text-muted-foreground size-7" aria-hidden="true" />
                 </div>
                 <div className="flex flex-col gap-px">
-                  <p className="text-muted-foreground font-medium">
-                    {'Drop files here or click to choose files from your device.'}
-                  </p>
-                  <p className="text-muted-foreground/70 text-sm">
-                    {'Files can be up to '} {formatBytes(maxSize)}.
-                  </p>
+                  <T>
+                    <p className="text-muted-foreground font-medium">
+                      Drop files here or click to choose files from your device.
+                    </p>
+                  </T>
+                  <T>
+                    <p className="text-muted-foreground/70 text-sm">
+                      Files can be up to <Var>{formatBytes(maxSize)}</Var>.
+                    </p>
+                  </T>
                 </div>
               </div>
             )}

@@ -7,6 +7,7 @@ import type { Context } from '@prisma/client';
 import { Plus } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import { useMemo } from 'react';
+import { T } from 'gt-next';
 import { CreateContextSheet } from './components/CreateContextSheet';
 import { columns as getColumns } from './components/table/ContextColumns';
 
@@ -37,7 +38,7 @@ export const ContextTable = ({ entries, pageCount }: { entries: Context[]; pageC
             onClick={() => setOpenSheet('true')}
           >
             <Plus className="h-4 w-4" />
-            Add Entry
+            <T>Add Entry</T>
           </Button>
         </DataTableToolbar>
       </DataTable>

@@ -3,6 +3,7 @@ import { getServersideSession } from '@/lib/get-session';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { getGT } from 'gt-next/server';
 
 export default async function VendorManagement() {
   const {
@@ -23,7 +24,8 @@ export default async function VendorManagement() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
   return {
-    title: 'Vendors',
+    title: t('Vendors'),
   };
 }

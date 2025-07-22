@@ -1,5 +1,6 @@
 import type { TZDate } from '@date-fns/tz';
 import { differenceInDays, differenceInMonths, format, isSameYear, startOfDay } from 'date-fns';
+import { getGT } from 'gt-next/server';
 
 export function formatSize(bytes: number): string {
   const units = ['byte', 'kilobyte', 'megabyte', 'gigabyte', 'terabyte'];
@@ -42,23 +43,24 @@ export function formatAmount({
   }).format(amount);
 }
 
-export function secondsToHoursAndMinutes(seconds: number) {
+export async function secondsToHoursAndMinutes(seconds: number): Promise<string> {
+  const t = await getGT();
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
 
   if (hours && minutes) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}h`;
+    return t('{hours}:{minutes}h', { hours, minutes: minutes.toString().padStart(2, '0') });
   }
 
   if (hours) {
-    return `${hours}h`;
+    return t('{hours}h', { hours });
   }
 
   if (minutes) {
-    return `${minutes}m`;
+    return t('{minutes}m', { minutes });
   }
 
-  return '0h';
+  return t('0h');
 }
 
 type BurnRateData = {
@@ -127,7 +129,8 @@ export function formatDateRange(dates: TZDate[]): string {
   return `${formatFullDate(startDate)} - ${formatFullDate(endDate)}`;
 }
 
-export function getDueDateStatus(dueDate: string): string {
+export async function getDueDateStatus(dueDate: string): Promise<string> {
+  const t = await getGT();
   const now = new Date();
   const due = new Date(dueDate);
 
@@ -138,41 +141,42 @@ export function getDueDateStatus(dueDate: string): string {
   const diffDays = differenceInDays(dueDay, nowDay);
   const diffMonths = differenceInMonths(dueDay, nowDay);
 
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Tomorrow';
-  if (diffDays === -1) return 'Yesterday';
+  if (diffDays === 0) return t('Today');
+  if (diffDays === 1) return t('Tomorrow');
+  if (diffDays === -1) return t('Yesterday');
 
   if (diffDays > 0) {
-    if (diffMonths < 1) return `in ${diffDays} days`;
-    return `in ${diffMonths} month${diffMonths === 1 ? '' : 's'}`;
+    if (diffMonths < 1) return t('in {days, plural, one {# day} other {# days}}', { days: diffDays });
+    return t('in {months, plural, one {# month} other {# months}}', { months: diffMonths });
   }
 
-  if (diffMonths < 1) return `${Math.abs(diffDays)} day${Math.abs(diffDays) === 1 ? '' : 's'} ago`;
-  return `${diffMonths} month${diffMonths === 1 ? '' : 's'} ago`;
+  if (diffMonths < 1) return t('{days, plural, one {# day} other {# days}} ago', { days: Math.abs(diffDays) });
+  return t('{months, plural, one {# month} other {# months}} ago', { months: diffMonths });
 }
 
-export function formatRelativeTime(date: Date): string {
+export async function formatRelativeTime(date: Date): Promise<string> {
+  const t = await getGT();
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
   if (diffInSeconds < 60) {
-    return 'just now';
+    return t('just now');
   }
 
   const intervals = [
-    { label: 'y', seconds: 31536000 },
-    { label: 'mo', seconds: 2592000 },
-    { label: 'd', seconds: 86400 },
-    { label: 'h', seconds: 3600 },
-    { label: 'm', seconds: 60 },
+    { label: t('y'), seconds: 31536000 },
+    { label: t('mo'), seconds: 2592000 },
+    { label: t('d'), seconds: 86400 },
+    { label: t('h'), seconds: 3600 },
+    { label: t('m'), seconds: 60 },
   ] as const;
 
   for (const interval of intervals) {
     const count = Math.floor(diffInSeconds / interval.seconds);
     if (count > 0) {
-      return `${count}${interval.label} ago`;
+      return t('{count}{label} ago', { count, label: interval.label });
     }
   }
 
-  return 'just now';
+  return t('just now');
 }

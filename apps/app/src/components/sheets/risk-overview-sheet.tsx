@@ -6,6 +6,7 @@ import { Drawer, DrawerContent, DrawerTitle } from '@comp/ui/drawer';
 import { useMediaQuery } from '@comp/ui/hooks';
 import { ScrollArea } from '@comp/ui/scroll-area';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@comp/ui/sheet';
+import { useGT } from 'gt-next';
 import { X } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
@@ -15,6 +16,7 @@ export function RiskOverviewSheet({ risk }: { risk: Risk }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [open, setOpen] = useQueryState('risk-overview-sheet');
   const isOpen = Boolean(open);
+  const t = useGT();
 
   const handleOpenChange = (open: boolean) => {
     setOpen(open ? 'true' : null);
@@ -26,7 +28,7 @@ export function RiskOverviewSheet({ risk }: { risk: Risk }) {
         <SheetContent stack>
           <SheetHeader className="mb-8">
             <div className="flex flex-row items-center justify-between">
-              <SheetTitle>{'Update Risk'}</SheetTitle>
+              <SheetTitle>{t('Update Risk')}</SheetTitle>
               <Button
                 size="icon"
                 variant="ghost"
@@ -36,7 +38,7 @@ export function RiskOverviewSheet({ risk }: { risk: Risk }) {
                 <X className="h-5 w-5" />
               </Button>
             </div>{' '}
-            <SheetDescription>{'Update risk details and metadata'}</SheetDescription>
+            <SheetDescription>{t('Update risk details and metadata')}</SheetDescription>
           </SheetHeader>
 
           <ScrollArea className="h-full p-0 pb-[100px]" hideScrollbar>
@@ -49,7 +51,7 @@ export function RiskOverviewSheet({ risk }: { risk: Risk }) {
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-      <DrawerTitle hidden>{'Update Risk'}</DrawerTitle>
+      <DrawerTitle hidden>{t('Update Risk')}</DrawerTitle>
       <DrawerContent className="p-6">
         <UpdateRiskForm risk={risk} />
       </DrawerContent>

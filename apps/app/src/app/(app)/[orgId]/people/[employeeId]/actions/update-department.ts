@@ -6,7 +6,8 @@ import { db } from '@comp/db';
 import type { Departments } from '@comp/db/types';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
-import { type AppError, appErrors, updateEmployeeDepartmentSchema } from '../types';
+import { type AppError, getAppErrors, updateEmployeeDepartmentSchema } from '../types';
+import { getGT } from 'gt-next/server';
 
 export type ActionResponse<T = any> = Promise<
   { success: true; data: T } | { success: false; error: AppError }
@@ -23,6 +24,8 @@ export const updateEmployeeDepartment = authActionClient
   })
   .action(async ({ parsedInput }): Promise<ActionResponse> => {
     const { employeeId, department } = parsedInput;
+    const t = await getGT();
+    const appErrors = getAppErrors(t);
 
     const session = await auth.api.getSession({
       headers: await headers(),

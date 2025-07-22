@@ -3,6 +3,7 @@
 import { authActionClient } from '@/actions/safe-action';
 import { env } from '@/env.mjs';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { Vercel } from '@vercel/sdk';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
@@ -33,6 +34,7 @@ export const checkDnsRecordAction = authActionClient
     },
   })
   .action(async ({ parsedInput, ctx }) => {
+    const t = await getGT();
     const { domain } = parsedInput;
 
     if (!ctx.session.activeOrganizationId) {
@@ -63,7 +65,7 @@ export const checkDnsRecordAction = authActionClient
       console.error('DNS lookup failed:', data);
       throw new Error(
         data.message ||
-          'DNS record verification failed, check the records are valid or try again later.',
+          t('DNS record verification failed, check the records are valid or try again later.'),
       );
     }
 
@@ -134,15 +136,16 @@ export const checkDnsRecordAction = authActionClient
         isCnameVerified,
         isTxtVerified,
         isVercelTxtVerified,
-        error:
-          'Error verifying DNS records. Please ensure both CNAME and TXT records are correctly configured, or wait a few minutes and try again.',
+        error: t(
+          'Error verifying DNS records. Please ensure both CNAME and TXT records are correctly configured, or wait a few minutes and try again.'
+        ),
       };
     }
 
     if (!env.TRUST_PORTAL_PROJECT_ID) {
       return {
         success: false,
-        error: 'Vercel project ID is not set.',
+        error: t('Vercel project ID is not set.'),
       };
     }
 

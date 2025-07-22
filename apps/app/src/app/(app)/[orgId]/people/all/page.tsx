@@ -1,6 +1,7 @@
 import PageCore from '@/components/pages/PageCore.tsx';
 import type { Metadata } from 'next';
 import { TeamMembers } from './components/TeamMembers';
+import { getGT } from 'gt-next/server';
 
 export default async function Members() {
   return (
@@ -11,7 +12,8 @@ export default async function Members() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
   return {
-    title: 'People',
+    title: t('People'),
   };
 }

@@ -3,6 +3,7 @@
 import { db } from '@comp/db';
 import { Departments, Frequency } from '@comp/db/types';
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { getGT } from 'gt-next/server';
 import { authActionClient } from '../safe-action';
 import { createPolicySchema } from '../schema';
 
@@ -20,18 +21,19 @@ export const createPolicyAction = authActionClient
     const { title, description, controlIds } = parsedInput;
     const { activeOrganizationId } = ctx.session;
     const { user } = ctx;
+    const t = await getGT();
 
     if (!activeOrganizationId) {
       return {
         success: false,
-        error: 'Not authorized',
+        error: t('Not authorized'),
       };
     }
 
     if (!user) {
       return {
         success: false,
-        error: 'Not authorized',
+        error: t('Not authorized'),
       };
     }
 
@@ -46,7 +48,7 @@ export const createPolicyAction = authActionClient
     if (!member) {
       return {
         success: false,
-        error: 'Not authorized',
+        error: t('Not authorized'),
       };
     }
 
@@ -117,7 +119,7 @@ export const createPolicyAction = authActionClient
 
       return {
         success: false,
-        error: 'Failed to create policy',
+        error: t('Failed to create policy'),
       };
     }
   });

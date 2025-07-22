@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useGetColumnHeaders } from './client-columns';
+import { useGT } from 'gt-next';
 
 interface DataTableProps {
   data: Task[];
@@ -16,6 +17,7 @@ export function DataTable({ data, pageCount, currentPage }: DataTableProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const t = useGT();
 
   const columnHeaders = useGetColumnHeaders();
 
@@ -66,7 +68,7 @@ export function DataTable({ data, pageCount, currentPage }: DataTableProps) {
             ) : (
               <TableRow>
                 <TableCell colSpan={columnHeaders.length} className="h-24 text-center">
-                  No results.
+                  {t('No results.')}
                 </TableCell>
               </TableRow>
             )}

@@ -4,6 +4,7 @@
 
 import { authActionClient } from '@/actions/safe-action';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
 
@@ -23,6 +24,7 @@ export const trustPortalSwitchAction = authActionClient
     },
   })
   .action(async ({ parsedInput, ctx }) => {
+    const t = await getGT();
     const { enabled, contactEmail, friendlyUrl } = parsedInput;
     const { activeOrganizationId } = ctx.session;
 
@@ -56,6 +58,6 @@ export const trustPortalSwitchAction = authActionClient
       };
     } catch (error) {
       console.error(error);
-      throw new Error('Failed to update organization name');
+      throw new Error(t('Failed to update trust portal settings'));
     }
   });

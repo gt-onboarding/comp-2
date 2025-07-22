@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@comp/ui/dialog';
 import { Form } from '@comp/ui/form';
+import { T, useGT } from 'gt-next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
@@ -36,6 +37,7 @@ interface ControlDeleteDialogProps {
 export function ControlDeleteDialog({ isOpen, onClose, control }: ControlDeleteDialogProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const t = useGT();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -46,12 +48,12 @@ export function ControlDeleteDialog({ isOpen, onClose, control }: ControlDeleteD
 
   const deleteControl = useAction(deleteControlAction, {
     onSuccess: () => {
-      toast.info('Control deleted! Redirecting to controls list...');
+      toast.info(t('Control deleted! Redirecting to controls list...'));
       onClose();
       router.push(`/${control.organizationId}/controls`);
     },
     onError: () => {
-      toast.error('Failed to delete control.');
+      toast.error(t('Failed to delete control.'));
       setIsSubmitting(false);
     },
   });
@@ -68,28 +70,38 @@ export function ControlDeleteDialog({ isOpen, onClose, control }: ControlDeleteD
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Delete Control</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this control? This action cannot be undone.
-          </DialogDescription>
+          <T>
+            <DialogTitle>Delete Control</DialogTitle>
+          </T>
+          <T>
+            <DialogDescription>
+              Are you sure you want to delete this control? This action cannot be undone.
+            </DialogDescription>
+          </T>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <DialogFooter className="gap-2">
-              <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
-                Cancel
-              </Button>
+              <T>
+                <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+                  Cancel
+                </Button>
+              </T>
               <Button type="submit" variant="destructive" disabled={isSubmitting} className="gap-2">
                 {isSubmitting ? (
-                  <span className="flex items-center gap-2">
-                    <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                    Deleting...
-                  </span>
+                  <T>
+                    <span className="flex items-center gap-2">
+                      <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                      Deleting...
+                    </span>
+                  </T>
                 ) : (
-                  <span className="flex items-center gap-2">
-                    <Trash2 className="h-3 w-3" />
-                    Delete
-                  </span>
+                  <T>
+                    <span className="flex items-center gap-2">
+                      <Trash2 className="h-3 w-3" />
+                      Delete
+                    </span>
+                  </T>
                 )}
               </Button>
             </DialogFooter>

@@ -1,4 +1,6 @@
 import { cn } from '@comp/ui/cn';
+import { T, useGT } from 'gt-next';
+import { InlineTranslationOptions } from 'gt-next/types';
 
 // Consolidated status types from Prisma schema
 export const STATUS_TYPES = [
@@ -51,28 +53,28 @@ export const STATUS_COLORS: Record<StatusType, string> = {
 } as const;
 
 // Updated status translation mapping
-export const getStatusTranslation = (status: StatusType) => {
+export const getStatusTranslation = (status: StatusType, t: (content: string, options?: InlineTranslationOptions) => string) => {
   switch (status) {
     case 'draft':
-      return 'Draft';
+      return t('Draft');
     case 'todo':
-      return 'Todo';
+      return t('Todo');
     case 'in_progress':
-      return 'In Progress';
+      return t('In Progress');
     case 'done':
-      return 'Done';
+      return t('Done');
     case 'published':
-      return 'Published';
+      return t('Published');
     case 'archived':
-      return 'Archived';
+      return t('Archived');
     case 'needs_review':
-      return 'Needs Review';
+      return t('Needs Review');
     case 'open':
-      return 'Open';
+      return t('Open');
     case 'pending':
-      return 'Pending';
+      return t('Pending');
     case 'closed':
-      return 'Closed';
+      return t('Closed');
 
     default: {
       // Fallback for unmapped statuses
@@ -91,21 +93,22 @@ interface StatusIndicatorProps {
 }
 
 export function StatusIndicator({ status, className, withLabel = true }: StatusIndicatorProps) {
+  const t = useGT();
+  
   // Handle null or undefined status
   if (!status) {
     const defaultColor = '#808080'; // Gray color for unknown/null status
-    const defaultLabel = '-'; // Placeholder label
     return (
       <div className={cn('flex items-center gap-2', className)}>
         <div className={cn('size-2.5')} style={{ backgroundColor: defaultColor }} />
-        {withLabel ? defaultLabel : null}
+        {withLabel ? <T>-</T> : null}
       </div>
     );
   }
 
   // Proceed with valid status
   const color = STATUS_COLORS[status] ?? '#808080';
-  const label = getStatusTranslation(status);
+  const label = getStatusTranslation(status, t);
 
   return (
     <div className={cn('flex items-center gap-2 text-sm', className)}>

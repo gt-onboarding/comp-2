@@ -2,6 +2,7 @@ import PageWithBreadcrumb from '@/components/pages/PageWithBreadcrumb';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import type { FrameworkEditorRequirement } from '@comp/db/types';
+import { getGT } from 'gt-next/server';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getSingleFrameworkInstanceWithControls } from '../../../data/getSingleFrameworkInstanceWithControls';
@@ -91,11 +92,12 @@ export default async function RequirementPage({ params }: PageProps) {
   console.log('relatedControls', relatedControls);
 
   const maxLabelLength = 40;
+  const t = await getGT();
 
   return (
     <PageWithBreadcrumb
       breadcrumbs={[
-        { label: 'Frameworks', href: `/${organizationId}/frameworks` },
+        { label: t('Frameworks'), href: `/${organizationId}/frameworks` },
         {
           label: frameworkName,
           href: `/${organizationId}/frameworks/${frameworkInstanceId}`,

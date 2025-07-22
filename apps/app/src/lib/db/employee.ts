@@ -5,6 +5,7 @@ import type { Departments, Member, Role } from '@comp/db/types';
 import { InvitePortalEmail } from '@comp/email/emails/invite-portal';
 import { sendEmail } from '@comp/email/lib/resend';
 import { revalidatePath } from 'next/cache';
+import { getGT } from 'gt-next/server';
 
 if (!env.NEXT_PUBLIC_PORTAL_URL) {
   throw new Error('NEXT_PUBLIC_PORTAL_URL is not set');
@@ -172,8 +173,11 @@ async function handleExistingUser({
     console.log(
       `[EXISTING_USER] User already has role(s): ${existingMemberRoles.join(', ')}. Cannot add as employee.`,
     );
+    const t = await getGT();
     throw new Error(
-      `User already has role(s): ${existingMemberRoles.join(', ')}. Each person can only have one role.`,
+      t('User already has role(s): {roles}. Each person can only have one role.', {
+        roles: existingMemberRoles.join(', '),
+      }),
     );
   }
 
@@ -195,15 +199,19 @@ async function handleExistingUser({
 
     if (!updatedMember) {
       console.error('[EXISTING_USER] Failed to update member role - no member returned');
-      throw new Error('Failed to update member role');
+      const t = await getGT();
+      throw new Error(t('Failed to update member role'));
     }
 
     console.log(`[EXISTING_USER] Successfully updated member role to: ${updatedMember.role}`);
     return updatedMember;
   } catch (dbError) {
     console.error('[EXISTING_USER] Database error when updating member role:', dbError);
+    const t = await getGT();
     throw new Error(
-      `Failed to update member role: ${dbError instanceof Error ? dbError.message : String(dbError)}`,
+      t('Failed to update member role: {error}', {
+        error: dbError instanceof Error ? dbError.message : String(dbError),
+      }),
     );
   }
 }
@@ -243,7 +251,8 @@ async function createNewUser({
   });
 
   if (!newMember) {
-    throw new Error('Failed to add employee to organization');
+    const t = await getGT();
+    throw new Error(t('Failed to add employee to organization'));
   }
 
   return newMember;

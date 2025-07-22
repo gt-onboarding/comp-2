@@ -6,15 +6,16 @@ import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { updateEmployeeDepartment } from '../actions/update-department';
+import { useGT } from 'gt-next';
 
-const DEPARTMENTS = [
-  { value: 'admin', label: 'Admin' },
-  { value: 'gov', label: 'Governance' },
-  { value: 'hr', label: 'HR' },
-  { value: 'it', label: 'IT' },
-  { value: 'itsm', label: 'IT Service Management' },
-  { value: 'qms', label: 'Quality Management' },
-  { value: 'none', label: 'None' },
+const getDepartments = (t: (content: string) => string) => [
+  { value: 'admin', label: t('Admin') },
+  { value: 'gov', label: t('Governance') },
+  { value: 'hr', label: t('HR') },
+  { value: 'it', label: t('IT') },
+  { value: 'itsm', label: t('IT Service Management') },
+  { value: 'qms', label: t('Quality Management') },
+  { value: 'none', label: t('None') },
 ];
 
 interface EditableDepartmentProps {
@@ -29,14 +30,16 @@ export function EditableDepartment({
   onSuccess,
 }: EditableDepartmentProps) {
   const [department, setDepartment] = useState(currentDepartment);
+  const t = useGT();
+  const DEPARTMENTS = getDepartments(t);
 
   const { execute, status } = useAction(updateEmployeeDepartment, {
     onSuccess: () => {
-      toast.success('Department updated successfully');
+      toast.success(t('Department updated successfully'));
       onSuccess?.();
     },
     onError: (error) => {
-      toast.error(error?.error?.serverError || 'Failed to update department');
+      toast.error(error?.error?.serverError || t('Failed to update department'));
     },
   });
 
@@ -48,7 +51,7 @@ export function EditableDepartment({
     <div>
       <Select value={department} onValueChange={(value) => setDepartment(value as Departments)}>
         <SelectTrigger className="h-8 w-full">
-          <SelectValue placeholder="Select department" />
+          <SelectValue placeholder={t('Select department')} />
         </SelectTrigger>
         <SelectContent>
           {DEPARTMENTS.map((dept) => (

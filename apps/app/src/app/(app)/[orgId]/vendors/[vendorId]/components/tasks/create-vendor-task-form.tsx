@@ -10,6 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@comp/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@comp/ui/popover';
 import { Textarea } from '@comp/ui/textarea';
+import { T } from 'gt-next';
+import { useGT } from 'gt-next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { ArrowRightIcon, CalendarIcon } from 'lucide-react';
@@ -25,14 +27,15 @@ import { createVendorTaskAction } from '../../actions/task/create-task-action';
 export function CreateVendorTaskForm({ assignees }: { assignees: (Member & { user: User })[] }) {
   const [_, setCreateVendorTaskSheet] = useQueryState('create-vendor-task-sheet');
   const params = useParams<{ vendorId: string }>();
+  const t = useGT();
 
   const createTask = useAction(createVendorTaskAction, {
     onSuccess: () => {
-      toast.success('Task created successfully');
+      toast.success(t('Task created successfully'));
       setCreateVendorTaskSheet(null);
     },
     onError: () => {
-      toast.error('Failed to create task');
+      toast.error(t('Failed to create task'));
     },
   });
 
@@ -58,7 +61,9 @@ export function CreateVendorTaskForm({ assignees }: { assignees: (Member & { use
           <div>
             <Accordion type="multiple" defaultValue={['task']}>
               <AccordionItem value="task">
-                <AccordionTrigger>{'Task Details'}</AccordionTrigger>
+                <AccordionTrigger>
+                  <T>Task Details</T>
+                </AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-4">
                     <FormField
@@ -66,13 +71,15 @@ export function CreateVendorTaskForm({ assignees }: { assignees: (Member & { use
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{'Task Title'}</FormLabel>
+                          <FormLabel>
+                            <T>Task Title</T>
+                          </FormLabel>
                           <FormControl>
                             <Input
                               {...field}
                               autoFocus
                               className="mt-3"
-                              placeholder={'A short, descriptive title for the task.'}
+                              placeholder={t('A short, descriptive title for the task.')}
                               autoCorrect="off"
                             />
                           </FormControl>
@@ -86,14 +93,14 @@ export function CreateVendorTaskForm({ assignees }: { assignees: (Member & { use
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{'Description'}</FormLabel>
+                          <FormLabel>
+                            <T>Description</T>
+                          </FormLabel>
                           <FormControl>
                             <Textarea
                               {...field}
                               className="mt-3 min-h-[80px]"
-                              placeholder={
-                                'Provide a detailed description of what needs to be done.'
-                              }
+                              placeholder={t('Provide a detailed description of what needs to be done.')}
                             />
                           </FormControl>
                           <FormMessage />
@@ -106,7 +113,9 @@ export function CreateVendorTaskForm({ assignees }: { assignees: (Member & { use
                       name="dueDate"
                       render={({ field }) => (
                         <FormItem className="flex flex-col">
-                          <FormLabel>{'Due Date'}</FormLabel>
+                          <FormLabel>
+                            <T>Due Date</T>
+                          </FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
                               <FormControl>
@@ -120,7 +129,9 @@ export function CreateVendorTaskForm({ assignees }: { assignees: (Member & { use
                                   {field.value ? (
                                     format(field.value, 'PPP')
                                   ) : (
-                                    <span>{'Pick a date'}</span>
+                                    <span>
+                                      <T>Pick a date</T>
+                                    </span>
                                   )}
                                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
@@ -146,7 +157,9 @@ export function CreateVendorTaskForm({ assignees }: { assignees: (Member & { use
                       name="assigneeId"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{'Assignee'}</FormLabel>
+                          <FormLabel>
+                            <T>Assignee</T>
+                          </FormLabel>
                           <FormControl>
                             <SelectAssignee
                               assignees={assignees}
@@ -168,7 +181,7 @@ export function CreateVendorTaskForm({ assignees }: { assignees: (Member & { use
           <div className="mt-4 flex justify-end">
             <Button type="submit" variant="default" disabled={createTask.status === 'executing'}>
               <div className="flex items-center justify-center">
-                {'Create'}
+                <T>Create</T>
                 <ArrowRightIcon className="ml-2 h-4 w-4" />
               </div>
             </Button>

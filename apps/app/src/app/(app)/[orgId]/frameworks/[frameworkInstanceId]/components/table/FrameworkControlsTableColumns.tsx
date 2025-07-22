@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@comp/
 import type { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useGT, T, Var } from 'gt-next';
 
 export type OrganizationControlType = {
   id: string;
@@ -36,12 +37,13 @@ function isPolicyCompleted(policy: Policy): boolean {
 
 export function FrameworkControlsTableColumns(): ColumnDef<OrganizationControlType>[] {
   const { orgId } = useParams<{ orgId: string }>();
+  const t = useGT();
 
   return [
     {
       id: 'name',
       accessorKey: 'name',
-      header: 'Control',
+      header: t('Control'),
       cell: ({ row }) => {
         return (
           <div className="flex w-[300px] flex-col">
@@ -55,7 +57,7 @@ export function FrameworkControlsTableColumns(): ColumnDef<OrganizationControlTy
     {
       id: 'category',
       accessorKey: 'name',
-      header: 'Category',
+      header: t('Category'),
       cell: ({ row }) => (
         <div className="w-[200px]">
           <span className="text-sm">{row.original.name}</span>
@@ -65,7 +67,7 @@ export function FrameworkControlsTableColumns(): ColumnDef<OrganizationControlTy
     {
       id: 'status',
       accessorKey: 'policies',
-      header: 'Status',
+      header: t('Status'),
       cell: ({ row }) => {
         const policies = row.original.policies || [];
         const status = getControlStatusForPolicies(policies);
@@ -83,10 +85,14 @@ export function FrameworkControlsTableColumns(): ColumnDef<OrganizationControlTy
               </TooltipTrigger>
               <TooltipContent>
                 <div className="text-sm">
-                  <p>Progress: {Math.round((completedPolicies / totalPolicies) * 100) || 0}%</p>
-                  <p>
-                    Completed: {completedPolicies}/{totalPolicies} policies
-                  </p>
+                  <T>
+                    <p>Progress: <Var>{Math.round((completedPolicies / totalPolicies) * 100) || 0}</Var>%</p>
+                  </T>
+                  <T>
+                    <p>
+                      Completed: <Var>{completedPolicies}</Var>/<Var>{totalPolicies}</Var> policies
+                    </p>
+                  </T>
                 </div>
               </TooltipContent>
             </Tooltip>

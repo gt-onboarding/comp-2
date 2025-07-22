@@ -2,6 +2,7 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { VendorStatus } from '@/components/vendor-status';
 import { Avatar, AvatarFallback, AvatarImage } from '@comp/ui/avatar';
 import { Badge } from '@comp/ui/badge';
+import { T, useGT } from 'gt-next';
 import type { ColumnDef } from '@tanstack/react-table';
 import { UserIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -14,7 +15,8 @@ export const columns: ColumnDef<VendorRow>[] = [
     id: 'name',
     accessorKey: 'name',
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Vendor Name" />;
+      const t = useGT();
+      return <DataTableColumnHeader column={column} title={t('Vendor Name')} />;
     },
     cell: ({ row }) => {
       return (
@@ -37,7 +39,8 @@ export const columns: ColumnDef<VendorRow>[] = [
     id: 'status',
     accessorKey: 'status',
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Status" />;
+      const t = useGT();
+      return <DataTableColumnHeader column={column} title={t('Status')} />;
     },
     cell: ({ row }) => {
       return <VendorStatus status={row.original.status} />;
@@ -52,18 +55,20 @@ export const columns: ColumnDef<VendorRow>[] = [
     id: 'category',
     accessorKey: 'category',
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Category" />;
+      const t = useGT();
+      return <DataTableColumnHeader column={column} title={t('Category')} />;
     },
     cell: ({ row }) => {
+      const t = useGT();
       const categoryMap: Record<string, string> = {
-        cloud: 'Cloud',
-        infrastructure: 'Infrastructure',
-        software_as_a_service: 'SaaS',
-        finance: 'Finance',
-        marketing: 'Marketing',
-        sales: 'Sales',
-        hr: 'HR',
-        other: 'Other',
+        cloud: t('Cloud'),
+        infrastructure: t('Infrastructure'),
+        software_as_a_service: t('SaaS'),
+        finance: t('Finance'),
+        marketing: t('Marketing'),
+        sales: t('Sales'),
+        hr: t('HR'),
+        other: t('Other'),
       };
 
       return (
@@ -82,10 +87,12 @@ export const columns: ColumnDef<VendorRow>[] = [
     id: 'assignee',
     accessorKey: 'assignee',
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Assignee" />;
+      const t = useGT();
+      return <DataTableColumnHeader column={column} title={t('Assignee')} />;
     },
     enableSorting: false,
     cell: ({ row }) => {
+      const t = useGT();
       // Handle null assignee
       if (!row.original.assignee) {
         return (
@@ -93,7 +100,7 @@ export const columns: ColumnDef<VendorRow>[] = [
             <div className="bg-muted flex h-8 w-8 items-center justify-center rounded-full">
               <UserIcon className="text-muted-foreground h-4 w-4" />
             </div>
-            <p className="text-muted-foreground text-sm font-medium">None</p>
+            <p className="text-muted-foreground text-sm font-medium"><T>None</T></p>
           </div>
         );
       }
@@ -114,7 +121,7 @@ export const columns: ColumnDef<VendorRow>[] = [
           <p className="text-sm font-medium">
             {row.original.assignee.user?.name ||
               row.original.assignee.user?.email ||
-              'Unknown User'}
+              t('Unknown User')}
           </p>
         </div>
       );

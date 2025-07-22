@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { T, Branch, useGT } from 'gt-next';
 
 const formSchema = z.object({
   comment: z.string().optional(),
@@ -36,6 +37,7 @@ interface PolicyDeleteDialogProps {
 export function PolicyDeleteDialog({ isOpen, onClose, policy }: PolicyDeleteDialogProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const t = useGT();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -46,12 +48,12 @@ export function PolicyDeleteDialog({ isOpen, onClose, policy }: PolicyDeleteDial
 
   const deletePolicy = useAction(deletePolicyAction, {
     onSuccess: () => {
-      toast.info('Policy deleted! Redirecting to policies list...');
+      toast.info(t('Policy deleted! Redirecting to policies list...'));
       onClose();
       router.push(`/${policy.organizationId}/policies/all`);
     },
     onError: () => {
-      toast.error('Failed to delete policy.');
+      toast.error(t('Failed to delete policy.'));
     },
   });
 
@@ -67,27 +69,29 @@ export function PolicyDeleteDialog({ isOpen, onClose, policy }: PolicyDeleteDial
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Policy</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this policy? This action cannot be undone.
-          </DialogDescription>
+          <T>
+            <DialogTitle>Delete Policy</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this policy? This action cannot be undone.
+            </DialogDescription>
+          </T>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <DialogFooter className="gap-2">
               <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
-                Cancel
+                <T>Cancel</T>
               </Button>
               <Button type="submit" variant="destructive" disabled={isSubmitting} className="gap-2">
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
                     <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                    Deleting...
+                    <T>Deleting...</T>
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
                     <Trash2 className="h-3 w-3" />
-                    Delete
+                    <T>Delete</T>
                   </span>
                 )}
               </Button>

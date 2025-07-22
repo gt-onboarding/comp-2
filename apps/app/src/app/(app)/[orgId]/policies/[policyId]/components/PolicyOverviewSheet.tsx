@@ -9,6 +9,7 @@ import { ScrollArea } from '@comp/ui/scroll-area';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@comp/ui/sheet';
 import { X } from 'lucide-react';
 import { useQueryState } from 'nuqs';
+import { T } from 'gt-next';
 
 export function PolicyOverviewSheet({ policy }: { policy: Policy }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -25,7 +26,7 @@ export function PolicyOverviewSheet({ policy }: { policy: Policy }) {
         <SheetContent stack>
           <SheetHeader className="mb-8">
             <div className="flex flex-row items-center justify-between">
-              <SheetTitle>{'Update Policy'}</SheetTitle>
+              <SheetTitle><T>Update Policy</T></SheetTitle>
               <Button
                 size="icon"
                 variant="ghost"
@@ -35,7 +36,7 @@ export function PolicyOverviewSheet({ policy }: { policy: Policy }) {
                 <X className="h-5 w-5" />
               </Button>
             </div>{' '}
-            <SheetDescription>{'Update policy details, content and metadata.'}</SheetDescription>
+            <SheetDescription><T>Update policy details, content and metadata.</T></SheetDescription>
           </SheetHeader>
 
           <ScrollArea className="h-full p-0 pb-[100px]" hideScrollbar>
@@ -48,7 +49,7 @@ export function PolicyOverviewSheet({ policy }: { policy: Policy }) {
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-      <DrawerTitle hidden>{'Update Policy'}</DrawerTitle>
+      <DrawerTitle hidden><T>Update Policy</T></DrawerTitle>
       <DrawerContent className="p-6">
         <UpdatePolicyForm policy={policy} />
       </DrawerContent>

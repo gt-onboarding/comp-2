@@ -7,12 +7,14 @@ import { db } from '@comp/db';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod';
+import { getGT } from 'gt-next/server';
 
 const schema = z.object({
   commentId: z.string(),
 });
 
 export const deleteComment = async (input: z.infer<typeof schema>) => {
+  const t = await getGT();
   const { commentId } = input;
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -23,7 +25,7 @@ export const deleteComment = async (input: z.infer<typeof schema>) => {
   if (!organizationId) {
     return {
       success: false,
-      error: 'Not authorized: No active organization',
+      error: t('Not authorized: No active organization'),
     };
   }
 
@@ -45,7 +47,7 @@ export const deleteComment = async (input: z.infer<typeof schema>) => {
     if (!comment) {
       return {
         success: false,
-        error: 'Comment not found or access denied',
+        error: t('Comment not found or access denied'),
       };
     }
 
@@ -58,7 +60,7 @@ export const deleteComment = async (input: z.infer<typeof schema>) => {
       // TODO: Add role-based check for admins
       return {
         success: false,
-        error: 'Not authorized to delete this comment',
+        error: t('Not authorized to delete this comment'),
       };
     }
 
@@ -108,7 +110,7 @@ export const deleteComment = async (input: z.infer<typeof schema>) => {
     return { success: true, data: { deletedCommentId: commentId } };
   } catch (error: unknown) {
     console.error('Failed to delete comment:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Could not delete comment.';
+    const errorMessage = error instanceof Error ? error.message : t('Could not delete comment.');
     return { success: false, error: errorMessage };
   }
 };

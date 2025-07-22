@@ -7,6 +7,7 @@ import { Button } from '@comp/ui/button';
 import type { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { T } from 'gt-next';
 
 export type RiskRegisterType = {
   id: string;
@@ -50,7 +51,11 @@ export function useColumns(): ColumnDef<RiskRegisterType>[] {
     {
       id: 'status',
       accessorKey: 'status',
-      header: () => <span className="hidden md:table-cell">{'Status'}</span>,
+      header: () => (
+        <span className="hidden md:table-cell">
+          <T>Status</T>
+        </span>
+      ),
       cell: ({ row }) => {
         const status = row.original.status;
 
@@ -64,7 +69,11 @@ export function useColumns(): ColumnDef<RiskRegisterType>[] {
     {
       id: 'department',
       accessorKey: 'department',
-      header: () => <span className="hidden md:table-cell">{'Department'}</span>,
+      header: () => (
+        <span className="hidden md:table-cell">
+          <T>Department</T>
+        </span>
+      ),
       cell: ({ row }) => {
         const department = row.original.department;
 
@@ -82,7 +91,11 @@ export function useColumns(): ColumnDef<RiskRegisterType>[] {
     {
       id: 'assigneeId',
       accessorKey: 'assigneeId',
-      header: () => <span className="hidden md:table-cell">{'Assignee'}</span>,
+      header: () => (
+        <span className="hidden md:table-cell">
+          <T>Assignee</T>
+        </span>
+      ),
       cell: ({ row }) => {
         return (
           <div className="hidden md:table-cell">
