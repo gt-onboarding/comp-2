@@ -1,5 +1,7 @@
 'use client';
 
+import { useGT } from 'gt-next';
+
 interface ReviewWidgetProps {
   rating?: number;
   reviewCount?: number;
@@ -15,6 +17,7 @@ export function ReviewWidget({
   const fullStars = Math.floor(rating);
   const partialStar = rating - fullStars;
   const partialPercentage = Math.round(partialStar * 100);
+  const t = useGT();
 
   return (
     <div className={`flex items-center justify-center gap-4 text-center ${className}`}>
@@ -66,7 +69,7 @@ export function ReviewWidget({
         </div>
 
         {/* Review Count Text */}
-        <div className="text-sm text-muted-foreground">Based on {reviewCount}+ reviews</div>
+        <div className="text-sm text-muted-foreground">{t('Based on {reviewCount}+ reviews', { reviewCount })}</div>
       </div>
     </div>
   );

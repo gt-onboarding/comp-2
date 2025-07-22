@@ -2,6 +2,7 @@
 
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { headers } from 'next/headers';
 
@@ -24,12 +25,13 @@ export async function updateTrustPortalFrameworks({
   iso27001Status,
   gdprStatus,
 }: UpdateTrustPortalFrameworksParams) {
+  const t = await getGT();
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   if (!session?.session.activeOrganizationId) {
-    throw new Error('Not authenticated');
+    throw new Error(t('Not authenticated'));
   }
 
   const trustPortal = await db.trust.findUnique({
@@ -39,7 +41,7 @@ export async function updateTrustPortalFrameworks({
   });
 
   if (!trustPortal) {
-    throw new Error('Trust portal not found');
+    throw new Error(t('Trust portal not found'));
   }
 
   await db.trust.update({

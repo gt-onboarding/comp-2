@@ -3,6 +3,7 @@
 'use server';
 
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { revalidatePath } from 'next/cache';
 import { authActionClient } from '../safe-action';
 import { deleteOrganizationSchema } from '../schema';
@@ -24,13 +25,14 @@ export const deleteOrganizationAction = authActionClient
   .action(async ({ parsedInput, ctx }): Promise<DeleteOrganizationResult> => {
     const { id } = parsedInput;
     const { session } = ctx;
+    const t = await getGT();
 
     if (!id) {
-      throw new Error('Invalid user input');
+      throw new Error(t('Invalid user input'));
     }
 
     if (!session.activeOrganizationId) {
-      throw new Error('Invalid organization input');
+      throw new Error(t('Invalid organization input'));
     }
 
     try {

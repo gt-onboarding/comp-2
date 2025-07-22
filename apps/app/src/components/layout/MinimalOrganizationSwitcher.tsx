@@ -3,6 +3,7 @@
 import { changeOrganizationAction } from '@/actions/change-organization';
 import type { Organization } from '@comp/db/types';
 import { Button } from '@comp/ui/button';
+import { T, useGT } from 'gt-next';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,7 @@ export function MinimalOrganizationSwitcher({
   currentOrganization,
 }: MinimalOrganizationSwitcherProps) {
   const router = useRouter();
+  const t = useGT();
   const { execute, status } = useAction(changeOrganizationAction, {
     onSuccess: (result) => {
       const orgId = result.data?.data?.id;
@@ -48,7 +50,7 @@ export function MinimalOrganizationSwitcher({
           className="h-auto p-1 text-sm font-medium"
           disabled={status === 'executing'}
         >
-          {currentOrganization?.name || 'Select Organization'}
+          {currentOrganization?.name || t('Select Organization')}
           {status === 'executing' ? (
             <Loader2 className="ml-2 h-4 w-4 animate-spin" />
           ) : (
@@ -69,7 +71,9 @@ export function MinimalOrganizationSwitcher({
         <DropdownMenuItem onClick={() => router.push('/setup?intent=create-additional')}>
           <div className="flex items-center">
             <Plus className="mr-2 h-4 w-4" />
-            Create Organization
+            <T>
+              Create Organization
+            </T>
           </div>
         </DropdownMenuItem>
       </DropdownMenuContent>

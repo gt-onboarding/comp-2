@@ -11,18 +11,16 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { createOrganizationMinimal } from '../actions/create-organization-minimal';
 import type { OnboardingFormFields } from '../components/OnboardingStepInput';
-import { companyDetailsSchema, steps } from '../lib/constants';
+import { createCompanyDetailsSchema, createSteps } from '../lib/constants';
 import { updateSetupSession } from '../lib/setup-session';
 import type { CompanyDetails } from '../lib/types';
+import { useGT } from 'gt-next';
 
 interface UseOnboardingFormProps {
   setupId?: string;
   initialData?: Record<string, any>;
   currentStep?: string;
 }
-
-// Only use the first 3 steps for the minimal flow
-const prePaymentSteps = steps.slice(0, 3);
 
 export function useOnboardingForm({
   setupId,
@@ -31,6 +29,24 @@ export function useOnboardingForm({
 }: UseOnboardingFormProps = {}) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useGT();
+
+  // Initialize steps with fallback
+  const [steps, setSteps] = useState<any[]>([]);
+  const [prePaymentSteps, setPrePaymentSteps] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadSteps = async () => {
+      try {
+        const translatedSteps = await createSteps();
+        setSteps(translatedSteps);
+        setPrePaymentSteps(translatedSteps.slice(0, 3));
+      } catch (error) {
+        console.error('Failed to load translated steps:', error);
+      }
+    };
+    loadSteps();
+  }, []);
 
   // Helper to build URL with search params
   const buildUrlWithParams = (path: string, params?: Record<string, string>) => {
@@ -93,20 +109,36 @@ export function useOnboardingForm({
   }, [setupId, stepIndex, savedAnswers, mounted]);
 
   const step = prePaymentSteps[stepIndex];
-  const stepSchema = z.object({
-    [step.key]: companyDetailsSchema.shape[step.key],
-  });
+  const [stepSchema, setStepSchema] = useState<any>(null);
+
+  useEffect(() => {
+    const loadSchema = async () => {
+      if (step) {
+        try {
+          const companyDetailsSchema = await createCompanyDetailsSchema();
+          setStepSchema(z.object({
+            [step.key]: companyDetailsSchema.shape[step.key],
+          }));
+        } catch (error) {
+          console.error('Failed to load schema:', error);
+        }
+      }
+    };
+    loadSchema();
+  }, [step]);
 
   const form = useForm<OnboardingFormFields>({
-    resolver: zodResolver(stepSchema),
+    resolver: stepSchema ? zodResolver(stepSchema) : undefined,
     mode: 'onSubmit',
-    defaultValues: { [step.key]: savedAnswers[step.key] || '' },
+    defaultValues: step ? { [step.key]: savedAnswers[step.key] || '' } : {},
   });
 
   // Reset form defaultValues when stepIndex or savedAnswers change for the current step
   useEffect(() => {
-    form.reset({ [step.key]: savedAnswers[step.key] || '' });
-  }, [savedAnswers, step.key, form]);
+    if (step) {
+      form.reset({ [step.key]: savedAnswers[step.key] || '' });
+    }
+  }, [savedAnswers, step, form]);
 
   const createOrganizationAction = useAction(createOrganizationMinimal, {
     onSuccess: async ({ data }) => {
@@ -127,13 +159,13 @@ export function useOnboardingForm({
         // Clear answers after successful creation
         setSavedAnswers({});
       } else {
-        toast.error('Failed to create organization');
+        toast.error(t('Failed to create organization'));
         setIsFinalizing(false);
         setIsOnboarding(false);
       }
     },
     onError: () => {
-      toast.error('Failed to create organization');
+      toast.error(t('Failed to create organization'));
       setIsFinalizing(false);
       setIsOnboarding(false);
     },
@@ -209,7 +241,24 @@ export function useOnboardingForm({
     }
   };
 
-  const isLastStep = stepIndex === prePaymentSteps.length - 1;
+  const isLastStep = prePaymentSteps.length > 0 && stepIndex === prePaymentSteps.length - 1;
+
+  // Return early if steps haven't loaded yet
+  if (!step || prePaymentSteps.length === 0) {
+    return {
+      stepIndex: 0,
+      steps: [],
+      step: null,
+      form,
+      savedAnswers,
+      isOnboarding,
+      isFinalizing,
+      mounted,
+      onSubmit: () => {},
+      handleBack: () => {},
+      isLastStep: false,
+    };
+  }
 
   return {
     stepIndex,

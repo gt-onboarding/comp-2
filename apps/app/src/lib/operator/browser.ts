@@ -1,5 +1,6 @@
 'server only';
 import { type Browser, type Page, chromium } from 'playwright-core';
+import { getGT } from 'gt-next/server';
 
 interface BrowserSession {
   browser: Browser;
@@ -14,7 +15,8 @@ async function getBrowser(sessionId: string) {
   const context = browser.contexts()[0];
   const page = context?.pages()[0];
   if (!page) {
-    throw new Error('No page to use, error configuring browser session');
+    const t = await getGT();
+    throw new Error(t('No page to use, error configuring browser session'));
   }
   return { browser, page };
 }

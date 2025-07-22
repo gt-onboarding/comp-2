@@ -1,19 +1,24 @@
 import { Button } from '@comp/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
 import { cn } from '@comp/ui/cn';
+import { T, useGT } from 'gt-next';
 import { ArrowLeft, CheckCircle2, XCircle } from 'lucide-react';
 import type { Host } from '../types';
 
 export const HostDetails = ({ host, onClose }: { host: Host; onClose: () => void }) => {
+  const t = useGT();
+  
   return (
     <div className="space-y-4">
       <Button variant="outline" className="w-min" onClick={onClose}>
         <ArrowLeft size={16} className="mr-2" />
-        Back
+        <T>Back</T>
       </Button>
       <Card>
         <CardHeader>
-          <CardTitle>{host.computer_name}'s Policies</CardTitle>
+          <CardTitle>
+            {t("{deviceName}'s Policies", { deviceName: host.computer_name })}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {host.policies.length > 0 ? (
@@ -29,18 +34,24 @@ export const HostDetails = ({ host, onClose }: { host: Host; onClose: () => void
                 {policy.response === 'pass' ? (
                   <div className="flex items-center gap-1 text-green-600">
                     <CheckCircle2 size={16} />
-                    <span>Pass</span>
+                    <span>
+                      <T>Pass</T>
+                    </span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-1 text-red-600">
                     <XCircle size={16} />
-                    <span>Fail</span>
+                    <span>
+                      <T>Fail</T>
+                    </span>
                   </div>
                 )}
               </div>
             ))
           ) : (
-            <p className="text-muted-foreground">No policies found for this device.</p>
+            <p className="text-muted-foreground">
+              <T>No policies found for this device.</T>
+            </p>
           )}
         </CardContent>
       </Card>

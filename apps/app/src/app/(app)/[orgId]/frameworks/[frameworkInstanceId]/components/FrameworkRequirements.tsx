@@ -6,6 +6,7 @@ import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
 import { useDataTable } from '@/hooks/use-data-table';
 import type { FrameworkEditorRequirement } from '@comp/db/types';
 import { ColumnDef } from '@tanstack/react-table';
+import { T, Num } from 'gt-next';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import type { FrameworkInstanceWithControls } from '../../types';
@@ -44,7 +45,7 @@ export function FrameworkRequirements({
     () => [
       {
         accessorKey: 'name',
-        header: ({ column }) => <DataTableColumnHeader column={column} title={'Name'} />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={<T>Name</T>} />,
         cell: ({ row }) => (
           <span className="line-clamp-2 max-w-[300px] truncate">{row.original.name}</span>
         ),
@@ -61,7 +62,7 @@ export function FrameworkRequirements({
       },
       {
         accessorKey: 'description',
-        header: ({ column }) => <DataTableColumnHeader column={column} title={'Description'} />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={<T>Description</T>} />,
         cell: ({ row }) => (
           <span className="line-clamp-2 max-w-[300px] truncate">{row.original.description}</span>
         ),
@@ -73,9 +74,9 @@ export function FrameworkRequirements({
       },
       {
         accessorKey: 'mappedControlsCount',
-        header: ({ column }) => <DataTableColumnHeader column={column} title={'Controls'} />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={<T>Controls</T>} />,
         cell: ({ row }) => (
-          <span className="text-muted-foreground text-sm">{row.original.mappedControlsCount}</span>
+          <span className="text-muted-foreground text-sm"><Num>{row.original.mappedControlsCount}</Num></span>
         ),
         size: 25,
         minSize: 25,
@@ -105,7 +106,7 @@ export function FrameworkRequirements({
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-bold">
-        Requirements ({table.table.getFilteredRowModel().rows.length})
+        <T>Requirements (<Num>{table.table.getFilteredRowModel().rows.length}</Num>)</T>
       </h2>
       <DataTable
         table={table.table}

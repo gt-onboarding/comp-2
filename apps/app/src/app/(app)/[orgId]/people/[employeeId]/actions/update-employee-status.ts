@@ -6,7 +6,8 @@ import { db } from '@comp/db';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod';
-import { appErrors } from '../types';
+import { getAppErrors } from '../types';
+import { getGT } from 'gt-next/server';
 
 const schema = z.object({
   employeeId: z.string(),
@@ -27,6 +28,8 @@ export const updateEmployeeStatus = authActionClient
       parsedInput,
     }): Promise<{ success: true; data: any } | { success: false; error: any }> => {
       const { employeeId, isActive } = parsedInput;
+      const t = await getGT();
+      const appErrors = getAppErrors(t);
 
       const session = await auth.api.getSession({
         headers: await headers(),

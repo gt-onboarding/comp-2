@@ -5,6 +5,7 @@ import { cache } from 'react';
 import PageCore from '@/components/pages/PageCore.tsx';
 import { db } from '@comp/db';
 import type { Metadata } from 'next';
+import { getGT } from 'gt-next/server';
 import { ApiKeysTable } from './components/table/ApiKeysTable';
 
 export default async function ApiKeysPage() {
@@ -18,8 +19,9 @@ export default async function ApiKeysPage() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
   return {
-    title: 'API',
+    title: t('API'),
   };
 }
 

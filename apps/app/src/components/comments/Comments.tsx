@@ -1,6 +1,7 @@
 import type { Attachment, Comment, Member, User } from '@comp/db/types';
 import { CommentEntityType } from '@comp/db/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@comp/ui/card';
+import { T, Var } from 'gt-next';
 import { CommentForm } from './CommentForm';
 import { CommentList } from './CommentList';
 
@@ -23,8 +24,8 @@ export const Comments = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Comments</CardTitle>
-        <CardDescription>Leave a comment on this {entityType}</CardDescription>
+        <T><CardTitle>Comments</CardTitle></T>
+        <T><CardDescription>Leave a comment on this <Var>{entityType}</Var></CardDescription></T>
       </CardHeader>
       <CardContent className="space-y-4">
         <CommentList comments={comments} />

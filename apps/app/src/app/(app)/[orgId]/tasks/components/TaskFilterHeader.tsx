@@ -1,15 +1,16 @@
 'use client';
 
 import { Button } from '@comp/ui/button';
+import { T } from 'gt-next';
 import { Check, Circle, List, Loader2 } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import React from 'react';
 
 // Configuration for task statuses and their display order.
 const statuses = [
-  { id: 'in_progress', title: 'In Progress' },
-  { id: 'todo', title: 'Todo' },
-  { id: 'done', title: 'Done' },
+  { id: 'in_progress', title: <T>In Progress</T> },
+  { id: 'todo', title: <T>Todo</T> },
+  { id: 'done', title: <T>Done</T> },
 ] as const;
 type StatusId = (typeof statuses)[number]['id'];
 
@@ -57,7 +58,7 @@ export function TaskFilterHeader() {
           onClick={() => setStatusFilter(null)}
         >
           <List className="h-3.5 w-3.5" />
-          <span>All</span>
+          <T><span>All</span></T>
         </Button>
         {statuses.map((status) => {
           const Icon = statusIcons[status.id];
@@ -83,7 +84,7 @@ export function TaskFilterHeader() {
             onClick={clearFilters}
             className="text-muted-foreground"
           >
-            Clear filters
+<T>Clear filters</T>
           </Button>
         )}
       </div>

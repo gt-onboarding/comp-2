@@ -10,6 +10,7 @@ import { createFleetLabelForOrg } from '@/jobs/tasks/device/create-fleet-label-f
 import { onboardOrganization as onboardOrganizationTask } from '@/jobs/tasks/onboarding/onboard-organization';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { revalidatePath } from 'next/cache';
 import { cookies, headers } from 'next/headers';
@@ -25,6 +26,7 @@ export const createOrganization = authActionClientWithoutOrg
     },
   })
   .action(async ({ parsedInput, ctx }) => {
+    const t = await getGT();
     try {
       const session = await auth.api.getSession({
         headers: await headers(),
@@ -33,7 +35,7 @@ export const createOrganization = authActionClientWithoutOrg
       if (!session) {
         return {
           success: false,
-          error: 'Not authorized.',
+          error: t('Not authorized.'),
         };
       }
 
@@ -225,7 +227,7 @@ export const createOrganization = authActionClientWithoutOrg
 
       return {
         success: false,
-        error: 'Failed to create or update organization structure',
+        error: t('Failed to create or update organization structure'),
       };
     }
   });

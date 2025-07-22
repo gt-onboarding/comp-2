@@ -1,6 +1,7 @@
 import { getOrganizationFromApiKey } from '@/lib/api-key';
 import { db } from '@comp/db';
 import { type NextRequest, NextResponse } from 'next/server';
+import { getGT } from 'gt-next/server';
 
 // Configure this route to use Node.js runtime instead of Edge
 export const runtime = 'nodejs';
@@ -30,6 +31,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (errorResponse) {
     return errorResponse;
   }
+
+  const t = await getGT();
 
   try {
     const riskId = (await params).id;
@@ -75,7 +78,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json(
         {
           success: false,
-          error: 'Risk not found',
+          error: t('Risk not found'),
         },
         { status: 404 },
       );
@@ -136,7 +139,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to fetch risk',
+        error: t('Failed to fetch risk'),
       },
       { status: 500 },
     );
@@ -172,6 +175,8 @@ export async function DELETE(
     return errorResponse;
   }
 
+  const t = await getGT();
+
   try {
     const riskId = (await params).id;
 
@@ -187,7 +192,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          error: 'Risk not found',
+          error: t('Risk not found'),
         },
         { status: 404 },
       );
@@ -203,7 +208,7 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       data: {
-        message: 'Risk deleted successfully',
+        message: t('Risk deleted successfully'),
       },
     });
   } catch (error) {
@@ -211,7 +216,7 @@ export async function DELETE(
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to delete risk',
+        error: t('Failed to delete risk'),
       },
       { status: 500 },
     );

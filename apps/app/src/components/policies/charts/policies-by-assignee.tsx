@@ -1,7 +1,9 @@
 import { db } from '@comp/db';
 import { PolicyStatus } from '@comp/db/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
+import { getGT } from 'gt-next/server';
 import type { CSSProperties } from 'react';
+import type { InlineTranslationOptions } from 'gt-next/types';
 
 interface Props {
   organizationId: string;
@@ -29,6 +31,7 @@ const policyStatus = {
 } as const;
 
 export async function PoliciesByAssignee({ organizationId }: Props) {
+  const t = await getGT();
   const [userStats, policies] = await Promise.all([
     userData(organizationId),
     policiesByUser(organizationId),
@@ -60,44 +63,44 @@ export async function PoliciesByAssignee({ organizationId }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{'Policies by Assignee'}</CardTitle>
+        <CardTitle>{t('Policies by Assignee')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-8">
           {stats.map((stat) => (
             <div key={stat.user.id} className="space-y-2">
               <div className="flex items-center justify-between">
-                <p className="text-sm">{stat.user.name || stat.user.email || 'Unknown User'}</p>
+                <p className="text-sm">{stat.user.name || stat.user.email || t('Unknown User')}</p>
                 <span className="text-muted-foreground text-sm">
-                  {stat.totalPolicies} {'policies'}
+                  {stat.totalPolicies} {t('policies')}
                 </span>
               </div>
 
-              <RiskBarChart stat={stat} />
+              <RiskBarChart stat={stat} t={t} />
 
               <div className="text-muted-foreground flex flex-wrap gap-3 text-xs">
                 <div className="flex items-center gap-1">
                   <div className="bg-primary size-2" />
                   <span>
-                    {'Published'} ({stat.publishedPolicies})
+                    {t('Published')} ({stat.publishedPolicies})
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="size-2 bg-[var(--chart-open)]" />
                   <span>
-                    {'Draft'} ({stat.draftPolicies})
+                    {t('Draft')} ({stat.draftPolicies})
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="size-2 bg-[var(--chart-pending)]" />
                   <span>
-                    {'Archived'} ({stat.archivedPolicies})
+                    {t('Archived')} ({stat.archivedPolicies})
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="size-2 bg-[hsl(var(--destructive))]" />
                   <span>
-                    {'Needs Review'} ({stat.needsReviewPolicies})
+                    {t('Needs Review')} ({stat.needsReviewPolicies})
                   </span>
                 </div>
               </div>
@@ -109,7 +112,7 @@ export async function PoliciesByAssignee({ organizationId }: Props) {
   );
 }
 
-function RiskBarChart({ stat }: { stat: UserPolicyStats }) {
+function RiskBarChart({ stat, t }: { stat: UserPolicyStats; t: (content: string, options?: InlineTranslationOptions) => string }) {
   const data = [
     ...(stat.publishedPolicies && stat.publishedPolicies > 0
       ? [
@@ -117,7 +120,7 @@ function RiskBarChart({ stat }: { stat: UserPolicyStats }) {
             key: 'published',
             value: stat.publishedPolicies,
             color: policyStatus.published,
-            label: 'Published',
+            label: t('Published'),
           },
         ]
       : []),
@@ -127,7 +130,7 @@ function RiskBarChart({ stat }: { stat: UserPolicyStats }) {
             key: 'draft',
             value: stat.draftPolicies,
             color: policyStatus.draft,
-            label: 'Draft',
+            label: t('Draft'),
           },
         ]
       : []),
@@ -137,7 +140,7 @@ function RiskBarChart({ stat }: { stat: UserPolicyStats }) {
             key: 'archived',
             value: stat.archivedPolicies,
             color: policyStatus.archived,
-            label: 'Archived',
+            label: t('Archived'),
           },
         ]
       : []),

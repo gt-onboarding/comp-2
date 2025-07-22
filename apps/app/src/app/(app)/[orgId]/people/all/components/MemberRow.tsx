@@ -38,6 +38,7 @@ import type { Role } from '@prisma/client';
 
 import { MultiRoleCombobox } from './MultiRoleCombobox';
 import type { MemberWithUser } from './TeamMembers';
+import { T, Var, useGT } from 'gt-next';
 
 interface MemberRowProps {
   member: MemberWithUser;
@@ -63,6 +64,7 @@ function getInitials(name?: string | null, email?: string | null): string {
 export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
   const params = useParams<{ orgId: string }>();
   const { orgId } = params;
+  const t = useGT();
 
   const [isRemoveAlertOpen, setIsRemoveAlertOpen] = useState(false);
   const [isUpdateRolesOpen, setIsUpdateRolesOpen] = useState(false);
@@ -147,7 +149,7 @@ export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
                   href={`/${orgId}/people/${memberId}`}
                   className="text-xs text-blue-600 hover:underline"
                 >
-                  ({'View Profile'})
+                  (<T>View Profile</T>)
                 </Link>
               )}
             </div>
@@ -161,13 +163,13 @@ export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
                 {(() => {
                   switch (role) {
                     case 'owner':
-                      return 'Owner';
+                      return t('Owner');
                     case 'admin':
-                      return 'Admin';
+                      return t('Admin');
                     case 'auditor':
-                      return 'Auditor';
+                      return t('Auditor');
                     case 'employee':
-                      return 'Employee';
+                      return t('Employee');
                     default:
                       return '???';
                   }
@@ -209,44 +211,48 @@ export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
                       }}
                     >
                       <Edit className="mr-2 h-4 w-4" />
-                      <span>{'Edit Roles'}</span>
+                      <T><span>Edit Roles</span></T>
                     </DropdownMenuItem>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>{'Edit Member Roles'}</DialogTitle>
+                      <DialogTitle><T>Edit Member Roles</T></DialogTitle>
                       <DialogDescription>
-                        {'Change roles for'} {memberName}
+                        <T>Change roles for <Var>{memberName}</Var></T>
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor={`role-${memberId}`}>{'Roles'}</Label>
+                        <Label htmlFor={`role-${memberId}`}><T>Roles</T></Label>
                         <MultiRoleCombobox
                           selectedRoles={selectedRoles}
                           onSelectedRolesChange={setSelectedRoles}
-                          placeholder={'Select a role'}
+                          placeholder={t('Select a role')}
                           lockedRoles={isOwner ? ['owner'] : []}
                         />
                         {isOwner && (
-                          <p className="text-muted-foreground mt-1 text-xs">
-                            {'The owner role cannot be removed.'}
-                          </p>
+                          <T>
+                            <p className="text-muted-foreground mt-1 text-xs">
+                              The owner role cannot be removed.
+                            </p>
+                          </T>
                         )}
-                        <p className="text-muted-foreground mt-1 text-xs">
-                          {'Members must have at least one role.'}
-                        </p>
+                        <T>
+                          <p className="text-muted-foreground mt-1 text-xs">
+                            Members must have at least one role.
+                          </p>
+                        </T>
                       </div>
                     </div>
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setIsUpdateRolesOpen(false)}>
-                        Cancel
+                        <T>Cancel</T>
                       </Button>
                       <Button
                         onClick={handleUpdateRolesClick}
                         disabled={isUpdating || selectedRoles.length === 0}
                       >
-                        {'Update'}
+                        <T>Update</T>
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -258,7 +264,7 @@ export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
                   onSelect={() => setIsRemoveAlertOpen(true)}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
-                  <span>{'Remove Member'}</span>
+                  <T><span>Remove Member</span></T>
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
@@ -269,16 +275,15 @@ export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
       <AlertDialog open={isRemoveAlertOpen} onOpenChange={setIsRemoveAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{'Remove Team Member'}</AlertDialogTitle>
+            <AlertDialogTitle><T>Remove Team Member</T></AlertDialogTitle>
             <AlertDialogDescription>
-              {'Are you sure you want to remove'} {memberName}?{' '}
-              {'They will no longer have access to this organization.'}
+              <T>Are you sure you want to remove <Var>{memberName}</Var>? They will no longer have access to this organization.</T>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{'Cancel'}</AlertDialogCancel>
+            <AlertDialogCancel><T>Cancel</T></AlertDialogCancel>
             <AlertDialogAction onClick={handleRemoveClick} disabled={isRemoving}>
-              {'Remove'}
+              <T>Remove</T>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

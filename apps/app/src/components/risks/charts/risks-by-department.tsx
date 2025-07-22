@@ -1,6 +1,7 @@
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
+import { T } from 'gt-next';
 import { headers } from 'next/headers';
 import { cache } from 'react';
 import { DepartmentChart } from './department-chart';
@@ -36,7 +37,7 @@ export async function RisksByDepartment() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{'Risks by Department'}</CardTitle>
+        <CardTitle><T>Risks by Department</T></CardTitle>
       </CardHeader>
       <CardContent>
         <DepartmentChart data={departmentsToShow} showEmptyDepartments={true} />

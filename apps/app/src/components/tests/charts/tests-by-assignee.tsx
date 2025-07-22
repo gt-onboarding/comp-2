@@ -1,5 +1,6 @@
 import { db } from '@comp/db';
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
+import { T, Var, Num } from 'gt-next';
 import type { CSSProperties } from 'react';
 
 interface Props {
@@ -65,15 +66,29 @@ export async function TestsByAssignee({ organizationId }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{'Tests by Assignee'}</CardTitle>
+        <T>
+          <CardTitle>Tests by Assignee</CardTitle>
+        </T>
       </CardHeader>
       <CardContent>
         <div className="space-y-8">
           {stats.map((stat) => (
             <div key={stat.user.id} className="space-y-2">
               <div className="flex items-center justify-between">
-                <p className="text-sm">{stat.user.name || stat.user.email || 'Unknown User'}</p>
-                <span className="text-muted-foreground text-sm">{stat.totalTests} Tests</span>
+                <p className="text-sm">
+                  {(stat.user.name || stat.user.email) ? (
+                    <T>
+                      <Var>{stat.user.name || stat.user.email}</Var>
+                    </T>
+                  ) : (
+                    <T>Unknown User</T>
+                  )}
+                </p>
+                <T>
+                  <span className="text-muted-foreground text-sm">
+                    <Num>{stat.totalTests}</Num> Tests
+                  </span>
+                </T>
               </div>
 
               <TestBarChart stat={stat} />
@@ -81,19 +96,25 @@ export async function TestsByAssignee({ organizationId }: Props) {
               <div className="text-muted-foreground flex flex-wrap gap-3 text-xs">
                 <div className="flex items-center gap-1">
                   <div className="size-2 bg-[var(--chart-success)]" />
-                  <span>
-                    {'Passed'} ({stat.passedTests})
-                  </span>
+                  <T>
+                    <span>
+                      Passed (<Num>{stat.passedTests}</Num>)
+                    </span>
+                  </T>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="size-2 bg-[hsl(var(--destructive))]" />
-                  <span>
-                    {'Failed'} ({stat.failedTests})
-                  </span>
+                  <T>
+                    <span>
+                      Failed (<Num>{stat.failedTests}</Num>)
+                    </span>
+                  </T>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="size-2 bg-[hsl(var(--muted-foreground))]" />
-                  <span>Unsupported ({stat.unsupportedTests})</span>
+                  <T>
+                    <span>Unsupported (<Num>{stat.unsupportedTests}</Num>)</span>
+                  </T>
                 </div>
               </div>
             </div>

@@ -4,6 +4,7 @@ import { db } from '@comp/db';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { T } from 'gt-next';
 
 export default async function NoAccess() {
   const session = await auth.api.getSession({
@@ -32,16 +33,16 @@ export default async function NoAccess() {
 
   return (
     <div className="bg-foreground/05 flex h-dvh flex-col items-center justify-center gap-4">
-      <h1 className="text-2xl font-bold">Access Denied</h1>
+      <h1 className="text-2xl font-bold"><T>Access Denied</T></h1>
       <div className="flex flex-col text-center">
         <p>
-          <b>Employees</b> don&apos;t have access to app.trycomp.ai, did you mean to go to{' '}
+          <T><b>Employees</b> don&apos;t have access to app.trycomp.ai, did you mean to go to{' '}
           <Link href="https://portal.trycomp.ai" className="text-primary underline">
             portal.trycomp.ai
           </Link>
-          ?
+          ?</T>
         </p>
-        <p>Please select another organization or contact your organization administrator.</p>
+        <p><T>Please select another organization or contact your organization administrator.</T></p>
       </div>
       <div>
         <OrganizationSwitcher organizations={organizations} organization={currentOrg} />

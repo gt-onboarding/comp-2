@@ -54,6 +54,7 @@
     "dub": "^0.63.6",
     "framer-motion": "^12.18.1",
     "geist": "^1.3.1",
+    "gt-next": "^6.0.6",
     "motion": "^12.9.2",
     "next": "15.4.0-canary.85",
     "next-safe-action": "^8.0.3",
@@ -123,7 +124,7 @@
   "scripts": {
     "analyze-locale-usage": "bunx tsx src/locales/analyze-locale-usage.ts",
     "apply-migrations": "cd ../../packages/db && bunx prisma migrate dev && cd ../../apps/app",
-    "build": "next build --turbopack",
+    "build": "bun run translate && next build --turbopack",
     "deploy:trigger-prod": "npx trigger.dev@latest deploy",
     "dev": "bun i && bun run apply-migrations && bunx concurrently --kill-others --names \"next,trigger\" --prefix-colors \"yellow,blue\" \"next dev --turbo -p 3000\" \"bun run trigger:dev\"",
     "lint": "next lint && prettier --check .",
@@ -141,6 +142,7 @@
     "test:ui": "vitest --ui",
     "test:watch": "vitest --watch",
     "trigger:dev": "npx trigger.dev@latest dev",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "translate": "locadex translate"
   }
 }

@@ -8,6 +8,7 @@ import { Attachment, AttachmentEntityType } from '@comp/db/types';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod';
+import { getGT } from 'gt-next/server';
 
 const schema = z.object({
   attachmentId: z.string(),
@@ -19,9 +20,10 @@ export const deleteTaskAttachment = async (input: z.infer<typeof schema>) => {
     headers: await headers(),
   });
   const organizationId = session?.session?.activeOrganizationId;
+  const t = await getGT();
 
   if (!organizationId) {
-    return { success: false, error: 'Not authorized' } as const;
+    return { success: false, error: t('Not authorized') } as const;
   }
 
   let attachmentToDelete: Attachment | null = null;
@@ -38,7 +40,7 @@ export const deleteTaskAttachment = async (input: z.infer<typeof schema>) => {
     if (!attachmentToDelete) {
       return {
         success: false,
-        error: 'Attachment not found or access denied',
+        error: t('Attachment not found or access denied'),
       } as const;
     }
 
@@ -76,7 +78,7 @@ export const deleteTaskAttachment = async (input: z.infer<typeof schema>) => {
     console.error('Error deleting attachment:', attachmentId, errorMessage);
     return {
       success: false,
-      error: 'Failed to delete attachment.',
+      error: t('Failed to delete attachment.'),
     } as const;
   }
 };

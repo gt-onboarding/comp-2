@@ -1,6 +1,7 @@
 import { getOrganizationFromApiKey } from '@/lib/api-key';
 import { db } from '@comp/db';
 import { type NextRequest, NextResponse } from 'next/server';
+import { getGT } from 'gt-next/server';
 
 // Configure this route to use Node.js runtime instead of Edge
 export const runtime = 'nodejs';
@@ -31,6 +32,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return errorResponse;
   }
 
+  const t = await getGT();
+
   try {
     const employeeId = (await params).id;
 
@@ -58,7 +61,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json(
         {
           success: false,
-          error: 'Employee not found',
+          error: t('Employee not found'),
         },
         { status: 404 },
       );
@@ -73,7 +76,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to fetch employee',
+        error: t('Failed to fetch employee'),
       },
       { status: 500 },
     );
@@ -109,6 +112,8 @@ export async function DELETE(
     return errorResponse;
   }
 
+  const t = await getGT();
+
   try {
     const employeeId = (await params).id;
 
@@ -124,7 +129,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          error: 'Employee not found',
+          error: t('Employee not found'),
         },
         { status: 404 },
       );
@@ -140,7 +145,7 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       data: {
-        message: 'Employee deleted successfully',
+        message: t('Employee deleted successfully'),
       },
     });
   } catch (error) {
@@ -148,7 +153,7 @@ export async function DELETE(
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to delete employee',
+        error: t('Failed to delete employee'),
       },
       { status: 500 },
     );

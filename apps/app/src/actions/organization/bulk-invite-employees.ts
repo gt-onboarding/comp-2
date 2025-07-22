@@ -2,6 +2,7 @@
 
 import { auth } from '@/utils/auth';
 import { authClient } from '@/utils/auth-client';
+import { getGT } from 'gt-next/server';
 import { createSafeActionClient } from 'next-safe-action';
 import { headers } from 'next/headers';
 import { z } from 'zod';
@@ -23,12 +24,13 @@ export const bulkInviteEmployees = createSafeActionClient()
   .inputSchema(schema)
   .action(async ({ parsedInput }) => {
     const { organizationId, emails } = parsedInput;
+    const t = await getGT();
 
     const session = await auth.api.getSession({ headers: await headers() });
     if (session?.session.activeOrganizationId !== organizationId) {
       return {
         success: false,
-        error: 'Unauthorized or invalid organization.',
+        error: t('Unauthorized or invalid organization.'),
       };
     }
 
@@ -45,7 +47,7 @@ export const bulkInviteEmployees = createSafeActionClient()
       } catch (error) {
         allSuccess = false;
         console.error(`Failed to invite ${email}:`, error);
-        const errorMessage = error instanceof Error ? error.message : 'Invitation failed';
+        const errorMessage = error instanceof Error ? error.message : t('Invitation failed');
         results.push({ email, success: false, error: errorMessage });
       }
     }

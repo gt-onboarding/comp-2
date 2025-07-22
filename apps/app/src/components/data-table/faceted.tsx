@@ -5,6 +5,7 @@ import * as React from 'react';
 
 import { Badge } from '@comp/ui/badge';
 import { cn } from '@comp/ui/cn';
+import { T, Num, Var } from 'gt-next';
 import {
   Command,
   CommandEmpty,
@@ -125,7 +126,7 @@ function FacetedBadgeList(props: FacetedBadgeListProps) {
   const {
     options = [],
     max = 2,
-    placeholder = 'Select options...',
+    placeholder,
     className,
     badgeClassName,
     ...badgeListProps
@@ -147,7 +148,7 @@ function FacetedBadgeList(props: FacetedBadgeListProps) {
   if (!values || values.length === 0) {
     return (
       <div {...badgeListProps} className="text-muted-foreground flex w-full items-center gap-1">
-        {placeholder}
+        <T><Var>{placeholder || 'Select options...'}</Var></T>
         <ChevronsUpDown className="ml-auto size-4 shrink-0 opacity-50" />
       </div>
     );
@@ -157,7 +158,7 @@ function FacetedBadgeList(props: FacetedBadgeListProps) {
     <div {...badgeListProps} className={cn('flex flex-wrap items-center gap-1', className)}>
       {values.length > max ? (
         <Badge variant="secondary" className={cn('rounded-sm px-1 font-normal', badgeClassName)}>
-          {values.length} selected
+          <T><Num>{values.length}</Num> selected</T>
         </Badge>
       ) : (
         values.map((value) => (

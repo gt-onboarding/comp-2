@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@comp/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@comp/ui/select';
 import { UserIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useGT } from 'gt-next';
 
 interface SelectAssigneeProps {
   assigneeId: string | null;
@@ -22,6 +23,7 @@ export const SelectAssignee = ({
 }: SelectAssigneeProps) => {
   const { data: activeMember } = authClient.useActiveMember();
   const [selectedAssignee, setSelectedAssignee] = useState<(Member & { user: User }) | null>(null);
+  const t = useGT();
 
   // Initialize selectedAssignee based on assigneeId prop
   useEffect(() => {
@@ -74,7 +76,7 @@ export const SelectAssignee = ({
     <div className="flex flex-col gap-2">
       {withTitle && (
         <div className="mb-1.5 flex items-center gap-2">
-          <span className="font-medium">Assignee</span>
+          <span className="font-medium">{t('Assignee')}</span>
         </div>
       )}
       <Select value={assigneeId || 'none'} onValueChange={handleAssigneeChange} disabled={disabled}>
@@ -93,13 +95,13 @@ export const SelectAssignee = ({
                 </AvatarFallback>
               </Avatar>
               <span className="truncate">
-                {selectedAssignee.user.name || selectedAssignee.user.email || 'Unknown User'}
+                {selectedAssignee.user.name || selectedAssignee.user.email || t('Unknown User')}
               </span>
             </div>
           ) : (
             <div className="flex items-center gap-2">
               {renderNoneAvatar()}
-              <span>None</span>
+              <span>{t('None')}</span>
             </div>
           )}
         </SelectTrigger>
@@ -112,7 +114,7 @@ export const SelectAssignee = ({
           <SelectItem value="none" className="hover:bg-accent w-full overflow-hidden p-0">
             <div className="flex w-full items-center gap-2 px-3 py-1.5">
               {renderNoneAvatar()}
-              <span>None</span>
+              <span>{t('None')}</span>
             </div>
           </SelectItem>
           {assignees.map((assignee) => (
@@ -134,8 +136,8 @@ export const SelectAssignee = ({
                   </AvatarFallback>
                 </Avatar>
                 <span className="truncate">
-                  {assignee.user.name || assignee.user.email || 'Unknown User'}{' '}
-                  {assignee.id === activeMember?.id && '(You)'}
+                  {assignee.user.name || assignee.user.email || t('Unknown User')}{' '}
+                  {assignee.id === activeMember?.id && t('(You)')}
                 </span>
               </div>
             </SelectItem>

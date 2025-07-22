@@ -14,6 +14,7 @@ import {
   ShieldIcon,
 } from 'lucide-react';
 import { AuditLogWithRelations } from '../data';
+import { T } from 'gt-next';
 
 type LogActionType = 'create' | 'update' | 'delete' | 'approve' | 'reject' | 'review';
 
@@ -134,15 +135,15 @@ const LogItem = ({ log }: { log: AuditLogWithRelations }) => {
 
             {logData.changes && Object.keys(logData.changes).length > 0 && (
               <div className="bg-muted/40 rounded-md p-2 text-xs">
-                <div className="mb-1 font-medium">Changes:</div>
+                <div className="mb-1 font-medium"><T>Changes:</T></div>
                 <ul className="space-y-1">
                   {Object.entries(logData.changes).map(([field, { previous, current }]) => (
                     <li key={field}>
                       <span className="font-medium">{field}:</span>{' '}
                       <span className="text-muted-foreground line-through">
-                        {previous?.toString() || '(empty)'}
+                        {previous?.toString() || <T>(empty)</T>}
                       </span>{' '}
-                      <span className="text-foreground">→ {current?.toString() || '(empty)'}</span>
+                      <span className="text-foreground">→ {current?.toString() || <T>(empty)</T>}</span>
                     </li>
                   ))}
                 </ul>
@@ -167,7 +168,7 @@ const LogItem = ({ log }: { log: AuditLogWithRelations }) => {
               {log.entityId && (
                 <div className="flex items-center gap-1">
                   <ActivityIcon className="h-3 w-3" />
-                  ID: {log.entityId.substring(0, 8)}
+                  <T>ID:</T> {log.entityId.substring(0, 8)}
                 </div>
               )}
             </div>
@@ -182,7 +183,7 @@ export const RecentAuditLogs = ({ logs }: { logs: AuditLogWithRelations[] }) => 
     <Card className="overflow-hidden">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-md">Recent Activity</CardTitle>
+          <CardTitle className="text-md"><T>Recent Activity</T></CardTitle>
         </div>
       </CardHeader>
 
@@ -199,10 +200,12 @@ export const RecentAuditLogs = ({ logs }: { logs: AuditLogWithRelations[] }) => 
           ) : (
             <div className="bg-background flex flex-col items-center justify-center py-12 px-6 text-center">
               <ActivityIcon className="text-muted-foreground mb-2 h-8 w-8" />
-              <p className="text-sm font-medium">No recent activity</p>
-              <p className="text-muted-foreground text-xs">
-                Activity will appear here when changes are made to this policy
-              </p>
+              <T>
+                <p className="text-sm font-medium">No recent activity</p>
+                <p className="text-muted-foreground text-xs">
+                  Activity will appear here when changes are made to this policy
+                </p>
+              </T>
             </div>
           )}
         </ScrollArea>

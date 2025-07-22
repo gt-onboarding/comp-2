@@ -8,6 +8,7 @@ import { AttachmentEntityType, Comment } from '@comp/db/types';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod';
+import { getGT } from 'gt-next/server';
 
 const schema = z
   .object({
@@ -25,6 +26,7 @@ const schema = z
   );
 
 export const updateComment = async (input: z.infer<typeof schema>) => {
+  const t = await getGT();
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -35,7 +37,7 @@ export const updateComment = async (input: z.infer<typeof schema>) => {
   if (!organizationId) {
     return {
       success: false,
-      error: 'Not authorized',
+      error: t('Not authorized'),
       data: null,
     };
   }
@@ -50,7 +52,7 @@ export const updateComment = async (input: z.infer<typeof schema>) => {
     if (!comment) {
       return {
         success: false,
-        error: 'Comment not found',
+        error: t('Comment not found'),
         data: null,
       };
     }
@@ -64,7 +66,7 @@ export const updateComment = async (input: z.infer<typeof schema>) => {
       // TODO: Add role-based check for admins
       return {
         success: false,
-        error: 'Not authorized',
+        error: t('Not authorized'),
         data: null,
       };
     }
@@ -152,7 +154,7 @@ export const updateComment = async (input: z.infer<typeof schema>) => {
     // Use unknown for outer catch block
     console.error('Failed to update comment:', error);
     // Type checking before accessing message
-    const errorMessage = error instanceof Error ? error.message : 'Could not update comment.';
+    const errorMessage = error instanceof Error ? error.message : t('Could not update comment.');
     return {
       success: false,
       error: errorMessage,

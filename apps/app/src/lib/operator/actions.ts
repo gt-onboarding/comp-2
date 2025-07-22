@@ -3,6 +3,7 @@
 import { sleep } from '@/lib/utils';
 import type { Page } from 'playwright-core';
 import { viewPort } from './session';
+import { getGT } from 'gt-next/server';
 
 export async function scrollDownPage(page: Page, amount?: number) {
   if (amount !== undefined) {
@@ -11,17 +12,20 @@ export async function scrollDownPage(page: Page, amount?: number) {
         // Simple approach without explicit window typing
         window.scrollBy(0, amt);
       }, amount);
-      return `Scrolled down ${amount}px.`;
+      const t = await getGT();
+      return t('Scrolled down {amount}px.', { amount });
     }
     // Negative amount - scroll to bottom
     await page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight);
     });
-    return 'Scrolled to bottom of page.';
+    const t = await getGT();
+    return t('Scrolled to bottom of page.');
   }
   // No amount specified - use PageDown (original behavior)
   await page.keyboard.press('PageDown');
-  return 'Scrolled down one page.';
+  const t = await getGT();
+  return t('Scrolled down one page.');
 }
 
 /**
@@ -33,7 +37,8 @@ export async function goToUrlPage(page: Page, url: string) {
     waitUntil: 'commit',
     timeout: 25000,
   });
-  return `Navigated to ${urlToGoTo}`;
+  const t = await getGT();
+  return t('Navigated to {url}', { url: urlToGoTo });
 }
 
 /**
@@ -42,7 +47,8 @@ export async function goToUrlPage(page: Page, url: string) {
 export async function searchGooglePage(page: Page, query: string) {
   const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
   await page.goto(googleUrl);
-  return `Searched Google for "${query}".`;
+  const t = await getGT();
+  return t('Searched Google for "{query}".', { query });
 }
 
 export async function takeScreenshot(page: Page) {
@@ -60,7 +66,10 @@ export async function takeScreenshot(page: Page) {
 }
 
 export async function handleKeyboardAction(page: Page, action: 'key' | 'type', text?: string) {
-  if (!text) throw new Error('Text required for keyboard actions');
+  if (!text) {
+    const t = await getGT();
+    throw new Error(t('Text required for keyboard actions'));
+  }
 
   switch (action) {
     case 'key':
@@ -148,7 +157,8 @@ export async function clickTargetOnPage(
   // Move and click after painting
   await page.mouse.move(x, y);
   await page.mouse.click(x, y);
-  return `Clicked at coordinates: ${x}, ${y}`;
+  const t = await getGT();
+  return t('Clicked at coordinates: {x}, {y}', { x, y });
 }
 
 /**
@@ -158,7 +168,7 @@ export async function openNewTab(page: Page) {
   const context = page.context();
   const newPage = await context.newPage();
   return {
-    message: 'Opened new tab',
+    message: (await getGT())('Opened new tab'),
     newPage,
   };
 }
@@ -171,13 +181,17 @@ export async function switchToTab(page: Page, index: number) {
   const pages = context.pages();
 
   if (index < 0 || index >= pages.length) {
-    throw new Error(`Tab index ${index} is out of bounds (0-${pages.length - 1})`);
+    const t = await getGT();
+    throw new Error(t('Tab index {index} is out of bounds (0-{maxIndex})', {
+      index,
+      maxIndex: pages.length - 1,
+    }));
   }
 
   const targetPage = pages[index];
   await targetPage.bringToFront();
   return {
-    message: `Switched to tab ${index}`,
+    message: (await getGT())('Switched to tab {index}', { index }),
     page: targetPage,
   };
 }
@@ -187,7 +201,8 @@ export async function switchToTab(page: Page, index: number) {
  */
 export async function goBack(page: Page) {
   await page.goBack();
-  return 'Navigated back';
+  const t = await getGT();
+  return t('Navigated back');
 }
 
 /**
@@ -195,5 +210,6 @@ export async function goBack(page: Page) {
  */
 export async function goForward(page: Page) {
   await page.goForward();
-  return 'Navigated forward';
+  const t = await getGT();
+  return t('Navigated forward');
 }

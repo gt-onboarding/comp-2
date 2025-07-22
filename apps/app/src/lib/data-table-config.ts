@@ -1,4 +1,91 @@
-export type DataTableConfig = typeof dataTableConfig;
+import { useGT } from 'gt-next';
+
+export type DataTableConfig = ReturnType<typeof getDataTableConfig>;
+
+export const getDataTableConfig = () => {
+  const t = useGT();
+  
+  return {
+    textOperators: [
+      { label: t('Contains'), value: 'iLike' as const },
+      { label: t('Does not contain'), value: 'notILike' as const },
+      { label: t('Is'), value: 'eq' as const },
+      { label: t('Is not'), value: 'ne' as const },
+      { label: t('Is empty'), value: 'isEmpty' as const },
+      { label: t('Is not empty'), value: 'isNotEmpty' as const },
+    ],
+    numericOperators: [
+      { label: t('Is'), value: 'eq' as const },
+      { label: t('Is not'), value: 'ne' as const },
+      { label: t('Is less than'), value: 'lt' as const },
+      { label: t('Is less than or equal to'), value: 'lte' as const },
+      { label: t('Is greater than'), value: 'gt' as const },
+      { label: t('Is greater than or equal to'), value: 'gte' as const },
+      { label: t('Is between'), value: 'isBetween' as const },
+      { label: t('Is empty'), value: 'isEmpty' as const },
+      { label: t('Is not empty'), value: 'isNotEmpty' as const },
+    ],
+    dateOperators: [
+      { label: t('Is'), value: 'eq' as const },
+      { label: t('Is not'), value: 'ne' as const },
+      { label: t('Is before'), value: 'lt' as const },
+      { label: t('Is after'), value: 'gt' as const },
+      { label: t('Is on or before'), value: 'lte' as const },
+      { label: t('Is on or after'), value: 'gte' as const },
+      { label: t('Is between'), value: 'isBetween' as const },
+      { label: t('Is relative to today'), value: 'isRelativeToToday' as const },
+      { label: t('Is empty'), value: 'isEmpty' as const },
+      { label: t('Is not empty'), value: 'isNotEmpty' as const },
+    ],
+    selectOperators: [
+      { label: t('Is'), value: 'eq' as const },
+      { label: t('Is not'), value: 'ne' as const },
+      { label: t('Is empty'), value: 'isEmpty' as const },
+      { label: t('Is not empty'), value: 'isNotEmpty' as const },
+    ],
+    multiSelectOperators: [
+      { label: t('Has any of'), value: 'inArray' as const },
+      { label: t('Has none of'), value: 'notInArray' as const },
+      { label: t('Is empty'), value: 'isEmpty' as const },
+      { label: t('Is not empty'), value: 'isNotEmpty' as const },
+    ],
+    booleanOperators: [
+      { label: t('Is'), value: 'eq' as const },
+      { label: t('Is not'), value: 'ne' as const },
+    ],
+    sortOrders: [
+      { label: t('Asc'), value: 'asc' as const },
+      { label: t('Desc'), value: 'desc' as const },
+    ],
+    filterVariants: [
+      'text',
+      'number',
+      'range',
+      'date',
+      'dateRange',
+      'boolean',
+      'select',
+      'multiSelect',
+    ] as const,
+    operators: [
+      'iLike',
+      'notILike',
+      'eq',
+      'ne',
+      'inArray',
+      'notInArray',
+      'isEmpty',
+      'isNotEmpty',
+      'lt',
+      'lte',
+      'gt',
+      'gte',
+      'isBetween',
+      'isRelativeToToday',
+    ] as const,
+    joinOperators: ['and', 'or'] as const,
+  };
+};
 
 export const dataTableConfig = {
   textOperators: [

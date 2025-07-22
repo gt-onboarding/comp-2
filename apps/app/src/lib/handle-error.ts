@@ -1,8 +1,10 @@
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { useGT } from 'gt-next';
 
 export function getErrorMessage(err: unknown) {
-  const unknownError = 'Something went wrong, please try again later.';
+  const t = useGT();
+  const unknownError = t('Something went wrong, please try again later.');
 
   if (err instanceof z.ZodError) {
     const errors = err.issues.map((issue) => {

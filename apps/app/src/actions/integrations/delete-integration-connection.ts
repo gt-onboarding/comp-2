@@ -6,6 +6,7 @@ import { db } from '@comp/db';
 import { revalidatePath } from 'next/cache';
 import { authActionClient } from '../safe-action';
 import { deleteIntegrationConnectionSchema } from '../schema';
+import { getGT } from 'gt-next/server';
 
 export const deleteIntegrationConnectionAction = authActionClient
   .inputSchema(deleteIntegrationConnectionSchema)
@@ -17,13 +18,14 @@ export const deleteIntegrationConnectionAction = authActionClient
     },
   })
   .action(async ({ parsedInput, ctx }) => {
+    const t = await getGT();
     const { integrationName } = parsedInput;
     const { session } = ctx;
 
     if (!session.activeOrganizationId) {
       return {
         success: false,
-        error: 'Unauthorized',
+        error: t('Unauthorized'),
       };
     }
 
@@ -37,7 +39,7 @@ export const deleteIntegrationConnectionAction = authActionClient
     if (!integration) {
       return {
         success: false,
-        error: 'Integration not found',
+        error: t('Integration not found'),
       };
     }
 

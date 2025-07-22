@@ -1,6 +1,7 @@
 import { AppOnboarding } from '@/components/app-onboarding';
 import PageWithBreadcrumb from '@/components/pages/PageWithBreadcrumb';
 import type { SearchParams } from '@/types';
+import { getGT } from 'gt-next/server';
 import type { Metadata } from 'next';
 import { CreateVendorSheet } from '../components/create-vendor-sheet';
 import { VendorsTable } from './components/VendorsTable';
@@ -38,12 +39,13 @@ export default async function Page({
 
   // Show onboarding only if the view is default/unfiltered and there's no data
   if (vendorsResult.data.length === 0 && isDefaultView(parsedSearchParams)) {
+    const t = await getGT();
     return (
       <div className="py-4">
         <AppOnboarding
-          title={'Vendor Management'}
-          description={'Manage your vendors and ensure your organization is protected.'}
-          cta={'Add vendor'}
+          title={t('Vendor Management')}
+          description={t('Manage your vendors and ensure your organization is protected.')}
+          cta={t('Add vendor')}
           imageSrcLight="/onboarding/vendor-light.webp"
           imageSrcDark="/onboarding/vendor-dark.webp"
           imageAlt="Vendor Management"
@@ -83,7 +85,8 @@ export default async function Page({
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
   return {
-    title: 'Vendors',
+    title: t('Vendors'),
   };
 }

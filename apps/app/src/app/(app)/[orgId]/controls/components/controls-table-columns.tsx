@@ -2,16 +2,19 @@
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { StatusIndicator } from '@/components/status-indicator';
+import { useGT } from 'gt-next';
 import { ColumnDef } from '@tanstack/react-table';
 import { ControlWithRelations } from '../data/queries';
 import { getControlStatus } from '../lib/utils';
 
 export function getControlColumns(): ColumnDef<ControlWithRelations>[] {
+  const t = useGT();
+  
   return [
     {
       id: 'name',
       accessorKey: 'name',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Control Name" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('Control Name')} />,
       cell: ({ row }) => {
         return (
           <div className="flex items-center gap-2">
@@ -20,8 +23,8 @@ export function getControlColumns(): ColumnDef<ControlWithRelations>[] {
         );
       },
       meta: {
-        label: 'Control Name',
-        placeholder: 'Search for a control...',
+        label: t('Control Name'),
+        placeholder: t('Search for a control...'),
         variant: 'text',
       },
       enableColumnFilter: true,
@@ -34,7 +37,7 @@ export function getControlColumns(): ColumnDef<ControlWithRelations>[] {
     {
       id: 'status',
       accessorKey: '',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('Status')} />,
       cell: ({ row }) => {
         const control = row.original;
         const status = getControlStatus(control);
@@ -42,8 +45,8 @@ export function getControlColumns(): ColumnDef<ControlWithRelations>[] {
         return <StatusIndicator status={status} />;
       },
       meta: {
-        label: 'Status',
-        placeholder: 'Search status...',
+        label: t('Status'),
+        placeholder: t('Search status...'),
         variant: 'text',
       },
       enableSorting: false,

@@ -6,10 +6,14 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { OrganizationSetupForm } from '../components/OrganizationSetupForm';
 import { getSetupSession } from '../lib/setup-session';
+import { getGT } from 'gt-next/server';
 
-export const metadata: Metadata = {
-  title: 'Setup Your Organization | Comp AI',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
+  return {
+    title: t('Setup Your Organization | Comp AI'),
+  };
+}
 
 interface SetupPageProps {
   params: Promise<{ setupId: string }>;

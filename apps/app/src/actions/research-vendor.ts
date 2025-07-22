@@ -3,14 +3,18 @@
 import { researchVendor } from '@/jobs/tasks/scrape/research';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { z } from 'zod';
+import { getGT } from 'gt-next/server';
 import { authActionClient } from './safe-action';
 
+const createInputSchema = async () => {
+  const t = await getGT();
+  return z.object({
+    website: z.string().url({ message: t('Invalid URL format') }),
+  });
+};
+
 export const researchVendorAction = authActionClient
-  .inputSchema(
-    z.object({
-      website: z.string().url({ message: 'Invalid URL format' }),
-    }),
-  )
+  .inputSchema(await createInputSchema())
   .metadata({
     name: 'research-vendor',
   })
@@ -19,9 +23,10 @@ export const researchVendorAction = authActionClient
       const { activeOrganizationId } = session;
 
       if (!activeOrganizationId) {
+        const t = await getGT();
         return {
           success: false,
-          error: 'Not authorized',
+          error: t('Not authorized'),
         };
       }
 
@@ -36,10 +41,11 @@ export const researchVendorAction = authActionClient
     } catch (error) {
       console.error('Error in researchVendorAction:', error);
 
+      const t = await getGT();
       return {
         success: false,
         error: {
-          message: error instanceof Error ? error.message : 'An unexpected error occurred.',
+          message: error instanceof Error ? error.message : t('An unexpected error occurred.'),
         },
       };
     }

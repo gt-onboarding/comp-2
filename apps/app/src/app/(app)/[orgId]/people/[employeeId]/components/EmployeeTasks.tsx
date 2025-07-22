@@ -4,6 +4,7 @@ import type { EmployeeTrainingVideoCompletion, Member, Policy, User } from '@com
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@comp/ui/tabs';
+import { T, useGT, Var } from 'gt-next';
 import { AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
 import type { FleetPolicy, Host } from '../../devices/types';
 
@@ -26,14 +27,15 @@ export const EmployeeTasks = ({
   fleetPolicies: FleetPolicy[];
   isFleetEnabled: boolean;
 }) => {
+  const t = useGT();
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex flex-col items-start justify-between gap-4 text-base sm:flex-row sm:items-center">
           <div>
-            <h2 className="text-lg font-medium">Employee Tasks</h2>
+            <h2 className="text-lg font-medium"><T>Employee Tasks</T></h2>
             <h3 className="text-muted-foreground text-sm">
-              View and manage employee tasks and their status
+              <T>View and manage employee tasks and their status</T>
             </h3>
           </div>
         </CardTitle>
@@ -41,16 +43,16 @@ export const EmployeeTasks = ({
       <CardContent>
         <Tabs defaultValue="policies">
           <TabsList className="mb-4">
-            <TabsTrigger value="policies">Policies</TabsTrigger>
-            <TabsTrigger value="training">Training Videos</TabsTrigger>
-            {isFleetEnabled && <TabsTrigger value="device">Device</TabsTrigger>}
+            <TabsTrigger value="policies"><T>Policies</T></TabsTrigger>
+            <TabsTrigger value="training"><T>Training Videos</T></TabsTrigger>
+            {isFleetEnabled && <TabsTrigger value="device"><T>Device</T></TabsTrigger>}
           </TabsList>
 
           <TabsContent value="policies">
             <div className="flex flex-col gap-2">
               {policies.length === 0 ? (
                 <div className="text-muted-foreground py-6 text-center">
-                  <p>No policies required to sign.</p>
+                  <T><p>No policies required to sign.</p></T>
                 </div>
               ) : (
                 policies.map((policy) => {
@@ -80,7 +82,7 @@ export const EmployeeTasks = ({
             <div className="flex flex-col gap-2">
               {trainingVideos.length === 0 ? (
                 <div className="text-muted-foreground py-6 text-center">
-                  <p>No training videos required to watch.</p>
+                  <T><p>No training videos required to watch.</p></T>
                 </div>
               ) : (
                 trainingVideos.map((video) => {
@@ -104,7 +106,7 @@ export const EmployeeTasks = ({
                         </div>
                         {isCompleted && (
                           <span className="text-muted-foreground self-start text-xs">
-                            Completed -{' '}
+                            <T>Completed</T> -{' '}
                             {video.completedAt && new Date(video.completedAt).toLocaleDateString()}
                           </span>
                         )}
@@ -121,7 +123,7 @@ export const EmployeeTasks = ({
               {host ? (
                 <Card>
                   <CardHeader>
-                    <CardTitle>{host.computer_name}'s Policies</CardTitle>
+                    <CardTitle><T><Var>{host.computer_name}</Var>'s Policies</T></CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {fleetPolicies.map((policy) => (
@@ -136,12 +138,12 @@ export const EmployeeTasks = ({
                         {policy.response === 'pass' ? (
                           <div className="flex items-center gap-1 text-green-600">
                             <CheckCircle2 size={16} />
-                            <span>Pass</span>
+                            <span><T>Pass</T></span>
                           </div>
                         ) : (
                           <div className="flex items-center gap-1 text-red-600">
                             <XCircle size={16} />
-                            <span>Fail</span>
+                            <span><T>Fail</T></span>
                           </div>
                         )}
                       </div>
@@ -150,7 +152,7 @@ export const EmployeeTasks = ({
                 </Card>
               ) : (
                 <div className="text-muted-foreground py-6 text-center">
-                  <p>No device found.</p>
+                  <T><p>No device found.</p></T>
                 </div>
               )}
             </TabsContent>

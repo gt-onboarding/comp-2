@@ -7,13 +7,8 @@ import { useRealtimeRun } from '@trigger.dev/react-hooks';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, Rocket, ShieldAlert, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { T, useGT, Var } from 'gt-next';
 
-const PROGRESS_MESSAGES = [
-  'Learning about your company...',
-  'Creating Risks...',
-  'Creating Vendors...',
-  'Tailoring Policies...',
-];
 
 const IN_PROGRESS_STATUSES = [
   'QUEUED',
@@ -39,11 +34,19 @@ export const OnboardingTracker = ({
   onboarding: Onboarding;
   publicAccessToken: string;
 }) => {
+  const t = useGT();
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const triggerJobId = onboarding.triggerJobId;
 
+  const progressMessages = [
+    t('Learning about your company...'),
+    t('Creating Risks...'),
+    t('Creating Vendors...'),
+    t('Tailoring Policies...'),
+  ];
+
   if (!triggerJobId || !publicAccessToken) {
-    return <div className="text-muted-foreground text-sm">Unable to load onboarding tracker.</div>;
+    return <div className="text-muted-foreground text-sm"><T>Unable to load onboarding tracker.</T></div>;
   }
 
   const { run, error } = useRealtimeRun(triggerJobId, {
@@ -54,30 +57,30 @@ export const OnboardingTracker = ({
     let interval: NodeJS.Timeout;
     if (run && IN_PROGRESS_STATUSES.includes(run.status)) {
       interval = setInterval(() => {
-        setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % PROGRESS_MESSAGES.length);
+        setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % progressMessages.length);
       }, 4000);
     } else {
       setCurrentMessageIndex(0); // Reset when not in progress
     }
     return () => clearInterval(interval);
-  }, [run?.status]);
+  }, [run?.status, progressMessages.length]);
 
   if (!triggerJobId) {
     return (
       <Card className="bg-card text-card-foreground mx-auto my-2 w-full max-w-2xl shadow-xl">
         <CardHeader className="p-4 text-center">
-          <CardTitle className="text-foreground text-xl font-semibold">Onboarding Status</CardTitle>
+          <CardTitle className="text-foreground text-xl font-semibold"><T>Onboarding Status</T></CardTitle>
           <CardDescription className="text-muted-foreground mt-0.5 text-xs">
-            Organization setup has not started yet.
+            <T>Organization setup has not started yet.</T>
           </CardDescription>
         </CardHeader>
         <CardContent className="flex min-h-[80px] items-center justify-center p-4">
           <div className="flex flex-col items-center justify-center gap-2 text-center">
             <AlertTriangle className="text-warning h-6 w-6" /> {/* Use theme warning color */}
             <div>
-              <p className="text-warning text-base font-medium">Awaiting Initiation</p>
+              <p className="text-warning text-base font-medium"><T>Awaiting Initiation</T></p>
               <p className="text-muted-foreground mt-0.5 text-xs">
-                No onboarding process has been started.
+                <T>No onboarding process has been started.</T>
               </p>
             </div>
           </div>
@@ -92,9 +95,9 @@ export const OnboardingTracker = ({
         <div className="flex flex-col items-center justify-center gap-2 text-center">
           <LogoSpinner />
           <div>
-            <p className="text-primary text-base font-medium">Initializing Status</p>
+            <p className="text-primary text-base font-medium"><T>Initializing Status</T></p>
             <p className="text-muted-foreground mt-1 text-xs">
-              Checking the current onboarding status...
+              <T>Checking the current onboarding status...</T>
             </p>
           </div>
         </div>
@@ -105,10 +108,10 @@ export const OnboardingTracker = ({
         <div className="flex flex-col items-center justify-center gap-2 text-center">
           <AlertTriangle className="text-warning h-6 w-6" /> {/* Use theme warning color */}
           <div>
-            <p className="text-warning text-base font-medium">Status Unavailable</p>{' '}
+            <p className="text-warning text-base font-medium"><T>Status Unavailable</T></p>{' '}
             {/* Use theme warning color */}
             <p className="text-muted-foreground mt-1 text-xs">
-              Could not retrieve current onboarding status.
+              <T>Could not retrieve current onboarding status.</T>
             </p>
           </div>
         </div>
@@ -137,11 +140,11 @@ export const OnboardingTracker = ({
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {PROGRESS_MESSAGES[currentMessageIndex]}
+                  {progressMessages[currentMessageIndex]}
                 </motion.p>
               </AnimatePresence>
               <p className="text-muted-foreground mt-1 text-xs">
-                We are setting up your organization. This may take a few moments.
+                <T>We are setting up your organization. This may take a few moments.</T>
               </p>
             </div>
           </div>
@@ -151,8 +154,8 @@ export const OnboardingTracker = ({
           <div className="flex flex-col items-center justify-center gap-2 text-center">
             <Rocket className="text-chart-positive h-6 w-6" />
             <div>
-              <p className="text-chart-positive text-base font-medium">Setup Complete</p>
-              <p className="text-muted-foreground mt-1 text-xs">Your organization is ready.</p>
+              <p className="text-chart-positive text-base font-medium"><T>Setup Complete</T></p>
+              <p className="text-muted-foreground mt-1 text-xs"><T>Your organization is ready.</T></p>
             </div>
           </div>
         );
@@ -163,7 +166,7 @@ export const OnboardingTracker = ({
       case 'SYSTEM_FAILURE':
       case 'EXPIRED':
       case 'TIMED_OUT': {
-        const errorMessage = run.error?.message || 'An unexpected issue occurred.';
+        const errorMessage = run.error?.message || t('An unexpected issue occurred.');
         const truncatedMessage =
           errorMessage.length > 100 ? `${errorMessage.substring(0, 97)}...` : errorMessage;
         return (
@@ -171,7 +174,7 @@ export const OnboardingTracker = ({
             <ShieldAlert className="text-destructive h-6 w-6" />{' '}
             <div>
               <p className="text-destructive text-base font-medium">
-                Setup <span className="capitalize">{friendlyStatus}</span>
+                <T>Setup <Var><span className="capitalize">{friendlyStatus}</span></Var></T>
               </p>
               <p className="text-destructive/80 mt-1 text-xs">{truncatedMessage}</p>
             </div>
@@ -185,9 +188,9 @@ export const OnboardingTracker = ({
           <div className="flex flex-col items-center justify-center gap-2 text-center">
             <Zap className="text-warning h-6 w-6" />
             <div>
-              <p className="text-warning text-base font-medium">Unknown Status</p>
+              <p className="text-warning text-base font-medium"><T>Unknown Status</T></p>
               <p className="text-muted-foreground mt-1 text-xs">
-                Received an unhandled status: {exhaustiveCheck}
+                <T>Received an unhandled status: <Var>{exhaustiveCheck}</Var></T>
               </p>
             </div>
           </div>

@@ -4,6 +4,7 @@
 
 import { authActionClient } from '@/actions/safe-action';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { Vercel } from '@vercel/sdk';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { env } from 'node:process';
@@ -27,6 +28,7 @@ export const customDomainAction = authActionClient
     },
   })
   .action(async ({ parsedInput, ctx }) => {
+    const t = await getGT();
     const { domain } = parsedInput;
     const { activeOrganizationId } = ctx.session;
 
@@ -64,7 +66,7 @@ export const customDomainAction = authActionClient
         } else {
           return {
             success: false,
-            error: 'Domain is already in use by another organization',
+            error: t('Domain is already in use by another organization'),
           };
         }
       }
@@ -109,6 +111,6 @@ export const customDomainAction = authActionClient
       };
     } catch (error) {
       console.error(error);
-      throw new Error('Failed to update custom domain');
+      throw new Error(t('Failed to update custom domain'));
     }
   });

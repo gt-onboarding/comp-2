@@ -10,6 +10,7 @@ import {
 import { headers } from 'next/headers';
 import { SignOut } from './sign-out';
 import { ThemeSwitch } from './theme-switch';
+import { T } from 'gt-next';
 
 export async function UserMenu({ onlySignOut }: { onlySignOut?: boolean }) {
   const session = await auth.api.getSession({
@@ -53,7 +54,7 @@ export async function UserMenu({ onlySignOut }: { onlySignOut?: boolean }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <div className="flex flex-row items-center justify-between p-2">
-              <p className="text-sm">{'Theme'}</p>
+              <p className="text-sm"><T>Theme</T></p>
               <ThemeSwitch />
             </div>
             <DropdownMenuSeparator />

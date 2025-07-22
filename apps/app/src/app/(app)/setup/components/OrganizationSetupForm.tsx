@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { useOnboardingForm } from '../hooks/useOnboardingForm';
 import { OnboardingFormActions } from './OnboardingFormActions';
 import { OnboardingStepInput } from './OnboardingStepInput';
+import { T, Var } from 'gt-next';
 
 interface OrganizationSetupFormProps {
   existingOrganizations?: Organization[];
@@ -58,8 +59,9 @@ export function OrganizationSetupForm({
   const hasExistingOrgs = existingOrganizations.length > 0;
 
   // Check if current step has valid input
-  const currentStepValue = form.watch(step.key);
+  const currentStepValue = form.watch(step?.key);
   const isCurrentStepValid = (() => {
+    if (!step) return false;
     if (step.key === 'frameworkIds') {
       return Array.isArray(currentStepValue) && currentStepValue.length > 0;
     }
@@ -97,7 +99,7 @@ export function OrganizationSetupForm({
     <div className="scrollbar-hide flex min-h-[calc(100vh-50px)] flex-col items-center justify-center p-4">
       <div className="relative w-full max-w-2xl">
         <Card className="scrollbar-hide relative flex w-full flex-col bg-card/80 dark:bg-card/70 backdrop-blur-xl border border-border/50 shadow-2xl">
-          {isLoadingFrameworks && step.key === 'frameworkIds' && (
+          {isLoadingFrameworks && step?.key === 'frameworkIds' && (
             <div className="absolute inset-0 z-50 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-sm">
               <LogoSpinner />
             </div>
@@ -106,41 +108,43 @@ export function OrganizationSetupForm({
             <div className="flex flex-col items-center gap-2">
               <LogoSpinner />
               <div className="text-muted-foreground text-sm">
-                Step {stepIndex + 1} of {steps.length}
+                <T>Step <Var>{stepIndex + 1}</Var> of <Var>{steps.length}</Var></T>
               </div>
               <CardTitle className="flex min-h-[56px] items-center justify-center text-center">
-                {step.question}
+                {step?.question}
               </CardTitle>
             </div>
           </CardHeader>
           <CardContent className="flex min-h-[150px] flex-1 flex-col overflow-y-auto">
-            <Form {...form} key={step.key}>
-              <form
-                id="onboarding-form"
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="mt-4 w-full"
-                autoComplete="off"
-              >
-                <FormField
-                  name={step.key}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <OnboardingStepInput
-                          currentStep={step}
-                          form={form}
-                          savedAnswers={savedAnswers}
-                          onLoadingChange={setIsLoadingFrameworks}
-                        />
-                      </FormControl>
-                      <div className="min-h-[20px]">
-                        <FormMessage />
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              </form>
-            </Form>
+            {step && (
+              <Form {...form} key={step.key}>
+                <form
+                  id="onboarding-form"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="mt-4 w-full"
+                  autoComplete="off"
+                >
+                  <FormField
+                    name={step.key}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <OnboardingStepInput
+                            currentStep={step}
+                            form={form}
+                            savedAnswers={savedAnswers}
+                            onLoadingChange={setIsLoadingFrameworks}
+                          />
+                        </FormControl>
+                        <div className="min-h-[20px]">
+                          <FormMessage />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            )}
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <div className="flex w-full items-center justify-between">
@@ -174,7 +178,7 @@ export function OrganizationSetupForm({
                     />
                   </svg>
                   <span className="max-w-[280px] sm:max-w-none">
-                    AI personalizes your plan based on your answers
+                    <T>AI personalizes your plan based on your answers</T>
                   </span>
                 </span>
               </p>

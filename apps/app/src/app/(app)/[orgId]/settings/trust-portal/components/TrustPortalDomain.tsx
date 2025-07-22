@@ -14,6 +14,7 @@ import { Input } from '@comp/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@comp/ui/tooltip';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, CheckCircle, ClipboardCopy, Loader2 } from 'lucide-react';
+import { T, useGT } from 'gt-next';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -22,17 +23,19 @@ import { z } from 'zod';
 import { checkDnsRecordAction } from '../actions/check-dns-record';
 import { customDomainAction } from '../actions/custom-domain';
 
-const trustPortalDomainSchema = z.object({
-  domain: z
-    .string()
-    .min(1, 'Domain cannot be empty.')
-    .max(63, 'Domain too long. Max 63 chars.')
-    .regex(
-      /^(?!-)[A-Za-z0-9-]+([-\.]{1}[a-z0-9]+)*\.[A-Za-z]{2,6}$/,
-      'Invalid domain format. Use format like sub.example.com',
-    )
-    .trim(),
-});
+const getTrustPortalDomainSchema = (t: (content: string) => string) => {
+  return z.object({
+    domain: z
+      .string()
+      .min(1, t('Domain cannot be empty.'))
+      .max(63, t('Domain too long. Max 63 chars.'))
+      .regex(
+        /^(?!-)[A-Za-z0-9-]+([-\.]{1}[a-z0-9]+)*\.[A-Za-z]{2,6}$/,
+        t('Invalid domain format. Use format like sub.example.com'),
+      )
+      .trim(),
+  });
+};
 
 export function TrustPortalDomain({
   domain: initialDomain,
@@ -47,6 +50,7 @@ export function TrustPortalDomain({
   vercelVerification: string | null;
   orgId: string;
 }) {
+  const t = useGT();
   const [isCnameVerified, setIsCnameVerified] = useState(false);
   const [isTxtVerified, setIsTxtVerified] = useState(false);
   const [isVercelTxtVerified, setIsVercelTxtVerified] = useState(false);
@@ -62,13 +66,13 @@ export function TrustPortalDomain({
 
   const updateCustomDomain = useAction(customDomainAction, {
     onSuccess: (data) => {
-      toast.success('Custom domain update submitted, please verify your DNS records.');
+      toast.success(t('Custom domain update submitted, please verify your DNS records.'));
     },
     onError: (error) => {
       toast.error(
         error.error.serverError ||
           error.error.validationErrors?._errors?.[0] ||
-          'Failed to update custom domain.',
+          t('Failed to update custom domain.'),
       );
     },
   });
@@ -107,11 +111,12 @@ export function TrustPortalDomain({
     },
     onError: () => {
       toast.error(
-        'DNS record verification failed, check the records are valid or try again later.',
+        t('DNS record verification failed, check the records are valid or try again later.'),
       );
     },
   });
 
+  const trustPortalDomainSchema = getTrustPortalDomainSchema(t);
   const form = useForm<z.infer<typeof trustPortalDomainSchema>>({
     resolver: zodResolver(trustPortalDomainSchema),
     defaultValues: {
@@ -133,7 +138,7 @@ export function TrustPortalDomain({
 
   const handleCopy = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
-    toast.success(`${type} copied to clipboard`);
+    toast.success(t('{type} copied to clipboard', { type }));
   };
 
   const handleCheckDnsRecord = () => {
@@ -145,10 +150,14 @@ export function TrustPortalDomain({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle>Configure Custom Domain</CardTitle>
-            <CardDescription>
-              You can use a custom domain (like trust.example.com) to brand your trust portal.
-            </CardDescription>
+            <T>
+              <CardTitle>Configure Custom Domain</CardTitle>
+            </T>
+            <T>
+              <CardDescription>
+                You can use a custom domain (like trust.example.com) to brand your trust portal.
+              </CardDescription>
+            </T>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -158,7 +167,7 @@ export function TrustPortalDomain({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      Custom Domain
+                      <T>Custom Domain</T>
                       {initialDomain !== '' &&
                         (domainVerified ? (
                           <TooltipProvider>
@@ -166,7 +175,9 @@ export function TrustPortalDomain({
                               <TooltipTrigger type="button">
                                 <CheckCircle className="h-4 w-4 text-green-500" />
                               </TooltipTrigger>
-                              <TooltipContent>Domain is verified</TooltipContent>
+                              <T>
+                                <TooltipContent>Domain is verified</TooltipContent>
+                              </T>
                             </Tooltip>
                           </TooltipProvider>
                         ) : (
@@ -175,7 +186,9 @@ export function TrustPortalDomain({
                               <TooltipTrigger type="button">
                                 <AlertCircle className="h-4 w-4 text-red-500" />
                               </TooltipTrigger>
-                              <TooltipContent>Domain is not verified yet</TooltipContent>
+                              <T>
+                                <TooltipContent>Domain is not verified yet</TooltipContent>
+                              </T>
                             </Tooltip>
                           </TooltipProvider>
                         ))}
@@ -202,7 +215,7 @@ export function TrustPortalDomain({
                           {checkDnsRecord.status === 'executing' ? (
                             <Loader2 className="mr-1 h-4 w-4 animate-spin" />
                           ) : null}
-                          Check DNS record
+                          <T>Check DNS record</T>
                         </Button>
                       )}
                     </div>
@@ -220,10 +233,10 @@ export function TrustPortalDomain({
                         <table className="hidden w-full lg:table">
                           <thead>
                             <tr className="[&_th]:px-3 [&_th]:py-2 [&_th]:text-left">
-                              <th>Verified</th>
-                              <th>Type</th>
-                              <th>Name</th>
-                              <th>Value</th>
+                              <T><th>Verified</th></T>
+                              <T><th>Type</th></T>
+                              <T><th>Name</th></T>
+                              <T><th>Value</th></T>
                             </tr>
                           </thead>
                           <tbody>
@@ -356,11 +369,11 @@ export function TrustPortalDomain({
 
                         <div className="space-y-4 p-4 lg:hidden">
                           <div>
-                            <div className="mb-1 font-medium">Type:</div>
+                            <T><div className="mb-1 font-medium">Type:</div></T>
                             <div>CNAME</div>
                           </div>
                           <div>
-                            <div className="mb-1 font-medium">Name:</div>
+                            <T><div className="mb-1 font-medium">Name:</div></T>
                             <div className="flex items-center justify-between gap-2">
                               <span className="min-w-0 break-words">{form.watch('domain')}</span>
                               <Button
@@ -375,7 +388,7 @@ export function TrustPortalDomain({
                             </div>
                           </div>
                           <div>
-                            <div className="mb-1 font-medium">Value:</div>
+                            <T><div className="mb-1 font-medium">Value:</div></T>
                             <div className="flex items-center justify-between gap-2">
                               <span className="min-w-0 break-words">cname.vercel-dns.com.</span>
                               <Button
@@ -391,11 +404,11 @@ export function TrustPortalDomain({
                           </div>
                           <div className="border-b" />
                           <div>
-                            <div className="mb-1 font-medium">Type:</div>
+                            <T><div className="mb-1 font-medium">Type:</div></T>
                             <div>TXT</div>
                           </div>
                           <div>
-                            <div className="mb-1 font-medium">Name:</div>
+                            <T><div className="mb-1 font-medium">Name:</div></T>
                             <div className="flex items-center justify-between gap-2">
                               <span className="min-w-0 break-words">@</span>
                               <Button
@@ -412,7 +425,7 @@ export function TrustPortalDomain({
                             </div>
                           </div>
                           <div>
-                            <div className="mb-1 font-medium">Value:</div>
+                            <T><div className="mb-1 font-medium">Value:</div></T>
                             <div className="flex items-center justify-between gap-2">
                               <span className="min-w-0 break-words">
                                 compai-domain-verification={orgId}
@@ -434,11 +447,11 @@ export function TrustPortalDomain({
                             <>
                               <div className="border-b" />
                               <div>
-                                <div className="mb-1 font-medium">Type:</div>
+                                <T><div className="mb-1 font-medium">Type:</div></T>
                                 <div>TXT</div>
                               </div>
                               <div>
-                                <div className="mb-1 font-medium">Name:</div>
+                                <T><div className="mb-1 font-medium">Name:</div></T>
                                 <div className="flex items-center justify-between gap-2">
                                   <span className="min-w-0 break-words">_vercel</span>
                                   <Button
@@ -453,7 +466,7 @@ export function TrustPortalDomain({
                                 </div>
                               </div>
                               <div>
-                                <div className="mb-1 font-medium">Value:</div>
+                                <T><div className="mb-1 font-medium">Value:</div></T>
                                 <div className="flex items-center justify-between gap-2">
                                   <span className="min-w-0 break-words">{vercelVerification}</span>
                                   <Button
@@ -477,9 +490,11 @@ export function TrustPortalDomain({
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <div className="text-muted-foreground text-xs">
-              Configure a custom domain for your trust portal.
-            </div>
+            <T>
+              <div className="text-muted-foreground text-xs">
+                Configure a custom domain for your trust portal.
+              </div>
+            </T>
             <Button
               type="submit"
               disabled={
@@ -489,7 +504,7 @@ export function TrustPortalDomain({
               {updateCustomDomain.status === 'executing' ? (
                 <Loader2 className="mr-1 h-4 w-4 animate-spin" />
               ) : null}
-              {'Save'}
+              <T>Save</T>
             </Button>
           </CardFooter>
         </Card>
