@@ -6,6 +6,8 @@ import { ArrowDown, ArrowUp } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 
+import { useGT, T } from 'gt-next';
+
 type Props = {
   table?: {
     getIsAllPageRowsSelected: () => boolean;
@@ -21,6 +23,7 @@ type Props = {
 };
 
 export function DataTableHeader({ table, loading }: Props) {
+  const t = useGT();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -62,7 +65,7 @@ export function DataTableHeader({ table, loading }: Props) {
               variant="ghost"
               onClick={() => createSortQuery('title')}
             >
-              <span>{'Tasks'}</span>
+              <T><span>Tasks</span></T>
               {'title' === column && value === 'asc' && <ArrowDown size={16} />}
               {'title' === column && value === 'desc' && <ArrowUp size={16} />}
             </Button>
@@ -76,7 +79,7 @@ export function DataTableHeader({ table, loading }: Props) {
               variant="ghost"
               onClick={() => createSortQuery('status')}
             >
-              <span>{'Status'}</span>
+              <T><span>Status</span></T>
               {'status' === column && value === 'asc' && <ArrowDown size={16} />}
               {'status' === column && value === 'desc' && <ArrowUp size={16} />}
             </Button>
@@ -90,7 +93,7 @@ export function DataTableHeader({ table, loading }: Props) {
               variant="ghost"
               onClick={() => createSortQuery('dueDate')}
             >
-              <span>{'Due Date'}</span>
+              <T><span>Due Date</span></T>
               {'dueDate' === column && value === 'asc' && <ArrowDown size={16} />}
               {'dueDate' === column && value === 'desc' && <ArrowUp size={16} />}
             </Button>
@@ -104,7 +107,7 @@ export function DataTableHeader({ table, loading }: Props) {
               variant="ghost"
               onClick={() => createSortQuery('assigneeId')}
             >
-              <span>{'Assigned To'}</span>
+              <T><span>Assigned To</span></T>
               {'assigneeId' === column && value === 'asc' && <ArrowDown size={16} />}
               {'assigneeId' === column && value === 'desc' && <ArrowUp size={16} />}
             </Button>

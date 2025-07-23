@@ -6,19 +6,23 @@ import type { Departments } from '@comp/db/types';
 import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { appErrors } from '../types';
+import { getGT } from 'gt-next/server';
+import { getAppErrors } from '../types';
 
-const schema = z.object({
+const getSchema = (t: (content: string) => string) => z.object({
   employeeId: z.string(),
-  name: z.string().min(1, 'Name cannot be empty').optional(),
-  email: z.string().email('Invalid email format').optional(),
+  name: z.string().min(1, t('Name cannot be empty')).optional(),
+  email: z.string().email(t('Invalid email format')).optional(),
   department: z.string().optional(),
   isActive: z.boolean().optional(),
   createdAt: z.date().optional(),
 });
 
 export const updateEmployee = authActionClient
-  .inputSchema(schema)
+  .schema(async () => {
+    const t = await getGT();
+    return getSchema(t);
+  })
   .metadata({
     name: 'update-employee',
     track: {
@@ -28,6 +32,8 @@ export const updateEmployee = authActionClient
   })
   .action(async ({ parsedInput, ctx }) => {
     const { employeeId, name, email, department, isActive, createdAt } = parsedInput;
+    const t = await getGT();
+    const appErrors = getAppErrors(t);
 
     const organizationId = ctx.session.activeOrganizationId;
     if (!organizationId) throw new Error(appErrors.UNAUTHORIZED.message);
@@ -111,7 +117,7 @@ export const updateEmployee = authActionClient
         if (error.code === 'P2002') {
           const targetFields = error.meta?.target as string[] | undefined;
           if (targetFields?.includes('email')) {
-            throw new Error('Email address is already in use.');
+            throw new Error(t('Email address is already in use.'));
           }
         }
       }

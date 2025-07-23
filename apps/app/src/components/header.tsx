@@ -5,6 +5,7 @@ import { Skeleton } from '@comp/ui/skeleton';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
+import { LocaleSelector } from 'gt-next';
 import { AssistantButton } from './ai/chat-button';
 import { MobileMenu } from './mobile-menu';
 
@@ -27,7 +28,8 @@ export async function Header() {
 
       <AssistantButton />
 
-      <div className="ml-auto flex space-x-2">
+      <div className="ml-auto flex items-center space-x-2">
+        <LocaleSelector />
         <Suspense fallback={<Skeleton className="h-8 w-8 rounded-full" />}>
           <UserMenu />
         </Suspense>

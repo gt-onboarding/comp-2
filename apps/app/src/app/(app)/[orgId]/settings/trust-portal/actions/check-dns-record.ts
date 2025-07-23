@@ -6,25 +6,29 @@ import { db } from '@comp/db';
 import { Vercel } from '@vercel/sdk';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
+import { getGT } from 'gt-next/server';
 
-const checkDnsSchema = z.object({
-  domain: z
-    .string()
-    .min(1, 'Domain cannot be empty.')
-    .max(63, 'Domain too long. Max 63 chars.')
-    .regex(
-      /^(?!-)[A-Za-z0-9-]+([-\.]{1}[a-z0-9]+)*\.[A-Za-z]{2,6}$/,
-      'Invalid domain format. Use format like sub.example.com',
-    )
-    .trim(),
-});
+const getCheckDnsSchema = async () => {
+  const t = await getGT();
+  return z.object({
+    domain: z
+      .string()
+      .min(1, t('Domain cannot be empty.'))
+      .max(63, t('Domain too long. Max 63 chars.'))
+      .regex(
+        /^(?!-)[A-Za-z0-9-]+([-\.]{1}[a-z0-9]+)*\.[A-Za-z]{2,6}$/,
+        t('Invalid domain format. Use format like sub.example.com'),
+      )
+      .trim(),
+  });
+};
 
 const vercel = new Vercel({
   bearerToken: env.VERCEL_ACCESS_TOKEN,
 });
 
 export const checkDnsRecordAction = authActionClient
-  .inputSchema(checkDnsSchema)
+  .inputSchema(async () => await getCheckDnsSchema())
   .metadata({
     name: 'check-dns-record',
     track: {
@@ -33,10 +37,11 @@ export const checkDnsRecordAction = authActionClient
     },
   })
   .action(async ({ parsedInput, ctx }) => {
+    const t = await getGT();
     const { domain } = parsedInput;
 
     if (!ctx.session.activeOrganizationId) {
-      throw new Error('No active organization');
+      throw new Error(t('No active organization'));
     }
 
     const rootDomain = domain.split('.').slice(-2).join('.');
@@ -63,7 +68,7 @@ export const checkDnsRecordAction = authActionClient
       console.error('DNS lookup failed:', data);
       throw new Error(
         data.message ||
-          'DNS record verification failed, check the records are valid or try again later.',
+          t('DNS record verification failed, check the records are valid or try again later.'),
       );
     }
 
@@ -135,14 +140,15 @@ export const checkDnsRecordAction = authActionClient
         isTxtVerified,
         isVercelTxtVerified,
         error:
-          'Error verifying DNS records. Please ensure both CNAME and TXT records are correctly configured, or wait a few minutes and try again.',
+          t('Error verifying DNS records. Please ensure both CNAME and TXT records are correctly configured, or wait a few minutes and try again.'),
+
       };
     }
 
     if (!env.TRUST_PORTAL_PROJECT_ID) {
       return {
         success: false,
-        error: 'Vercel project ID is not set.',
+        error: t('Vercel project ID is not set.'),
       };
     }
 

@@ -2,6 +2,7 @@
 
 import { authActionClient } from '@/actions/safe-action';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -38,7 +39,8 @@ export const searchGlobalVendorsAction = authActionClient
 
       return { success: true, data: { vendors } };
     } catch (error) {
+      const t = await getGT();
       console.error('Error searching global vendors:', error);
-      return { success: false, error: 'Failed to search global vendors' };
+      return { success: false, error: t('Failed to search global vendors') };
     }
   });

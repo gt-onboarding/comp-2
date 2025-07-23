@@ -2,13 +2,15 @@ import PageWithBreadcrumb from '@/components/pages/PageWithBreadcrumb';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { Role, TaskStatus } from '@comp/db/types';
+import { getGT } from 'gt-next/server';
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { TaskList } from './components/TaskList';
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
   return {
-    title: 'Tasks',
+    title: t('Tasks'),
   };
 }
 
@@ -30,9 +32,10 @@ export default async function TasksPage({
 
   const tasks = await getTasks(statusFilter);
   const members = await getMembersWithMetadata();
+  const t = await getGT();
 
   return (
-    <PageWithBreadcrumb breadcrumbs={[{ label: 'Tasks', href: `/${orgId}/tasks` }]}>
+    <PageWithBreadcrumb breadcrumbs={[{ label: t('Tasks'), href: `/${orgId}/tasks` }]}>
       <TaskList tasks={tasks} members={members} />
     </PageWithBreadcrumb>
   );

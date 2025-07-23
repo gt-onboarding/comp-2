@@ -5,6 +5,8 @@ import { SecondaryMenu } from '@comp/ui/secondary-menu';
 import { headers } from 'next/headers';
 import { Suspense, cache } from 'react';
 import { CreateVendorSheet } from '../components/create-vendor-sheet';
+import { getGT } from 'gt-next/server';
+import { T } from 'gt-next';
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const {
@@ -16,37 +18,33 @@ export default async function Layout({ children }: { children: React.ReactNode }
   const orgId = activeOrganizationId;
   const overview = await getVendorOverview();
   const assignees = await getAssignees();
+  const t = await getGT();
 
   if (overview?.vendors === 0) {
     return (
       <div className="m-auto max-w-[1200px]">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<T><div>Loading...</div></T>}>
           <div className="mt-8">
             <AppOnboarding
-              title={'Vendor Management'}
-              description={
-                "Manage your vendors and ensure your organization's supply chain is secure and compliant."
-              }
-              cta={'Add vendor'}
+              title={t('Vendor Management')}
+              description={t("Manage your vendors and ensure your organization's supply chain is secure and compliant.")}
+              cta={t('Add vendor')}
               imageSrcDark="/onboarding/vendor-management.webp"
               imageSrcLight="/onboarding/vendor-management-light.webp"
-              imageAlt="Vendor Management"
+              imageAlt={t("Vendor Management")}
               sheetName="createVendorSheet"
               faqs={[
                 {
-                  questionKey: 'What is vendor management?',
-                  answerKey:
-                    'Vendor management is the process of managing, and controlling relationships and agreements with third-party suppliers of goods and services.',
+                  questionKey: t('What is vendor management?'),
+                  answerKey: t('Vendor management is the process of managing, and controlling relationships and agreements with third-party suppliers of goods and services.'),
                 },
                 {
-                  questionKey: 'Why is vendor management important?',
-                  answerKey:
-                    'It helps to ensure that you are getting the most value from your vendors, while also minimizing risks and maintaining compliance.',
+                  questionKey: t('Why is vendor management important?'),
+                  answerKey: t('It helps to ensure that you are getting the most value from your vendors, while also minimizing risks and maintaining compliance.'),
                 },
                 {
-                  questionKey: 'What are the key steps in vendor management?',
-                  answerKey:
-                    'The key steps include vendor selection, contract negotiation, performance monitoring, risk management, and relationship management.',
+                  questionKey: t('What are the key steps in vendor management?'),
+                  answerKey: t('The key steps include vendor selection, contract negotiation, performance monitoring, risk management, and relationship management.'),
                 },
               ]}
             />
@@ -59,16 +57,16 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return (
     <div className="m-auto max-w-[1200px]">
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<T><div>Loading...</div></T>}>
         <SecondaryMenu
           items={[
             {
               path: `/${orgId}/vendors`,
-              label: 'Overview',
+              label: t('Overview'),
             },
             {
               path: `/${orgId}/vendors/register`,
-              label: 'Vendors',
+              label: t('Vendors'),
             },
           ]}
         />

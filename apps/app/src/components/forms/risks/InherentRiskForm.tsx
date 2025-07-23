@@ -13,6 +13,8 @@ import { useQueryState } from 'nuqs';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import type { z } from 'zod';
+import { useGT } from 'gt-next';
+import { InlineTranslationOptions } from 'gt-next/types';
 
 interface InherentRiskFormProps {
   riskId: string;
@@ -21,36 +23,37 @@ interface InherentRiskFormProps {
 }
 
 // Map for displaying readable labels
-const LIKELIHOOD_LABELS: Record<Likelihood, string> = {
-  [Likelihood.very_unlikely]: 'Very Unlikely',
-  [Likelihood.unlikely]: 'Unlikely',
-  [Likelihood.possible]: 'Possible',
-  [Likelihood.likely]: 'Likely',
-  [Likelihood.very_likely]: 'Very Likely',
-};
+const getLikelihoodLabels = (t: (content: string, options?: InlineTranslationOptions) => string): Record<Likelihood, string> => ({
+  [Likelihood.very_unlikely]: t('Very Unlikely'),
+  [Likelihood.unlikely]: t('Unlikely'),
+  [Likelihood.possible]: t('Possible'),
+  [Likelihood.likely]: t('Likely'),
+  [Likelihood.very_likely]: t('Very Likely'),
+});
 
 // Map for displaying readable labels
-const IMPACT_LABELS: Record<Impact, string> = {
-  [Impact.insignificant]: 'Insignificant',
-  [Impact.minor]: 'Minor',
-  [Impact.moderate]: 'Moderate',
-  [Impact.major]: 'Major',
-  [Impact.severe]: 'Severe',
-};
+const getImpactLabels = (t: (content: string, options?: InlineTranslationOptions) => string): Record<Impact, string> => ({
+  [Impact.insignificant]: t('Insignificant'),
+  [Impact.minor]: t('Minor'),
+  [Impact.moderate]: t('Moderate'),
+  [Impact.major]: t('Major'),
+  [Impact.severe]: t('Severe'),
+});
 
 export function InherentRiskForm({
   riskId,
   initialProbability,
   initialImpact,
 }: InherentRiskFormProps) {
+  const t = useGT();
   const [_, setOpen] = useQueryState('inherent-risk-sheet');
   const updateInherentRisk = useAction(updateInherentRiskAction, {
     onSuccess: () => {
-      toast.success('Inherent risk updated successfully');
+      toast.success(t('Inherent risk updated successfully'));
       setOpen(null);
     },
     onError: () => {
-      toast.error('Failed to update inherent risk');
+      toast.error(t('Failed to update inherent risk'));
     },
   });
 
@@ -62,6 +65,9 @@ export function InherentRiskForm({
       impact: initialImpact,
     },
   });
+
+  const likelihoodLabels = getLikelihoodLabels(t);
+  const impactLabels = getImpactLabels(t);
 
   const onSubmit = (values: z.infer<typeof updateInherentRiskSchema>) => {
     updateInherentRisk.execute(values);
@@ -75,15 +81,15 @@ export function InherentRiskForm({
           name="probability"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{'Probability'}</FormLabel>
+              <FormLabel>{t('Probability')}</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={'Select a probability'} />
+                    <SelectValue placeholder={t('Select a probability')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.entries(LIKELIHOOD_LABELS).map(([value, label]) => (
+                  {Object.entries(likelihoodLabels).map(([value, label]) => (
                     <SelectItem key={value} value={value}>
                       {label}
                     </SelectItem>
@@ -99,15 +105,15 @@ export function InherentRiskForm({
           name="impact"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{'Impact'}</FormLabel>
+              <FormLabel>{t('Impact')}</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={'Select an impact'} />
+                    <SelectValue placeholder={t('Select an impact')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.entries(IMPACT_LABELS).map(([value, label]) => (
+                  {Object.entries(impactLabels).map(([value, label]) => (
                     <SelectItem key={value} value={value}>
                       {label}
                     </SelectItem>
@@ -127,7 +133,7 @@ export function InherentRiskForm({
             {updateInherentRisk.status === 'executing' ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              'Save'
+              t('Save')
             )}
           </Button>
         </div>

@@ -5,6 +5,7 @@ import { apiKeySchema } from '@/actions/schema';
 import { generateApiKey, generateSalt, hashApiKey } from '@/lib/api-key';
 import { db } from '@comp/db';
 import { revalidatePath } from 'next/cache';
+import { getGT } from 'gt-next/server';
 
 export const createApiKeyAction = authActionClient
   .inputSchema(apiKeySchema)
@@ -16,6 +17,7 @@ export const createApiKeyAction = authActionClient
     },
   })
   .action(async ({ parsedInput, ctx }) => {
+    const t = await getGT();
     try {
       const { name, expiresAt } = parsedInput;
       console.log(`Creating API key "${name}" with expiration: ${expiresAt}`);
@@ -87,7 +89,7 @@ export const createApiKeyAction = authActionClient
             success: false,
             error: {
               code: 'DUPLICATE_NAME',
-              message: 'An API key with this name already exists',
+              message: t('An API key with this name already exists'),
             },
           };
         }
@@ -97,7 +99,7 @@ export const createApiKeyAction = authActionClient
             success: false,
             error: {
               code: 'INVALID_ORGANIZATION',
-              message: "The organization does not exist or you don't have access",
+              message: t("The organization does not exist or you don't have access"),
             },
           };
         }
@@ -107,7 +109,7 @@ export const createApiKeyAction = authActionClient
         success: false,
         error: {
           code: 'INTERNAL_ERROR',
-          message: 'An unexpected error occurred while creating the API key',
+          message: t('An unexpected error occurred while creating the API key'),
         },
       };
     }

@@ -1,5 +1,6 @@
 'use client';
 
+import { T, useGT } from 'gt-next';
 import { Button } from '@comp/ui/button';
 import { cn } from '@comp/ui/cn';
 import {
@@ -45,6 +46,7 @@ export function PolicyActionDialog({
   confirmVariant = 'default',
 }: PolicyActionDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const t = useGT();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -80,7 +82,7 @@ export function PolicyActionDialog({
                 <FormItem>
                   <FormControl>
                     <Textarea
-                      placeholder="Add optional comment or reason (will be added as a comment)"
+                      placeholder={t('Add optional comment or reason (will be added as a comment)')}
                       className="resize-none"
                       {...field}
                     />
@@ -90,7 +92,7 @@ export function PolicyActionDialog({
             />
             <DialogFooter className="gap-2">
               <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
-                Cancel
+                <T>Cancel</T>
               </Button>
               <Button
                 type="submit"

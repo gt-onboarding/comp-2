@@ -1,6 +1,7 @@
 import { db } from '@comp/db';
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
 import type { CSSProperties } from 'react';
+import { T, Var } from 'gt-next';
 
 interface Props {
   organizationId: string;
@@ -65,7 +66,9 @@ export async function TestsByAssignee({ organizationId }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{'Tests by Assignee'}</CardTitle>
+        <T>
+          <CardTitle>Tests by Assignee</CardTitle>
+        </T>
       </CardHeader>
       <CardContent>
         <div className="space-y-8">
@@ -73,29 +76,33 @@ export async function TestsByAssignee({ organizationId }: Props) {
             <div key={stat.user.id} className="space-y-2">
               <div className="flex items-center justify-between">
                 <p className="text-sm">{stat.user.name || stat.user.email || 'Unknown User'}</p>
-                <span className="text-muted-foreground text-sm">{stat.totalTests} Tests</span>
+                <T>
+                  <span className="text-muted-foreground text-sm"><Var>{stat.totalTests}</Var> Tests</span>
+                </T>
               </div>
 
               <TestBarChart stat={stat} />
 
-              <div className="text-muted-foreground flex flex-wrap gap-3 text-xs">
-                <div className="flex items-center gap-1">
-                  <div className="size-2 bg-[var(--chart-success)]" />
-                  <span>
-                    {'Passed'} ({stat.passedTests})
-                  </span>
+              <T>
+                <div className="text-muted-foreground flex flex-wrap gap-3 text-xs">
+                  <div className="flex items-center gap-1">
+                    <div className="size-2 bg-[var(--chart-success)]" />
+                    <span>
+                      Passed (<Var>{stat.passedTests}</Var>)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="size-2 bg-[hsl(var(--destructive))]" />
+                    <span>
+                      Failed (<Var>{stat.failedTests}</Var>)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="size-2 bg-[hsl(var(--muted-foreground))]" />
+                    <span>Unsupported (<Var>{stat.unsupportedTests}</Var>)</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <div className="size-2 bg-[hsl(var(--destructive))]" />
-                  <span>
-                    {'Failed'} ({stat.failedTests})
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="size-2 bg-[hsl(var(--muted-foreground))]" />
-                  <span>Unsupported ({stat.unsupportedTests})</span>
-                </div>
-              </div>
+              </T>
             </div>
           ))}
         </div>

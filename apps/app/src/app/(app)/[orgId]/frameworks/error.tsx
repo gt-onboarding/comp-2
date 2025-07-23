@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { T } from 'gt-next';
 
 export default function ErrorPage({
   error,
@@ -15,10 +16,14 @@ export default function ErrorPage({
 
   return (
     <div>
-      <h2>Something went wrong!</h2>
-      <button onClick={reset} type="button">
-        Try again
-      </button>
+      <T>
+        <h2>Something went wrong!</h2>
+      </T>
+      <T>
+        <button onClick={reset} type="button">
+          Try again
+        </button>
+      </T>
     </div>
   );
 }

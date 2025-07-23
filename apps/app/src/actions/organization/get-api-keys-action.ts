@@ -4,6 +4,7 @@ import type { ActionResponse } from '@/actions/types';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { headers } from 'next/headers';
+import { getGT } from 'gt-next/server';
 
 export const getApiKeysAction = async (): Promise<
   ActionResponse<
@@ -18,6 +19,7 @@ export const getApiKeysAction = async (): Promise<
   >
 > => {
   try {
+    const t = await getGT();
     const session = await auth.api.getSession({
       headers: await headers(),
     });
@@ -27,7 +29,7 @@ export const getApiKeysAction = async (): Promise<
         success: false,
         error: {
           code: 'UNAUTHORIZED',
-          message: 'You must be logged in to perform this action',
+          message: t('You must be logged in to perform this action'),
         },
       };
     }
@@ -61,11 +63,12 @@ export const getApiKeysAction = async (): Promise<
     };
   } catch (error) {
     console.error('Error fetching API keys:', error);
+    const t = await getGT();
     return {
       success: false,
       error: {
         code: 'INTERNAL_ERROR',
-        message: 'An error occurred while fetching API keys',
+        message: t('An error occurred while fetching API keys'),
       },
     };
   }

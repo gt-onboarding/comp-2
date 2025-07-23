@@ -6,6 +6,7 @@ import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-tabl
 import { type RiskRegisterType, useColumns as getColumns } from './columns';
 import { DataTableHeader } from './data-table-header';
 import { DataTablePagination } from './data-table-pagination';
+import { T } from 'gt-next';
 
 interface DataTableProps<TData, TValue> {
   columnHeaders: {
@@ -67,7 +68,7 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                <T>No results.</T>
               </TableCell>
             </TableRow>
           )}

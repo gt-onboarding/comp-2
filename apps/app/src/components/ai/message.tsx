@@ -13,6 +13,7 @@ import { ErrorFallback } from '../error-fallback';
 import { LogoSpinner } from '../logo-spinner';
 import { MemoizedReactMarkdown } from '../markdown';
 import { ChatAvatar } from './chat-avatar';
+import { T } from 'gt-next';
 
 interface ToolInvocation {
   toolName: string;
@@ -69,7 +70,7 @@ export function ReasoningMessagePart({ part, isReasoning }: ReasoningMessagePart
             <ChatAvatar participantType="assistant" aria-label="Assistant" />
           </div>
           <div className="ml-4 flex-1 overflow-hidden pl-2 text-xs">
-            <div className="font-medium">Reasoning</div>
+            <T><div className="font-medium">Reasoning</div></T>
             <div className="mt-2 animate-spin">
               <LogoSpinner size={16} />
             </div>
@@ -82,7 +83,7 @@ export function ReasoningMessagePart({ part, isReasoning }: ReasoningMessagePart
           </div>
           <div className="ml-4 flex-1 overflow-hidden pl-2 text-xs">
             <div className="flex items-center gap-2">
-              <div className="font-medium">Reasoned for a few seconds</div>
+              <T><div className="font-medium">Reasoned for a few seconds</div></T>
               <button
                 type="button"
                 className={cn(

@@ -23,6 +23,7 @@ import {
 } from '@comp/ui/card';
 import { Input } from '@comp/ui/input';
 import { Label } from '@comp/ui/label';
+import { T, useGT } from 'gt-next';
 import { Loader2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { redirect } from 'next/navigation';
@@ -31,13 +32,14 @@ import { toast } from 'sonner';
 
 export function DeleteOrganization({ organizationId }: { organizationId: string }) {
   const [value, setValue] = useState('');
+  const t = useGT();
   const deleteOrganization = useAction(deleteOrganizationAction, {
     onSuccess: () => {
-      toast.success('Organization deleted');
+      toast.success(t('Organization deleted'));
       redirect('/');
     },
     onError: () => {
-      toast.error('Error deleting organization');
+      toast.error(t('Error deleting organization'));
     },
   });
 
@@ -45,13 +47,11 @@ export function DeleteOrganization({ organizationId }: { organizationId: string 
     <Card className="border-destructive border">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle>{'Delete organization'}</CardTitle>
+          <CardTitle><T>Delete organization</T></CardTitle>
         </div>
         <CardDescription>
           <div className="max-w-[600px]">
-            {
-              'Permanently remove your organization and all of its contents from the Comp AI platform. This action is not reversible - please continue with caution.'
-            }
+            <T>Permanently remove your organization and all of its contents from the Comp AI platform. This action is not reversible - please continue with caution.</T>
           </div>
         </CardDescription>
       </CardHeader>
@@ -62,26 +62,24 @@ export function DeleteOrganization({ organizationId }: { organizationId: string 
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="destructive" size="sm" className="hover:bg-destructive/90">
-              {'Delete'}
+              <T>Delete</T>
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{'Are you absolutely sure?'}</AlertDialogTitle>
+              <AlertDialogTitle><T>Are you absolutely sure?</T></AlertDialogTitle>
               <AlertDialogDescription>
-                {
-                  'This action cannot be undone. This will permanently delete your organization and remove your data from our servers.'
-                }
+                <T>This action cannot be undone. This will permanently delete your organization and remove your data from our servers.</T>
               </AlertDialogDescription>
             </AlertDialogHeader>
 
             <div className="mt-2 flex flex-col gap-2">
-              <Label htmlFor="confirm-delete">{"Type 'delete' to confirm"}</Label>
+              <Label htmlFor="confirm-delete"><T>Type 'delete' to confirm</T></Label>
               <Input id="confirm-delete" value={value} onChange={(e) => setValue(e.target.value)} />
             </div>
 
             <AlertDialogFooter className="mt-4">
-              <AlertDialogCancel>{'Cancel'}</AlertDialogCancel>
+              <AlertDialogCancel><T>Cancel</T></AlertDialogCancel>
               <AlertDialogAction
                 onClick={() =>
                   deleteOrganization.execute({
@@ -95,7 +93,7 @@ export function DeleteOrganization({ organizationId }: { organizationId: string 
                 {deleteOrganization.status === 'executing' ? (
                   <Loader2 className="mr-1 h-4 w-4 animate-spin" />
                 ) : null}
-                {'Delete'}
+                <T>Delete</T>
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

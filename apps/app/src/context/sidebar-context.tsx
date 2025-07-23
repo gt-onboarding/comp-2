@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useGT } from 'gt-next';
 
 interface SidebarContextType {
   isCollapsed: boolean;
@@ -31,9 +32,10 @@ export function SidebarProvider({
 }
 
 export function useSidebar() {
+  const t = useGT();
   const context = useContext(SidebarContext);
   if (context === undefined) {
-    throw new Error('useSidebar must be used within a SidebarProvider');
+    throw new Error(t('useSidebar must be used within a SidebarProvider'));
   }
   return context;
 }

@@ -8,6 +8,7 @@ import {
   CommandList,
 } from '@comp/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@comp/ui/popover';
+import { T, useGT, Var } from 'gt-next';
 import { Check } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 
@@ -43,6 +44,7 @@ export function PropertySelector<T>({
   unassignLabel = 'Unassigned',
 }: PropertySelectorProps<T>) {
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const t = useGT();
 
   return (
     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
@@ -51,9 +53,11 @@ export function PropertySelector<T>({
       </PopoverTrigger>
       <PopoverContent className={`${contentWidth} p-0`} side="left">
         <Command>
-          <CommandInput placeholder={searchPlaceholder} />
+          <CommandInput placeholder={t('Search...')} />
           <CommandList>
-            <CommandEmpty>{emptyText}</CommandEmpty>
+            <CommandEmpty>
+              <T><Var>{emptyText}</Var></T>
+            </CommandEmpty>
             <CommandGroup>
               {/* Optional Unassign Item */}
               {allowUnassign && (
@@ -71,7 +75,9 @@ export function PropertySelector<T>({
                       value === null || value === undefined ? 'opacity-100' : 'opacity-0',
                     )}
                   />
-                  <span className="text-muted-foreground">{unassignLabel}</span>
+                  <span className="text-muted-foreground">
+                    <T><Var>{unassignLabel}</Var></T>
+                  </span>
                 </CommandItem>
               )}
               {/* Dynamic Options */}

@@ -5,6 +5,7 @@ import { Button } from '@comp/ui/button';
 import { Icons } from '@comp/ui/icons';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { T } from 'gt-next';
 
 export function GithubSignIn({
   inviteCode,
@@ -48,7 +49,7 @@ export function GithubSignIn({
       ) : (
         <>
           <Icons.Github className="h-4 w-4" />
-          Continue with GitHub
+          <T>Continue with GitHub</T>
         </>
       )}
     </Button>

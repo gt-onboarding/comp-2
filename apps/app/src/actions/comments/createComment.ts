@@ -5,6 +5,7 @@ import { auth } from '@/utils/auth';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { db } from '@comp/db';
 import { AttachmentEntityType, CommentEntityType } from '@comp/db/types';
+import { getGT } from 'gt-next/server';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod';
@@ -56,12 +57,14 @@ const createCommentSchema = z
   );
 
 export const createComment = async (input: z.infer<typeof createCommentSchema>) => {
+  const t = await getGT();
+  
   // Parse and validate the input
   const parseResult = createCommentSchema.safeParse(input);
   if (!parseResult.success) {
     return {
       success: false,
-      error: parseResult.error.errors[0]?.message || 'Invalid input',
+      error: parseResult.error.errors[0]?.message || t('Invalid input'),
       data: null,
     };
   }
@@ -75,7 +78,7 @@ export const createComment = async (input: z.infer<typeof createCommentSchema>) 
   if (!orgId) {
     return {
       success: false,
-      error: 'Not authorized - no active organization found.',
+      error: t('Not authorized - no active organization found.'),
       data: null,
     };
   }
@@ -84,7 +87,7 @@ export const createComment = async (input: z.infer<typeof createCommentSchema>) 
     console.error('Entity ID missing after validation in createComment');
     return {
       success: false,
-      error: 'Internal error: Entity ID missing.',
+      error: t('Internal error: Entity ID missing.'),
       data: null,
     };
   }
@@ -102,7 +105,7 @@ export const createComment = async (input: z.infer<typeof createCommentSchema>) 
     if (!member) {
       return {
         success: false,
-        error: 'Not authorized - member not found in organization.',
+        error: t('Not authorized - member not found in organization.'),
         data: null,
       };
     }
@@ -182,7 +185,7 @@ export const createComment = async (input: z.infer<typeof createCommentSchema>) 
     console.error('Failed to create comment with attachments transaction:', error);
     return {
       success: false,
-      error: 'Failed to save comment and link attachments.', // More specific error
+      error: t('Failed to save comment and link attachments.'),
       data: null,
     };
   }

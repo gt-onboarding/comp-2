@@ -3,6 +3,7 @@
 import { getApiKeysAction } from '@/actions/organization/get-api-keys-action';
 import { useCallback } from 'react';
 import useSWR from 'swr';
+import { useGT } from 'gt-next';
 
 export interface ApiKey {
   id: string;
@@ -17,14 +18,15 @@ export interface ApiKey {
  * Custom hook for fetching API keys
  */
 export function useApiKeys() {
+  const t = useGT();
   // Fetcher function that calls the server action
   const fetcher = useCallback(async () => {
     const result = await getApiKeysAction();
     if (result.success && result.data) {
       return result.data;
     }
-    throw new Error('Failed to fetch API keys');
-  }, []);
+    throw new Error(t('Failed to fetch API keys'));
+  }, [t]);
 
   // Use SWR for data fetching with caching and revalidation
   const {

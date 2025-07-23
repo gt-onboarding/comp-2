@@ -8,6 +8,7 @@ import {
 import { getFleetInstance } from '@/lib/fleet';
 import { db } from '@comp/db';
 import type { EmployeeTrainingVideoCompletion, Member } from '@comp/db/types';
+import { getGT } from 'gt-next/server';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
@@ -58,8 +59,9 @@ export default async function EmployeeDetailsPage({
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
   return {
-    title: 'Employee Details',
+    title: t('Employee Details'),
   };
 }
 

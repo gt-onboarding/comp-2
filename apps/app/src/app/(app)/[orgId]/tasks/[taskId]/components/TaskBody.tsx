@@ -6,6 +6,7 @@ import { AttachmentEntityType } from '@comp/db/types';
 import { Button } from '@comp/ui/button';
 import { Label } from '@comp/ui/label';
 import { Textarea } from '@comp/ui/textarea';
+import { T, useGT } from 'gt-next';
 import { Loader2, Paperclip, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
@@ -37,6 +38,7 @@ export function TaskBody({
   onAttachmentsChange,
 }: TaskBodyProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const t = useGT();
   const [isUploading, setIsUploading] = useState(false);
   const [busyAttachmentId, setBusyAttachmentId] = useState<string | null>(null);
   const router = useRouter();
@@ -59,7 +61,7 @@ export function TaskBody({
           const MAX_FILE_SIZE_MB = 5;
           const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
           if (file.size > MAX_FILE_SIZE_BYTES) {
-            toast.error(`File "${file.name}" exceeds the ${MAX_FILE_SIZE_MB}MB limit.`);
+            toast.error(t('File "{fileName}" exceeds the {maxSize}MB limit.', { fileName: file.name, maxSize: MAX_FILE_SIZE_MB }));
             continue;
           }
 
@@ -67,7 +69,7 @@ export function TaskBody({
           reader.onloadend = async () => {
             const base64Data = (reader.result as string)?.split(',')[1];
             if (!base64Data) {
-              toast.error('Failed to read file data.');
+              toast.error(t('Failed to read file data.'));
               resetState();
               return;
             }
@@ -82,12 +84,12 @@ export function TaskBody({
             if (success && data) {
               uploadedAttachments.push(data);
             } else {
-              const errorMessage = error || 'Failed to process attachment after upload.';
+              const errorMessage = error || t('Failed to process attachment after upload.');
               toast.error(String(errorMessage));
             }
           };
           reader.onerror = () => {
-            toast.error('Error reading file.');
+            toast.error(t('Error reading file.'));
             resetState();
           };
           reader.readAsDataURL(file);
@@ -123,10 +125,10 @@ export function TaskBody({
       if (success && data?.signedUrl) {
         window.open(data.signedUrl, '_blank');
       } else {
-        toast.error(String(error || 'Failed to get attachment URL.'));
+        toast.error(String(error || t('Failed to get attachment URL.')));
       }
     } catch (err) {
-      toast.error('An unexpected error occurred while fetching the attachment URL.');
+      toast.error(t('An unexpected error occurred while fetching the attachment URL.'));
     } finally {
       setBusyAttachmentId(null);
     }
@@ -152,13 +154,13 @@ export function TaskBody({
         value={title}
         onChange={onTitleChange}
         className="h-auto shrink-0 border-none bg-transparent p-0 md:text-lg font-semibold tracking-tight shadow-none focus-visible:ring-0"
-        placeholder="Task Title"
+        placeholder={t('Task Title')}
         disabled={disabled || isUploadingFile || !!busyAttachmentId}
       />
       <Textarea
         value={description}
         onChange={onDescriptionChange}
-        placeholder="Add description..."
+        placeholder={t('Add description...')}
         className="text-muted-foreground text-md min-h-[80px] resize-none border-none p-0 shadow-none focus-visible:ring-0"
         disabled={disabled || isUploadingFile || !!busyAttachmentId}
       />
@@ -172,7 +174,9 @@ export function TaskBody({
       />
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="flex-1 text-sm font-medium">Attachments</Label>
+          <Label className="flex-1 text-sm font-medium">
+            <T>Attachments</T>
+          </Label>
           {attachments.length === 0 && (
             <Button
               variant="ghost"
@@ -180,7 +184,7 @@ export function TaskBody({
               onClick={triggerFileInput}
               disabled={isUploadingFile || !!busyAttachmentId}
               className="text-muted-foreground hover:text-foreground flex h-7 w-7 items-center justify-center"
-              aria-label="Add attachment"
+              aria-label={t('Add attachment')}
             >
               {isUploadingFile ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -209,10 +213,12 @@ export function TaskBody({
           </div>
         ) : (
           !isUploadingFile && (
-            <p className="text-muted-foreground pt-1 text-sm italic">
-              No attachments yet. Click the <Paperclip className="inline h-4 w-4" /> icon above to
-              add one.
-            </p>
+            <T>
+              <p className="text-muted-foreground pt-1 text-sm italic">
+                No attachments yet. Click the <Paperclip className="inline h-4 w-4" /> icon above to
+                add one.
+              </p>
+            </T>
           )
         )}
 
@@ -222,14 +228,14 @@ export function TaskBody({
             onClick={triggerFileInput}
             disabled={isUploadingFile || !!busyAttachmentId}
             className="mt-2 w-full justify-center gap-2"
-            aria-label="Add attachment"
+            aria-label={t('Add attachment')}
           >
             {isUploadingFile ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <Plus className="h-4 w-4" />
             )}
-            Add Attachment
+            <T>Add Attachment</T>
           </Button>
         )}
       </div>

@@ -3,8 +3,10 @@
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { headers } from 'next/headers';
+import { getGT } from 'gt-next/server';
 
 export async function getOrganizations() {
+  const t = await getGT();
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -12,7 +14,7 @@ export async function getOrganizations() {
   const user = session?.user;
 
   if (!user) {
-    throw new Error('Not authenticated');
+    throw new Error(t('Not authenticated'));
   }
 
   const memberOrganizations = await db.member.findMany({

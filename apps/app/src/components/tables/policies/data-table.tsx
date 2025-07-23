@@ -1,6 +1,7 @@
 'use client';
 
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { T } from 'gt-next';
 import { Suspense } from 'react';
 
 import { cn } from '@comp/ui/cn';
@@ -69,7 +70,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  <T>No results.</T>
                 </TableCell>
               </TableRow>
             )}

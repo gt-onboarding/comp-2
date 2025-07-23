@@ -5,7 +5,8 @@ import type { ActionResponse } from '@/actions/types';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { headers } from 'next/headers';
-import { appErrors, updatePolicySchema } from '../types';
+import { getGT } from 'gt-next/server';
+import { getAppErrors, updatePolicySchema } from '../types';
 
 // Helper function to clean the content by removing function references
 function cleanContent(content: any): any {
@@ -39,6 +40,8 @@ export const updatePolicy = authActionClient
   })
   .action(async ({ parsedInput }): Promise<ActionResponse> => {
     const { policyId, content, status } = parsedInput;
+    const t = await getGT();
+    const appErrors = getAppErrors(t);
 
     const session = await auth.api.getSession({
       headers: await headers(),

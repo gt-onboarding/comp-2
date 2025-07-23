@@ -14,6 +14,7 @@ import { tasks } from '@trigger.dev/sdk/v3';
 import { revalidatePath } from 'next/cache';
 import { cookies, headers } from 'next/headers';
 import { companyDetailsSchema, steps } from '../lib/constants';
+import { getGT } from 'gt-next/server';
 
 export const createOrganization = authActionClientWithoutOrg
   .inputSchema(companyDetailsSchema)
@@ -26,6 +27,7 @@ export const createOrganization = authActionClientWithoutOrg
   })
   .action(async ({ parsedInput, ctx }) => {
     try {
+      const t = await getGT();
       const session = await auth.api.getSession({
         headers: await headers(),
       });
@@ -33,7 +35,7 @@ export const createOrganization = authActionClientWithoutOrg
       if (!session) {
         return {
           success: false,
-          error: 'Not authorized.',
+          error: t('Not authorized.'),
         };
       }
 
@@ -225,7 +227,7 @@ export const createOrganization = authActionClientWithoutOrg
 
       return {
         success: false,
-        error: 'Failed to create or update organization structure',
+        error: t('Failed to create or update organization structure'),
       };
     }
   });

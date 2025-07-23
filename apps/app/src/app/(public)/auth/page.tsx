@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from '@comp/ui/card';
 import { Icons } from '@comp/ui/icons';
+import { T } from 'gt-next';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import Link from 'next/link';
@@ -49,33 +50,35 @@ export default async function Page({
           <CardHeader className="text-center space-y-3 pt-10">
             <Icons.Logo className="h-10 w-10 mx-auto" />
             <CardTitle className="text-2xl tracking-tight text-card-foreground">
-              Get Started with Comp AI
+              <T>Get Started with Comp AI</T>
             </CardTitle>
             <CardDescription className="text-base text-muted-foreground px-4">
-              {`Automate SOC 2, ISO 27001 and GDPR compliance with AI.`}
+              <T>Automate SOC 2, ISO 27001 and GDPR compliance with AI.</T>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 pb-6 px-8">
             <LoginForm inviteCode={inviteCode} showGoogle={showGoogle} showGithub={showGithub} />
           </CardContent>
           <CardFooter className="pb-10">
-            <p className="w-full px-6 text-center text-xs text-muted-foreground">
-              By clicking continue, you acknowledge that you have read and agree to the{' '}
-              <Link
-                href="https://trycomp.ai/terms-and-conditions"
-                className="underline hover:text-primary"
-              >
-                Terms and Conditions
-              </Link>{' '}
-              and{' '}
-              <Link
-                href="https://trycomp.ai/privacy-policy"
-                className="underline hover:text-primary"
-              >
-                Privacy Policy
-              </Link>
-              .
-            </p>
+            <T>
+              <p className="w-full px-6 text-center text-xs text-muted-foreground">
+                By clicking continue, you acknowledge that you have read and agree to the{' '}
+                <Link
+                  href="https://trycomp.ai/terms-and-conditions"
+                  className="underline hover:text-primary"
+                >
+                  Terms and Conditions
+                </Link>{' '}
+                and{' '}
+                <Link
+                  href="https://trycomp.ai/privacy-policy"
+                  className="underline hover:text-primary"
+                >
+                  Privacy Policy
+                </Link>
+                .
+              </p>
+            </T>
           </CardFooter>
         </Card>
       </main>

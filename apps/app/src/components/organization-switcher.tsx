@@ -4,6 +4,7 @@ import { changeOrganizationAction } from '@/actions/change-organization';
 import type { Organization } from '@comp/db/types';
 import { Button } from '@comp/ui/button';
 import { cn } from '@comp/ui/cn';
+import { useGT, T } from 'gt-next';
 import {
   Command,
   CommandEmpty,
@@ -88,6 +89,7 @@ export function OrganizationSwitcher({
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [pendingOrgId, setPendingOrgId] = useState<string | null>(null);
+  const t = useGT();
 
   const [showOrganizationSwitcher, setShowOrganizationSwitcher] = useQueryState(
     'showOrganizationSwitcher',
@@ -168,17 +170,17 @@ export function OrganizationSwitcher({
           </Button>
         </DialogTrigger>
         <DialogContent className="p-0 sm:max-w-[400px]">
-          <DialogTitle className="sr-only">Select Organization</DialogTitle>
+          <T><DialogTitle className="sr-only">Select Organization</DialogTitle></T>
           <Command>
             <div className="flex items-center border-b px-3">
               <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
               <CommandInput
-                placeholder="Search organization..."
+                placeholder={t('Search organization...')}
                 className="placeholder:text-muted-foreground flex h-11 w-full rounded-md border-0 bg-transparent py-3 text-sm outline-hidden focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
             <CommandList>
-              <CommandEmpty>No results found</CommandEmpty>
+              <T><CommandEmpty>No results found</CommandEmpty></T>
               <CommandGroup className="max-h-[300px] overflow-y-auto">
                 {organizations.map((org) => (
                   <CommandItem
@@ -217,7 +219,7 @@ export function OrganizationSwitcher({
                   className="flex items-center gap-2"
                 >
                   <Plus className="h-4 w-4" />
-                  Create Organization
+                  <T>Create Organization</T>
                 </CommandItem>
               </CommandGroup>
             </CommandList>

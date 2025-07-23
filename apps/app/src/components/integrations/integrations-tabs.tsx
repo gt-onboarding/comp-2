@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@comp/ui/cn';
+import { T, useGT, Var } from 'gt-next';
 import { useQueryState } from 'nuqs';
 
 const tabs = [
@@ -15,6 +16,7 @@ const tabs = [
 ];
 
 export function AppsTabs() {
+  const t = useGT();
   const [currentTab, setTab] = useQueryState('tab', {
     shallow: false,
     defaultValue: 'all',
@@ -33,7 +35,9 @@ export function AppsTabs() {
             currentTab === tab.value ? 'text-foreground' : 'text-muted-foreground',
           )}
         >
-          <span>{tab.name}</span>
+          <T>
+            <span><Var>{tab.name}</Var></span>
+          </T>
           {currentTab === tab.value && (
             <span className="bg-primary absolute right-0 bottom-0 left-0 h-0.5" />
           )}

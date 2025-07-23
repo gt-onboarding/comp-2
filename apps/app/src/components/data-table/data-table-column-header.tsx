@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@comp/ui/dropdown-menu';
+import { T } from 'gt-next';
 
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.ComponentProps<typeof DropdownMenuTrigger> {
@@ -77,7 +78,7 @@ export function DataTableColumnHeader<TData, TValue>({
             >
               <div className="flex items-center gap-2">
                 <ChevronUp className="size-4" />
-                Ascend
+                <T>Ascend</T>
               </div>
             </DropdownMenuCheckboxItem>
             <DropdownMenuCheckboxItem
@@ -99,7 +100,7 @@ export function DataTableColumnHeader<TData, TValue>({
             >
               <div className="flex items-center gap-2">
                 <ChevronDown className="size-4" />
-                Descend
+                <T>Descend</T>
               </div>
             </DropdownMenuCheckboxItem>
             {(() => {
@@ -118,7 +119,7 @@ export function DataTableColumnHeader<TData, TValue>({
                     >
                       <div className="flex items-center gap-2">
                         <X className="size-4" />
-                        Reset
+                        <T>Reset</T>
                       </div>
                     </DropdownMenuItem>
                   );

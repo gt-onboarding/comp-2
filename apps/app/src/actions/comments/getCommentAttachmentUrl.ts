@@ -6,6 +6,7 @@ import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { db } from '@comp/db';
 import { AttachmentEntityType } from '@comp/db/types';
+import { getGT } from 'gt-next/server';
 import { headers } from 'next/headers';
 import { z } from 'zod';
 
@@ -14,6 +15,8 @@ const schema = z.object({
 });
 
 export const getCommentAttachmentUrl = async (input: z.infer<typeof schema>) => {
+  const t = await getGT();
+  
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -23,7 +26,7 @@ export const getCommentAttachmentUrl = async (input: z.infer<typeof schema>) => 
   if (!organizationId) {
     return {
       success: false,
-      error: 'Not authorized - no organization found',
+      error: t('Not authorized - no organization found'),
     } as const;
   }
 
@@ -39,7 +42,7 @@ export const getCommentAttachmentUrl = async (input: z.infer<typeof schema>) => 
     if (!attachment) {
       return {
         success: false,
-        error: 'Attachment not found or access denied',
+        error: t('Attachment not found or access denied'),
       } as const;
     }
 
@@ -48,7 +51,7 @@ export const getCommentAttachmentUrl = async (input: z.infer<typeof schema>) => 
       console.error('Attachment requested is not a comment attachment', attachmentId);
       return {
         success: false,
-        error: 'Invalid attachment type requested',
+        error: t('Invalid attachment type requested'),
       } as const;
     }
 
@@ -68,7 +71,7 @@ export const getCommentAttachmentUrl = async (input: z.infer<typeof schema>) => 
       );
       return {
         success: false,
-        error: 'Attachment link error (Comment not found)',
+        error: t('Attachment link error (Comment not found)'),
       } as const;
     }
 
@@ -80,7 +83,7 @@ export const getCommentAttachmentUrl = async (input: z.infer<typeof schema>) => 
       console.error('Error extracting S3 key for comment attachment:', attachmentId, extractError);
       return {
         success: false,
-        error: 'Could not process attachment URL',
+        error: t('Could not process attachment URL'),
       } as const;
     }
 
@@ -99,7 +102,7 @@ export const getCommentAttachmentUrl = async (input: z.infer<typeof schema>) => 
         console.error('getSignedUrl returned undefined for key:', key);
         return {
           success: false,
-          error: 'Failed to generate signed URL',
+          error: t('Failed to generate signed URL'),
         } as const;
       }
 
@@ -108,14 +111,14 @@ export const getCommentAttachmentUrl = async (input: z.infer<typeof schema>) => 
       console.error('S3 getSignedUrl Error:', s3Error);
       return {
         success: false,
-        error: 'Could not generate access URL for the file',
+        error: t('Could not generate access URL for the file'),
       } as const;
     }
   } catch (dbError) {
     console.error('Database Error fetching comment attachment:', dbError);
     return {
       success: false,
-      error: 'Failed to retrieve attachment details',
+      error: t('Failed to retrieve attachment details'),
     } as const;
   }
 };

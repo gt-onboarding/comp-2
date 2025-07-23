@@ -5,17 +5,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { useGT } from 'gt-next';
 import { updateEmployeeDepartment } from '../actions/update-department';
 
-const DEPARTMENTS = [
-  { value: 'admin', label: 'Admin' },
-  { value: 'gov', label: 'Governance' },
-  { value: 'hr', label: 'HR' },
-  { value: 'it', label: 'IT' },
-  { value: 'itsm', label: 'IT Service Management' },
-  { value: 'qms', label: 'Quality Management' },
-  { value: 'none', label: 'None' },
-];
+function useDepartments() {
+  const t = useGT();
+  return [
+    { value: 'admin', label: t('Admin') },
+    { value: 'gov', label: t('Governance') },
+    { value: 'hr', label: t('HR') },
+    { value: 'it', label: t('IT') },
+    { value: 'itsm', label: t('IT Service Management') },
+    { value: 'qms', label: t('Quality Management') },
+    { value: 'none', label: t('None') },
+  ];
+}
 
 interface EditableDepartmentProps {
   employeeId: string;
@@ -29,14 +33,17 @@ export function EditableDepartment({
   onSuccess,
 }: EditableDepartmentProps) {
   const [department, setDepartment] = useState(currentDepartment);
+  const departments = useDepartments();
 
+  const t = useGT();
+  
   const { execute, status } = useAction(updateEmployeeDepartment, {
     onSuccess: () => {
-      toast.success('Department updated successfully');
+      toast.success(t('Department updated successfully'));
       onSuccess?.();
     },
     onError: (error) => {
-      toast.error(error?.error?.serverError || 'Failed to update department');
+      toast.error(error?.error?.serverError || t('Failed to update department'));
     },
   });
 
@@ -48,10 +55,10 @@ export function EditableDepartment({
     <div>
       <Select value={department} onValueChange={(value) => setDepartment(value as Departments)}>
         <SelectTrigger className="h-8 w-full">
-          <SelectValue placeholder="Select department" />
+          <SelectValue placeholder={t('Select department')} />
         </SelectTrigger>
         <SelectContent>
-          {DEPARTMENTS.map((dept) => (
+          {departments.map((dept) => (
             <SelectItem key={dept.value} value={dept.value}>
               {dept.label}
             </SelectItem>

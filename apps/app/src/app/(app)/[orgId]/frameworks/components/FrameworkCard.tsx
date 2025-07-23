@@ -5,6 +5,7 @@ import { Badge } from '@comp/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
 import { cn } from '@comp/ui/cn';
 import { Progress } from '@comp/ui/progress';
+import { useGT } from 'gt-next';
 import { BarChart3, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -22,25 +23,26 @@ export function FrameworkCard({
   tasks,
 }: FrameworkCardProps) {
   const { orgId } = useParams<{ orgId: string }>();
+  const t = useGT();
 
   const getStatusBadge = (score: number) => {
     if (score >= 95)
       return {
-        label: 'Compliant',
+        label: t('Compliant'),
         variant: 'default' as const,
       };
     if (score >= 80)
       return {
-        label: 'Nearly Compliant',
+        label: t('Nearly Compliant'),
         variant: 'secondary' as const,
       };
     if (score >= 50)
       return {
-        label: 'In Progress',
+        label: t('In Progress'),
         variant: 'outline' as const,
       };
     return {
-      label: 'Needs Attention',
+      label: t('Needs Attention'),
       variant: 'destructive' as const,
     };
   };
@@ -120,7 +122,7 @@ export function FrameworkCard({
             <div className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-1">
                 <BarChart3 className="text-muted-foreground h-3 w-3" />
-                <span className="text-muted-foreground">Progress</span>
+                <span className="text-muted-foreground">{t('Progress')}</span>
               </div>
               <span className={cn('font-medium tabular-nums', getComplianceColor(complianceScore))}>
                 {complianceScore}%
@@ -131,15 +133,15 @@ export function FrameworkCard({
 
           {/* Stats */}
           <div className="text-muted-foreground flex items-center justify-between text-xs">
-            <span>{compliantControlsCount} complete</span>
-            <span>{inProgressCount} active</span>
-            <span>{controlsCount} total</span>
+            <span>{t('{count} complete', { count: compliantControlsCount })}</span>
+            <span>{t('{count} active', { count: inProgressCount })}</span>
+            <span>{t('{count} total', { count: controlsCount })}</span>
           </div>
 
           {/* Footer */}
           <div className="text-muted-foreground flex items-center border-t pt-2 text-xs">
             <Clock className="mr-1 h-3 w-3" />
-            <span>Updated {lastActivityDate}</span>
+            <span>{t('Updated {date}', { date: lastActivityDate })}</span>
           </div>
         </CardContent>
       </Card>

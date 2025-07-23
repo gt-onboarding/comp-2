@@ -1,3 +1,4 @@
+import { withGTConfig } from "gt-next/config";
 import type { NextConfig } from 'next';
 import './src/env.mjs';
 
@@ -6,47 +7,47 @@ const config: NextConfig = {
   reactStrictMode: true,
   turbopack: {
     resolveAlias: {
-      underscore: 'lodash',
-    },
+      underscore: 'lodash'
+    }
   },
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
+    {
+      protocol: 'https',
+      hostname: '**'
+    }]
+
   },
   transpilePackages: ['@comp/ui'],
   logging: {
     fetches: {
-      fullUrl: process.env.LOG_FETCHES === 'true',
-    },
+      fullUrl: process.env.LOG_FETCHES === 'true'
+    }
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: '15mb',
+      bodySizeLimit: '15mb'
     },
     nodeMiddleware: true,
-    authInterrupts: true,
+    authInterrupts: true
   },
   async rewrites() {
     return [
-      {
-        source: '/ingest/static/:path*',
-        destination: 'https://us-assets.i.posthog.com/static/:path*',
-      },
-      {
-        source: '/ingest/:path*',
-        destination: 'https://us.i.posthog.com/:path*',
-      },
-      {
-        source: '/ingest/decide',
-        destination: 'https://us.i.posthog.com/decide',
-      },
-    ];
+    {
+      source: '/ingest/static/:path*',
+      destination: 'https://us-assets.i.posthog.com/static/:path*'
+    },
+    {
+      source: '/ingest/:path*',
+      destination: 'https://us.i.posthog.com/:path*'
+    },
+    {
+      source: '/ingest/decide',
+      destination: 'https://us.i.posthog.com/decide'
+    }];
+
   },
-  skipTrailingSlashRedirect: true,
+  skipTrailingSlashRedirect: true
 };
 
-export default config;
+export default withGTConfig(config, {});

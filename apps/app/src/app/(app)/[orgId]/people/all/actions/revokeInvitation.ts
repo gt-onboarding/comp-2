@@ -3,6 +3,7 @@
 import { db } from '@comp/db';
 // Remove unused Role import if not needed elsewhere
 // import { Role } from "@comp/db/types";
+import { getGT } from 'gt-next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
 // Adjust safe-action import for colocalized structure
@@ -23,10 +24,11 @@ export const revokeInvitation = authActionClient
   })
   .inputSchema(revokeInvitationSchema)
   .action(async ({ parsedInput, ctx }): Promise<ActionResponse<{ revoked: boolean }>> => {
+    const t = await getGT();
     if (!ctx.session.activeOrganizationId) {
       return {
         success: false,
-        error: 'User does not have an organization',
+        error: t('User does not have an organization'),
       };
     }
 
@@ -45,7 +47,7 @@ export const revokeInvitation = authActionClient
       if (!invitation) {
         return {
           success: false,
-          error: 'Invitation not found or already accepted',
+          error: t('Invitation not found or already accepted'),
         };
       }
 
@@ -67,7 +69,7 @@ export const revokeInvitation = authActionClient
       console.error('Error revoking invitation:', error);
       return {
         success: false,
-        error: 'Failed to revoke invitation',
+        error: t('Failed to revoke invitation'),
       };
     }
   });

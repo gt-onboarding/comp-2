@@ -56,3 +56,18 @@ export const appErrors = {
     message: 'An unexpected error occurred',
   },
 } as const;
+
+export const getAppErrors = (t: (content: string) => string) => ({
+  NOT_FOUND: {
+    code: 'NOT_FOUND' as const,
+    message: t('Employee not found'),
+  },
+  UNAUTHORIZED: {
+    code: 'UNAUTHORIZED' as const,
+    message: t('You are not authorized to view this employee'),
+  },
+  UNEXPECTED_ERROR: {
+    code: 'UNEXPECTED_ERROR' as const,
+    message: t('An unexpected error occurred'),
+  },
+}) as const;

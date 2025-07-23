@@ -4,6 +4,7 @@
 
 import { authActionClient } from '@/actions/safe-action';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { createVendorTaskSchema } from '../schema';
 
@@ -24,7 +25,8 @@ export const createVendorTaskAction = authActionClient
     } = ctx;
 
     if (!user.id || !activeOrganizationId) {
-      throw new Error('Invalid user input');
+      const t = await getGT();
+      throw new Error(t('Invalid user input'));
     }
 
     try {

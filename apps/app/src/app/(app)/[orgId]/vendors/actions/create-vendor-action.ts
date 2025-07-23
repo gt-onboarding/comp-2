@@ -4,30 +4,35 @@ import type { ActionResponse } from '@/types/actions';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { type Vendor, VendorCategory, VendorStatus } from '@comp/db/types';
+import { getGT } from 'gt-next/server';
 import { createSafeActionClient } from 'next-safe-action';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod';
 
-const schema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  website: z.string().url('Must be a valid URL').optional(),
-  description: z.string().optional(),
-  category: z.nativeEnum(VendorCategory),
-  status: z.nativeEnum(VendorStatus).default(VendorStatus.not_assessed),
-  assigneeId: z.string().optional(),
-});
+const createSchema = async () => {
+  const t = await getGT();
+  return z.object({
+    name: z.string().min(1, t('Name is required')),
+    website: z.string().url(t('Must be a valid URL')).optional(),
+    description: z.string().optional(),
+    category: z.nativeEnum(VendorCategory),
+    status: z.nativeEnum(VendorStatus).default(VendorStatus.not_assessed),
+    assigneeId: z.string().optional(),
+  });
+};
 
 export const createVendorAction = createSafeActionClient()
-  .inputSchema(schema)
+  .inputSchema(createSchema)
   .action(async (input): Promise<ActionResponse<Vendor>> => {
     try {
+      const t = await getGT();
       const session = await auth.api.getSession({
         headers: await headers(),
       });
 
       if (!session?.session?.activeOrganizationId) {
-        throw new Error('Unauthorized');
+        throw new Error(t('Unauthorized'));
       }
 
       const vendor = await db.vendor.create({
@@ -45,9 +50,10 @@ export const createVendorAction = createSafeActionClient()
 
       return { success: true, data: vendor };
     } catch (error) {
+      const t = await getGT();
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to create vendor',
+        error: error instanceof Error ? error.message : t('Failed to create vendor'),
       };
     }
   });

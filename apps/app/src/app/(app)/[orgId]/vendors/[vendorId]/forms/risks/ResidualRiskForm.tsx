@@ -10,6 +10,7 @@ import { Impact, Likelihood } from '@prisma/client';
 import { useQueryState } from 'nuqs';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useGT, T } from 'gt-next';
 
 const formSchema = z.object({
   residualProbability: z.nativeEnum(Likelihood),
@@ -29,6 +30,7 @@ export function ResidualRiskForm({
   initialProbability = Likelihood.very_unlikely,
   initialImpact = Impact.insignificant,
 }: ResidualRiskFormProps) {
+  const t = useGT();
   const { toast } = useToast();
   const [_, setOpen] = useQueryState('residual-risk-sheet');
 
@@ -50,16 +52,16 @@ export function ResidualRiskForm({
       });
 
       toast({
-        title: 'Success',
-        description: 'Residual risk updated successfully',
+        title: t('Success'),
+        description: t('Residual risk updated successfully'),
       });
 
       setOpen('false');
     } catch (error) {
       console.error('Error submitting form:', error);
       toast({
-        title: 'Error',
-        description: 'An unexpected error occurred',
+        title: t('Error'),
+        description: t('An unexpected error occurred'),
         variant: 'destructive',
       });
     }
@@ -73,19 +75,19 @@ export function ResidualRiskForm({
           name="residualProbability"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{'Residual Probability'}</FormLabel>
+              <FormLabel><T>Residual Probability</T></FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={'Select a probability'} />
+                    <SelectValue placeholder={t('Select a probability')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value={Likelihood.very_likely}>{'Very Likely'}</SelectItem>
-                  <SelectItem value={Likelihood.likely}>{'Likely'}</SelectItem>
-                  <SelectItem value={Likelihood.possible}>{'Possible'}</SelectItem>
-                  <SelectItem value={Likelihood.unlikely}>{'Unlikely'}</SelectItem>
-                  <SelectItem value={Likelihood.very_unlikely}>{'Very Unlikely'}</SelectItem>
+                  <SelectItem value={Likelihood.very_likely}><T>Very Likely</T></SelectItem>
+                  <SelectItem value={Likelihood.likely}><T>Likely</T></SelectItem>
+                  <SelectItem value={Likelihood.possible}><T>Possible</T></SelectItem>
+                  <SelectItem value={Likelihood.unlikely}><T>Unlikely</T></SelectItem>
+                  <SelectItem value={Likelihood.very_unlikely}><T>Very Unlikely</T></SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -98,19 +100,19 @@ export function ResidualRiskForm({
           name="residualImpact"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{'Residual Impact'}</FormLabel>
+              <FormLabel><T>Residual Impact</T></FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={'Select an impact'} />
+                    <SelectValue placeholder={t('Select an impact')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value={Impact.insignificant}>{'Insignificant'}</SelectItem>
-                  <SelectItem value={Impact.minor}>{'Minor'}</SelectItem>
-                  <SelectItem value={Impact.moderate}>{'Moderate'}</SelectItem>
-                  <SelectItem value={Impact.major}>{'Major'}</SelectItem>
-                  <SelectItem value={Impact.severe}>{'Severe'}</SelectItem>
+                  <SelectItem value={Impact.insignificant}><T>Insignificant</T></SelectItem>
+                  <SelectItem value={Impact.minor}><T>Minor</T></SelectItem>
+                  <SelectItem value={Impact.moderate}><T>Moderate</T></SelectItem>
+                  <SelectItem value={Impact.major}><T>Major</T></SelectItem>
+                  <SelectItem value={Impact.severe}><T>Severe</T></SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -119,7 +121,7 @@ export function ResidualRiskForm({
         />
 
         <div className="flex justify-end">
-          <Button type="submit">{'Save'}</Button>
+          <Button type="submit"><T>Save</T></Button>
         </div>
       </form>
     </Form>

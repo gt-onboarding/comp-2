@@ -9,6 +9,7 @@ import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useQueryState } from 'nuqs';
+import { T, useGT } from 'gt-next';
 
 interface FAQ {
   questionKey: string;
@@ -38,6 +39,7 @@ export function AppOnboarding({
   sheetName,
   href,
 }: Props) {
+  const t = useGT();
   const [open, setOpen] = useQueryState(sheetName ?? 'sheet');
   const isOpen = Boolean(open);
   const { theme } = useTheme();
@@ -52,12 +54,16 @@ export function AppOnboarding({
                 <div>
                   <CardTitle className="flex items-center gap-2 text-2xl font-bold">
                     {title}
-                    <Badge variant="outline" className="text-xs">
-                      New
-                    </Badge>
-                    <Badge className="hidden self-start bg-blue-100 text-blue-800 sm:flex sm:shrink-0 sm:self-auto dark:bg-blue-900/30 dark:text-blue-400">
-                      Recommended
-                    </Badge>
+                    <T>
+                      <Badge variant="outline" className="text-xs">
+                        New
+                      </Badge>
+                    </T>
+                    <T>
+                      <Badge className="hidden self-start bg-blue-100 text-blue-800 sm:flex sm:shrink-0 sm:self-auto dark:bg-blue-900/30 dark:text-blue-400">
+                        Recommended
+                      </Badge>
+                    </T>
                   </CardTitle>
                   <CardDescription className="text-muted-foreground max-w-xl text-base">
                     {description}
@@ -75,7 +81,9 @@ export function AppOnboarding({
                 <div className="flex flex-col">
                   <div className="mb-4 flex items-center gap-2">
                     <BookOpen className="text-primary h-4 w-4" />
-                    <p className="text-md font-medium">{'Learn More'}</p>
+                    <T>
+                      <p className="text-md font-medium">Learn More</p>
+                    </T>
                   </div>
 
                   {faqs && faqs.length > 0 && (

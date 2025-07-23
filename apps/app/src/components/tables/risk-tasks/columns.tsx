@@ -7,6 +7,7 @@ import { Button } from '@comp/ui/button';
 import type { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { T, useGT } from 'gt-next';
 
 export type RiskTaskType = {
   id: string;
@@ -23,12 +24,13 @@ export type RiskTaskType = {
 
 export function useColumns(): ColumnDef<RiskTaskType>[] {
   const { orgId } = useParams<{ orgId: string }>();
+  const t = useGT();
 
   return [
     {
       id: 'title',
       accessorKey: 'title',
-      header: 'Tasks',
+      header: t('Tasks'),
       cell: ({ row }) => {
         return (
           <span className="truncate">
@@ -44,7 +46,7 @@ export function useColumns(): ColumnDef<RiskTaskType>[] {
     {
       id: 'status',
       accessorKey: 'status',
-      header: 'Status',
+      header: t('Status'),
       cell: ({ row }) => {
         const status = row.original.status;
 
@@ -58,7 +60,7 @@ export function useColumns(): ColumnDef<RiskTaskType>[] {
     {
       id: 'dueDate',
       accessorKey: 'dueDate',
-      header: () => <span className="hidden sm:table-cell">{'Due Date'}</span>,
+      header: () => <span className="hidden sm:table-cell"><T>Due Date</T></span>,
       cell: ({ row }) => {
         const status = row.original.status;
 
@@ -72,7 +74,7 @@ export function useColumns(): ColumnDef<RiskTaskType>[] {
     {
       id: 'assigneeId',
       accessorKey: 'assigneeId',
-      header: () => <span className="hidden sm:table-cell">{'Assigned To'}</span>,
+      header: () => <span className="hidden sm:table-cell"><T>Assigned To</T></span>,
       cell: ({ row }) => {
         return (
           <div className="hidden sm:table-cell">

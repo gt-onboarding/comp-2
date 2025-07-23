@@ -5,6 +5,7 @@ import { useLocalStorage } from '@/app/(app)/setup/hooks/useLocalStorage';
 import { companyDetailsSchema, steps } from '@/app/(app)/setup/lib/constants';
 import type { CompanyDetails } from '@/app/(app)/setup/lib/types';
 import { trackEvent, trackOnboardingEvent } from '@/utils/tracking';
+import { useGT } from 'gt-next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
@@ -29,6 +30,7 @@ export function usePostPaymentOnboarding({
   initialData = {},
 }: UsePostPaymentOnboardingProps) {
   const router = useRouter();
+  const t = useGT();
 
   // Create storage keys specific to this organization
   const storageKey = `onboarding-progress-${organizationId}`;
@@ -111,13 +113,13 @@ export function usePostPaymentOnboarding({
         // Redirect to the organization dashboard
         router.push(data.redirectUrl);
       } else {
-        toast.error('Failed to complete onboarding');
+        toast.error(t('Failed to complete onboarding'));
         setIsFinalizing(false);
         setIsOnboarding(false);
       }
     },
     onError: () => {
-      toast.error('Failed to complete onboarding');
+      toast.error(t('Failed to complete onboarding'));
       setIsFinalizing(false);
       setIsOnboarding(false);
     },

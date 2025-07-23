@@ -14,17 +14,19 @@ import { useQueryState } from 'nuqs';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import type { z } from 'zod';
+import { T, useGT } from 'gt-next';
 
 export function UpdateTaskOverviewForm({ task }: { task: Task }) {
   const [open, setOpen] = useQueryState('task-update-overview-sheet');
+  const t = useGT();
 
   const updateTask = useAction(updateTaskAction, {
     onSuccess: () => {
-      toast.success('Risk updated successfully');
+      toast.success(t('Risk updated successfully'));
       setOpen(null);
     },
     onError: () => {
-      toast.error('Failed to update risk');
+      toast.error(t('Failed to update risk'));
     },
   });
 
@@ -58,13 +60,15 @@ export function UpdateTaskOverviewForm({ task }: { task: Task }) {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Task Title'}</FormLabel>
+                <FormLabel>
+                  <T>Task Title</T>
+                </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     autoFocus
                     className="mt-3"
-                    placeholder={'A short, descriptive title for the task.'}
+                    placeholder={t('A short, descriptive title for the task.')}
                     autoCorrect="off"
                   />
                 </FormControl>
@@ -77,12 +81,14 @@ export function UpdateTaskOverviewForm({ task }: { task: Task }) {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>
+                  <T>Description</T>
+                </FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
                     className="mt-3 min-h-[80px]"
-                    placeholder={'Provide a detailed description of what needs to be done.'}
+                    placeholder={t('Provide a detailed description of what needs to be done.')}
                   />
                 </FormControl>
                 <FormMessage />
@@ -95,7 +101,7 @@ export function UpdateTaskOverviewForm({ task }: { task: Task }) {
             {updateTask.status === 'executing' ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              'Save'
+              <T>Save</T>
             )}
           </Button>
         </div>

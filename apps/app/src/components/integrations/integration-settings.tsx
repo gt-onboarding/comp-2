@@ -3,6 +3,7 @@ import { Button } from '@comp/ui/button';
 import { Input } from '@comp/ui/input';
 import { Label } from '@comp/ui/label';
 import { Switch } from '@comp/ui/switch';
+import { T, useGT } from 'gt-next';
 import { Loader2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
@@ -77,12 +78,13 @@ export function IntegrationSettings({
   integrationId: string;
   installedSettings: Record<string, any>;
 }) {
+  const t = useGT();
   const updateIntegrationSettings = useAction(updateIntegrationSettingsAction, {
     onSuccess: () => {
-      toast.success('Settings updated');
+      toast.success(t('Settings updated'));
     },
     onError: () => {
-      toast.error('Failed to update settings');
+      toast.error(t('Failed to update settings'));
     },
   });
 
@@ -90,15 +92,18 @@ export function IntegrationSettings({
   const normalizedSettings = Array.isArray(settings)
     ? settings
     : settings
-      ? Object.entries(settings).map(([key, value]) => ({
-          id: key,
-          label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
-          description: `Enter your ${key.replace(/_/g, ' ')}`,
-          type: 'text',
-          required: true,
-          value: value,
-          placeholder: `Enter your ${key.replace(/_/g, ' ')}`,
-        }))
+      ? Object.entries(settings).map(([key, value]) => {
+          const formattedKey = key.replace(/_/g, ' ');
+          return {
+            id: key,
+            label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
+            description: t('Enter your {field}', { field: formattedKey }),
+            type: 'text',
+            required: true,
+            value: value,
+            placeholder: t('Enter your {field}', { field: formattedKey }),
+          };
+        })
       : [];
 
   const [localSettings, setLocalSettings] = useState(normalizedSettings);
@@ -125,7 +130,9 @@ export function IntegrationSettings({
   return (
     <div className="flex flex-col gap-2">
       {localSettings.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No settings available</p>
+        <T>
+          <p className="text-muted-foreground text-sm">No settings available</p>
+        </T>
       ) : (
         localSettings.map((setting) => (
           <div key={setting.id} className="my-2 flex flex-col">
@@ -144,7 +151,7 @@ export function IntegrationSettings({
           {updateIntegrationSettings.isPending ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            'Save settings'
+            t('Save settings')
           )}
         </Button>
       )}

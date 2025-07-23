@@ -7,26 +7,30 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@comp/ui/input';
 import { Textarea } from '@comp/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useGT, T } from 'gt-next';
 import { Loader2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useQueryState } from 'nuqs';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import type { z } from 'zod';
-import { updateVendorSchema } from '../../actions/schema';
+import { getUpdateVendorSchema } from '../../actions/schema';
 import { updateVendorAction } from '../../actions/update-vendor-action';
 
 export function UpdateTitleAndDescriptionForm({ vendor }: { vendor: Vendor }) {
   const [open, setOpen] = useQueryState('vendor-overview-sheet');
+  const t = useGT();
+  
+  const updateVendorSchema = getUpdateVendorSchema(t);
 
   const updateVendor = useAction(updateVendorAction, {
     onSuccess: () => {
-      toast.success('Vendor updated successfully');
+      toast.success(t('Vendor updated successfully'));
       setOpen(null);
     },
     onError: (error) => {
       console.error('Error updating vendor:', error);
-      toast.error('Failed to update vendor');
+      toast.error(t('Failed to update vendor'));
     },
   });
 
@@ -58,7 +62,9 @@ export function UpdateTitleAndDescriptionForm({ vendor }: { vendor: Vendor }) {
       <div className="scrollbar-hide h-[calc(100vh-250px)] overflow-auto">
         <Accordion type="multiple" defaultValue={['vendor']}>
           <AccordionItem value="vendor">
-            <AccordionTrigger>{'Vendor'}</AccordionTrigger>
+            <AccordionTrigger>
+              <T>Vendor</T>
+            </AccordionTrigger>
             <AccordionContent>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -66,13 +72,15 @@ export function UpdateTitleAndDescriptionForm({ vendor }: { vendor: Vendor }) {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{'Name'}</FormLabel>
+                      <FormLabel>
+                        <T>Name</T>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           autoFocus
                           className="mt-3"
-                          placeholder={'A short, descriptive name for the vendor.'}
+                          placeholder={t('A short, descriptive name for the vendor.')}
                           autoCorrect="off"
                         />
                       </FormControl>
@@ -85,12 +93,14 @@ export function UpdateTitleAndDescriptionForm({ vendor }: { vendor: Vendor }) {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{'Description'}</FormLabel>
+                      <FormLabel>
+                        <T>Description</T>
+                      </FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
                           className="mt-3 min-h-[80px]"
-                          placeholder={'A detailed description of the vendor and its services.'}
+                          placeholder={t('A detailed description of the vendor and its services.')}
                         />
                       </FormControl>
                       <FormMessage />
@@ -106,7 +116,7 @@ export function UpdateTitleAndDescriptionForm({ vendor }: { vendor: Vendor }) {
                     {updateVendor.status === 'executing' ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      'Save'
+                      <T>Save</T>
                     )}
                   </Button>
                 </div>

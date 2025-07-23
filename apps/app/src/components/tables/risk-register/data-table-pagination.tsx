@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
+import { T, Var, useGT } from 'gt-next';
 
 interface DataTablePaginationProps {
   pageCount: number;
@@ -15,6 +16,7 @@ export function DataTablePagination({ pageCount, currentPage }: DataTablePaginat
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
+  const t = useGT();
 
   const createPageQuery = useCallback(
     (value: number) => {
@@ -40,7 +42,7 @@ export function DataTablePagination({ pageCount, currentPage }: DataTablePaginat
       <div className="flex items-center space-x-2">
         <Select value={searchParams.get('per_page') || '10'} onValueChange={createPerPageQuery}>
           <SelectTrigger className="h-8 w-[70px]">
-            <SelectValue placeholder="10" />
+            <SelectValue placeholder={t('10')} />
           </SelectTrigger>
           <SelectContent side="top">
             {[10, 20, 30, 40, 50].map((pageSize) => (
@@ -61,7 +63,9 @@ export function DataTablePagination({ pageCount, currentPage }: DataTablePaginat
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <div className="flex w-[60px] items-center justify-center text-sm font-medium">
-          {currentPage} of {pageCount}
+          <T>
+            <Var>{currentPage}</Var> of <Var>{pageCount}</Var>
+          </T>
         </div>
         <Button
           variant="outline"

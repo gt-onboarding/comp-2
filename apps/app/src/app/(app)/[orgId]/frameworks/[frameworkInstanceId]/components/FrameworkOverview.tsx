@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@comp/ui/dropdown-menu';
 import { Progress } from '@comp/ui/progress';
+import { T, useGT } from 'gt-next';
 import { BarChart3, MoreVertical, Target, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { getControlStatus } from '../../lib/utils';
@@ -29,6 +30,7 @@ export function FrameworkOverview({
 }: FrameworkOverviewProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const t = useGT();
 
   // Get all controls from all requirements
   const allControls = frameworkInstanceWithControls.controls;
@@ -79,16 +81,18 @@ export function FrameworkOverview({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => {
-                setDropdownOpen(false);
-                setDeleteDialogOpen(true);
-              }}
-              className="text-destructive focus:text-destructive"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete Framework
-            </DropdownMenuItem>
+            <T>
+              <DropdownMenuItem
+                onClick={() => {
+                  setDropdownOpen(false);
+                  setDeleteDialogOpen(true);
+                }}
+                className="text-destructive focus:text-destructive"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Framework
+              </DropdownMenuItem>
+            </T>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -98,10 +102,12 @@ export function FrameworkOverview({
         {/* Progress Card */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <BarChart3 className="h-4 w-4" />
-              Compliance Progress
-            </CardTitle>
+            <T>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <BarChart3 className="h-4 w-4" />
+                Compliance Progress
+              </CardTitle>
+            </T>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-end gap-4">
@@ -115,15 +121,17 @@ export function FrameworkOverview({
                   >
                     {compliancePercentage}
                   </span>
-                  <span className="text-muted-foreground text-sm">% complete</span>
+                  <T>
+                    <span className="text-muted-foreground text-sm">% complete</span>
+                  </T>
                 </div>
                 <Progress value={compliancePercentage} className="h-2" />
               </div>
             </div>
             <div className="text-muted-foreground flex items-center gap-6 text-sm">
-              <span>{compliantControls} completed</span>
-              <span>{inProgressControls} remaining</span>
-              <span>{totalControls} total</span>
+              <span>{compliantControls} {t('completed')}</span>
+              <span>{inProgressControls} {t('remaining')}</span>
+              <span>{totalControls} {t('total')}</span>
             </div>
           </CardContent>
         </Card>
@@ -131,28 +139,36 @@ export function FrameworkOverview({
         {/* Stats Card */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Target className="h-4 w-4" />
-              Control Status
-            </CardTitle>
+            <T>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Target className="h-4 w-4" />
+                Control Status
+              </CardTitle>
+            </T>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                <span className="text-sm">Complete</span>
+                <T>
+                  <span className="text-sm">Complete</span>
+                </T>
               </div>
               <span className="font-medium tabular-nums">{compliantControls}</span>
             </div>
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                <span className="text-sm">In Progress</span>
+                <T>
+                  <span className="text-sm">In Progress</span>
+                </T>
               </div>
               <span className="font-medium tabular-nums">{inProgressControls}</span>
             </div>
             <div className="flex items-center justify-between border-t py-2 pt-3">
-              <span className="text-sm font-medium">Total</span>
+              <T>
+                <span className="text-sm font-medium">Total</span>
+              </T>
               <span className="font-semibold tabular-nums">{totalControls}</span>
             </div>
           </CardContent>

@@ -1,5 +1,6 @@
 import { getOrganizationFromApiKey } from '@/lib/api-key';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { type NextRequest, NextResponse } from 'next/server';
 
 // Configure this route to use Node.js runtime instead of Edge
@@ -55,10 +56,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // If employee not found, return 404
     if (!employee) {
+      const t = await getGT();
       return NextResponse.json(
         {
           success: false,
-          error: 'Employee not found',
+          error: t('Employee not found'),
         },
         { status: 404 },
       );
@@ -70,10 +72,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     });
   } catch (error) {
     console.error('Error fetching employee:', error);
+    const t = await getGT();
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to fetch employee',
+        error: t('Failed to fetch employee'),
       },
       { status: 500 },
     );
@@ -121,10 +124,11 @@ export async function DELETE(
     });
 
     if (!existingEmployee) {
+      const t = await getGT();
       return NextResponse.json(
         {
           success: false,
-          error: 'Employee not found',
+          error: t('Employee not found'),
         },
         { status: 404 },
       );
@@ -137,18 +141,20 @@ export async function DELETE(
       },
     });
 
+    const t = await getGT();
     return NextResponse.json({
       success: true,
       data: {
-        message: 'Employee deleted successfully',
+        message: t('Employee deleted successfully'),
       },
     });
   } catch (error) {
     console.error('Error deleting employee:', error);
+    const t = await getGT();
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to delete employee',
+        error: t('Failed to delete employee'),
       },
       { status: 500 },
     );

@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@comp/ui/sheet';
 import { X } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import { CreateRisk } from '../forms/risks/create-risk-form';
+import { T } from 'gt-next';
 
 export function CreateRiskSheet({ assignees }: { assignees: (Member & { user: User })[] }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -24,7 +25,9 @@ export function CreateRiskSheet({ assignees }: { assignees: (Member & { user: Us
       <Sheet open={isOpen} onOpenChange={handleOpenChange}>
         <SheetContent stack>
           <SheetHeader className="mb-8 flex flex-row items-center justify-between">
-            <SheetTitle>{'Create New Risk'}</SheetTitle>
+            <SheetTitle>
+              <T>Create New Risk</T>
+            </SheetTitle>
             <Button
               size="icon"
               variant="ghost"
@@ -45,7 +48,9 @@ export function CreateRiskSheet({ assignees }: { assignees: (Member & { user: Us
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-      <DrawerTitle hidden>{'Create New Risk'}</DrawerTitle>
+      <DrawerTitle hidden>
+        <T>Create New Risk</T>
+      </DrawerTitle>
       <DrawerContent className="p-6">
         <CreateRisk assignees={assignees} />
       </DrawerContent>

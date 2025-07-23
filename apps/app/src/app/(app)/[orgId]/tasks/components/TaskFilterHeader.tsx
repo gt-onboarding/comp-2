@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@comp/ui/button';
+import { T, useGT } from 'gt-next';
 import { Check, Circle, List, Loader2 } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import React from 'react';
@@ -18,6 +19,7 @@ type StatusId = (typeof statuses)[number]['id'];
  * Uses `nuqs` to manage filter state in the URL search parameters.
  */
 export function TaskFilterHeader() {
+  const t = useGT();
   // State for the status filter, synced with the 'status' URL query parameter.
   const [statusFilter, setStatusFilter] = useQueryState('status', {
     shallow: false, // Ensures full page reload on change to refetch server data.
@@ -29,6 +31,20 @@ export function TaskFilterHeader() {
     in_progress: Loader2,
     todo: Circle,
     done: Check,
+  };
+
+  // Helper to get translated status title
+  const getStatusTitle = (statusId: StatusId) => {
+    switch (statusId) {
+      case 'in_progress':
+        return t('In Progress');
+      case 'todo':
+        return t('Todo');
+      case 'done':
+        return t('Done');
+      default:
+        return statusId;
+    }
   };
 
   // Helper function to determine button styling based on active state.
@@ -57,7 +73,7 @@ export function TaskFilterHeader() {
           onClick={() => setStatusFilter(null)}
         >
           <List className="h-3.5 w-3.5" />
-          <span>All</span>
+          <span>{t('All')}</span>
         </Button>
         {statuses.map((status) => {
           const Icon = statusIcons[status.id];
@@ -71,7 +87,7 @@ export function TaskFilterHeader() {
               onClick={() => setStatusFilter(status.id)}
             >
               {React.createElement(Icon, { className: 'h-3.5 w-3.5' })}
-              <span>{status.title}</span>
+              <span>{getStatusTitle(status.id)}</span>
             </Button>
           );
         })}
@@ -83,7 +99,7 @@ export function TaskFilterHeader() {
             onClick={clearFilters}
             className="text-muted-foreground"
           >
-            Clear filters
+            {t('Clear filters')}
           </Button>
         )}
       </div>

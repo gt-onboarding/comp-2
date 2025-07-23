@@ -1,5 +1,6 @@
 import PageWithBreadcrumb from '@/components/pages/PageWithBreadcrumb';
 import type { Metadata } from 'next';
+import { getGT } from 'gt-next/server';
 import PolicyPage from './components/PolicyPage';
 import {
   getAssignees,
@@ -23,12 +24,13 @@ export default async function PolicyDetails({
   const logs = await getLogsForPolicy(policyId);
 
   const isPendingApproval = !!policy?.approverId;
+  const t = await getGT();
 
   return (
     <PageWithBreadcrumb
       breadcrumbs={[
-        { label: 'Policies', href: `/${orgId}/policies/all` },
-        { label: policy?.name ?? 'Policy', current: true },
+        { label: t('Policies'), href: `/${orgId}/policies/all` },
+        { label: policy?.name ?? t('Policy'), current: true },
       ]}
     >
       <PolicyPage
@@ -46,7 +48,8 @@ export default async function PolicyDetails({
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
   return {
-    title: 'Policy Overview',
+    title: t('Policy Overview'),
   };
 }

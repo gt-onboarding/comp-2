@@ -8,6 +8,7 @@ import { Vercel } from '@vercel/sdk';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { env } from 'node:process';
 import { z } from 'zod';
+import { getGT } from 'gt-next/server';
 
 const customDomainSchema = z.object({
   domain: z.string().min(1),
@@ -27,11 +28,12 @@ export const customDomainAction = authActionClient
     },
   })
   .action(async ({ parsedInput, ctx }) => {
+    const t = await getGT();
     const { domain } = parsedInput;
     const { activeOrganizationId } = ctx.session;
 
     if (!activeOrganizationId) {
-      throw new Error('No active organization');
+      throw new Error(t('No active organization'));
     }
 
     try {
@@ -64,7 +66,7 @@ export const customDomainAction = authActionClient
         } else {
           return {
             success: false,
-            error: 'Domain is already in use by another organization',
+            error: t('Domain is already in use by another organization'),
           };
         }
       }
@@ -109,6 +111,6 @@ export const customDomainAction = authActionClient
       };
     } catch (error) {
       console.error(error);
-      throw new Error('Failed to update custom domain');
+      throw new Error(t('Failed to update custom domain'));
     }
   });

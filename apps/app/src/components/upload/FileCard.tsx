@@ -18,6 +18,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@comp/
 import { ExternalLink, Loader2, Maximize2, Trash } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { T, Var } from 'gt-next';
 import { FileIcon } from './FileIcon';
 
 interface FilePreviewState {
@@ -106,7 +107,7 @@ export function FileCard({
                     variant="ghost"
                     className="text-muted-foreground hover:text-foreground text-xs"
                   >
-                    {'Preview'}
+                    <T>Preview</T>
                   </Button>
                 </DialogTrigger>
               </div>
@@ -128,7 +129,7 @@ export function FileCard({
 
           <DialogContent className="w-full max-w-4xl">
             <DialogTitle className="mb-4 flex items-center justify-between">
-              <span>{`File Preview: ${fileName}`}</span>
+              <T><span>File Preview: <Var>{fileName}</Var></span></T>
             </DialogTitle>
 
             {previewState.url ? (
@@ -148,7 +149,7 @@ export function FileCard({
                 ) : (
                   <div className="flex h-full items-center justify-center">
                     <p className="text-muted-foreground">
-                      {'Preview not available for this file type'}
+                      <T>Preview not available for this file type</T>
                     </p>
                   </div>
                 )}
@@ -183,7 +184,7 @@ export function FileCard({
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{'Open File'}</p>
+              <T><p>Open File</p></T>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -203,20 +204,20 @@ export function FileCard({
                 </AlertDialogTrigger>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{'Delete File'}</p>
+                <T><p>Delete File</p></T>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{'Delete File'}</AlertDialogTitle>
+              <T><AlertDialogTitle>Delete File</AlertDialogTitle></T>
               <AlertDialogDescription>
-                {'This action cannot be undone. The file will be permanently deleted.'}
+                <T>This action cannot be undone. The file will be permanently deleted.</T>
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>{'Cancel'}</AlertDialogCancel>
-              <AlertDialogAction onClick={() => onDelete(url)}>{'Delete'}</AlertDialogAction>
+              <T><AlertDialogCancel>Cancel</AlertDialogCancel></T>
+              <T><AlertDialogAction onClick={() => onDelete(url)}>Delete</AlertDialogAction></T>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

@@ -16,6 +16,9 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { zaraz } from 'zaraz-ts';
 
+import { useGT, T } from 'gt-next';
+import type { InlineTranslationOptions } from 'gt-next/types';
+
 type PlanType = 'starter' | 'done-for-you';
 
 interface PlanContent {
@@ -29,6 +32,7 @@ interface PlanContent {
 }
 
 export function CheckoutCompleteDialog({ orgId }: { orgId: string }) {
+  const t = useGT();
   const [checkoutComplete, setCheckoutComplete] = useQueryState('checkoutComplete', {
     defaultValue: '',
     clearOnDefault: true,
@@ -98,33 +102,35 @@ export function CheckoutCompleteDialog({ orgId }: { orgId: string }) {
   };
 
   // Different content based on plan type
-  const content: Record<PlanType, PlanContent> = {
+  const getContent = (t: (content: string, options?: InlineTranslationOptions) => string): Record<PlanType, PlanContent> => ({
     'done-for-you': {
-      title: 'Payment Successful! 🎉',
-      description:
-        'Your invoice has been paid. To get started, please continue with the onboarding so our AI can get to work.',
-      badge: 'Invoice Paid',
+      title: t('Payment Successful! 🎉'),
+      description: t(
+        'Your invoice has been paid. To get started, please continue with the onboarding so our AI can get to work.'
+      ),
+      badge: t('Invoice Paid'),
       badgeClass: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
       iconClass: 'bg-green-100 dark:bg-green-900/30',
       iconColor: 'text-green-600 dark:text-green-400',
-      buttonText: 'Continue',
+      buttonText: t('Continue'),
     },
     starter: {
-      title: 'Payment Successful! 🎉',
-      description: 'Your Starter subscription is now active.',
-      badge: 'Invoice Paid',
+      title: t('Payment Successful! 🎉'),
+      description: t('Your Starter subscription is now active.'),
+      badge: t('Invoice Paid'),
       badgeClass: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
       iconClass: 'bg-blue-100 dark:bg-blue-900/30',
       iconColor: 'text-blue-600 dark:text-blue-400',
-      buttonText: 'Complete Onboarding',
+      buttonText: t('Complete Onboarding'),
     },
-  };
+  });
 
   // Only render content if we have a valid plan type stored
   if (!planType) {
     return null;
   }
 
+  const content = getContent(t);
   const currentContent = content[planType];
 
   return (

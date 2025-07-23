@@ -5,6 +5,7 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
 import { authActionClient } from '../safe-action';
 import type { ActionResponse } from '../types';
+import { getGT } from 'gt-next/server';
 
 // Schema only needs email now
 const inviteEmployeeSchema = z.object({
@@ -21,12 +22,13 @@ export const inviteEmployee = authActionClient
   })
   .inputSchema(inviteEmployeeSchema)
   .action(async ({ parsedInput, ctx }): Promise<ActionResponse<{ invited: boolean }>> => {
+    const t = await getGT();
     const organizationId = ctx.session.activeOrganizationId;
 
     if (!organizationId) {
       return {
         success: false,
-        error: 'Organization not found',
+        error: t('Organization not found'),
       };
     }
 
@@ -48,7 +50,7 @@ export const inviteEmployee = authActionClient
       };
     } catch (error) {
       console.error('Error inviting employee:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to invite employee';
+      const errorMessage = error instanceof Error ? error.message : t('Failed to invite employee');
       return {
         success: false,
         error: errorMessage,

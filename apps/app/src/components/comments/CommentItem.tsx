@@ -29,6 +29,7 @@ import { useRouter } from 'next/navigation';
 import type React from 'react';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useGT, T } from 'gt-next';
 import { AttachmentItem } from '../../app/(app)/[orgId]/tasks/[taskId]/components/AttachmentItem';
 import { formatRelativeTime } from '../../app/(app)/[orgId]/tasks/[taskId]/components/commentUtils'; // Revert import path
 import type { CommentWithAuthor } from './Comments';
@@ -52,6 +53,7 @@ function mapFileTypeToAttachmentType(fileType: string): AttachmentType {
 }
 
 export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
+  const t = useGT();
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const [currentAttachments, setCurrentAttachments] = useState(
@@ -93,7 +95,7 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
     const attachmentsRemoved = attachmentsToRemove.length > 0;
 
     if (!contentChanged && !attachmentsAdded && !attachmentsRemoved) {
-      toast.info('No changes detected.');
+      toast.info(t('No changes detected.'));
       setIsEditing(false); // Exit edit mode if no changes
       return;
     }
@@ -118,7 +120,7 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
       });
 
       if (success) {
-        toast.success('Comment updated successfully.');
+        toast.success(t('Comment updated successfully.'));
 
         // Optimistically add new attachments to currentAttachments for immediate UI update
         setCurrentAttachments((prev) => [
@@ -145,10 +147,10 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
         setAttachmentsToRemove([]);
         router.refresh();
       } else {
-        toast.error(String(error || 'Failed to update comment.'));
+        toast.error(String(error || t('Failed to update comment.')));
       }
     } catch (error) {
-      toast.error('Failed to save comment changes.');
+      toast.error(t('Failed to save comment changes.'));
       console.error('Save changes error:', error);
     } finally {
       setIsEditing(false);
@@ -156,7 +158,7 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
   };
 
   const handleDeleteComment = async () => {
-    if (window.confirm('Are you sure you want to delete this comment?')) {
+    if (window.confirm(t('Are you sure you want to delete this comment?'))) {
       console.log('Deleting comment:', comment.id);
       await deleteComment({ commentId: comment.id });
       router.refresh();
@@ -199,19 +201,19 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
           const MAX_FILE_SIZE_MB = 5;
           const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
           if (file.size > MAX_FILE_SIZE_BYTES) {
-            toast.error(`File "${file.name}" exceeds the ${MAX_FILE_SIZE_MB}MB limit.`);
+            toast.error(t('File "{fileName}" exceeds the {maxSize}MB limit.', { fileName: file.name, maxSize: MAX_FILE_SIZE_MB }));
             return resolve(); // Skip processing this file
           }
 
           if (!file.type.startsWith('image/')) {
-            toast.info('Only image previews are shown before submitting.');
+            toast.info(t('Only image previews are shown before submitting.'));
           }
           const reader = new FileReader();
           reader.onloadend = async () => {
             const dataUrlResult = reader.result as string;
             const base64Data = dataUrlResult?.split(',')[1];
             if (!base64Data) {
-              toast.error(`Failed to read file data for ${file.name}`);
+              toast.error(t('Failed to read file data for {fileName}', { fileName: file.name }));
               return resolve();
             }
             const { success, data, error } = await uploadFile({
@@ -223,7 +225,7 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
             });
             if (error) {
               console.error('Upload file action error occurred:', error);
-              toast.error(`Failed to upload "${file.name}": ${error}`);
+              toast.error(t('Failed to upload "{fileName}": {error}', { fileName: file.name, error }));
             } else if (success && data?.id && data.signedUrl) {
               setPendingAttachmentsToAdd((prev) => [
                 ...prev,
@@ -234,15 +236,15 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
                   signedUrl: data.signedUrl,
                 } as PendingAttachment,
               ]);
-              toast.success(`File "${data?.name ?? 'unknown'}" ready for attachment.`);
+              toast.success(t('File "{fileName}" ready for attachment.', { fileName: data?.name ?? 'unknown' }));
             } else {
               console.error('Upload succeeded but missing data:', data);
-              toast.error(`Failed to process "${file.name}" after upload.`);
+              toast.error(t('Failed to process "{fileName}" after upload.', { fileName: file.name }));
             }
             resolve();
           };
           reader.onerror = () => {
-            toast.error(`Error reading file: ${file.name}`);
+            toast.error(t('Error reading file: {fileName}', { fileName: file.name }));
             resolve();
           };
           reader.readAsDataURL(file);
@@ -274,10 +276,10 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
       if (success && data?.signedUrl) {
         window.open(data.signedUrl, '_blank');
       } else {
-        toast.error(String(error || 'Failed to get attachment URL.'));
+        toast.error(String(error || t('Failed to get attachment URL.')));
       }
     } catch (err) {
-      toast.error('An unexpected error occurred while fetching the attachment.');
+      toast.error(t('An unexpected error occurred while fetching the attachment.'));
       console.error(err);
     } finally {
       setBusyAttachmentId(null);
@@ -291,7 +293,7 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
       // Use signedUrl
       window.open(pendingAttachment.signedUrl, '_blank'); // Use signedUrl
     } else {
-      toast.error('Preview URL not available for this pending attachment.');
+      toast.error(t('Preview URL not available for this pending attachment.'));
       console.warn('Could not find pending attachment or signedUrl for ID:', attachmentId); // Use signedUrl
     }
   };
@@ -321,7 +323,7 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
                   {comment.author.user?.name ?? 'Unknown User'}
                 </span>
                 <span className="text-muted-foreground text-xs">
-                  {!isEditing ? formatRelativeTime(comment.createdAt) : 'Editing...'}
+                  {!isEditing ? formatRelativeTime(comment.createdAt, t) : t('Editing...')}
                 </span>
               </div>
               {!isEditing && (
@@ -331,7 +333,7 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
                       variant="ghost"
                       size="icon"
                       className="h-6 w-6 shrink-0"
-                      aria-label="Comment options"
+                      aria-label={t('Comment options')}
                     >
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
@@ -339,14 +341,14 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onSelect={handleEditToggle}>
                       <Pencil className="mr-2 h-3.5 w-3.5" />
-                      Edit
+                      {t('Edit')}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-destructive focus:text-destructive focus:bg-destructive/10"
                       onSelect={handleDeleteComment}
                     >
                       <Trash2 className="mr-2 h-3.5 w-3.5" />
-                      Delete
+                      {t('Delete')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -360,7 +362,7 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
                 value={editedContent}
                 onChange={(e) => setEditedContent(e.target.value)}
                 className="bg-background/50 min-h-[60px] text-sm"
-                placeholder="Edit comment..."
+                placeholder={t('Edit comment...')}
               />
             )}
 
@@ -368,7 +370,7 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
               <div className="pt-6">
                 {isEditing ? (
                   <div className="flex flex-col gap-2">
-                    <Label className="block text-xs font-medium">Attachments</Label>
+                    <Label className="block text-xs font-medium">{t('Attachments')}</Label>
                     <div className="flex flex-col gap-2">
                       {/* Combined attachments row */}
                       <div className="flex flex-wrap gap-2">
@@ -420,12 +422,12 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
                           {isUploading ? (
                             <>
                               <Loader2 className="h-4 w-4 animate-spin" />
-                              Uploading...
+                              {t('Uploading...')}
                             </>
                           ) : (
                             <>
                               <Plus className="h-4 w-4" />
-                              Add Attachment
+                              {t('Add Attachment')}
                             </>
                           )}
                         </Button>
@@ -463,10 +465,10 @@ export function CommentItem({ comment }: { comment: CommentWithAuthor }) {
                   onClick={handleCancelEdit}
                   disabled={isProcessing} // Disable only when saving
                 >
-                  Cancel
+                  {t('Cancel')}
                 </Button>
                 <Button size="sm" onClick={handleSaveEdit} disabled={isProcessing}>
-                  {isProcessing ? 'Saving...' : 'Save Changes'}
+                  {isProcessing ? t('Saving...') : t('Save Changes')}
                 </Button>
               </div>
             )}

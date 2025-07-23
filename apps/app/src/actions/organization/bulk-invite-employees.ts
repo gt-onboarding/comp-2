@@ -5,13 +5,17 @@ import { authClient } from '@/utils/auth-client';
 import { createSafeActionClient } from 'next-safe-action';
 import { headers } from 'next/headers';
 import { z } from 'zod';
+import { getGT } from 'gt-next/server';
 
-const emailSchema = z.string().email({ message: 'Invalid email format' });
-
-const schema = z.object({
-  organizationId: z.string(),
-  emails: z.array(emailSchema).min(1, { message: 'At least one email is required.' }),
-});
+const createSchemas = async () => {
+  const t = await getGT();
+  const emailSchema = z.string().email({ message: t('Invalid email format') });
+  const schema = z.object({
+    organizationId: z.string(),
+    emails: z.array(emailSchema).min(1, { message: t('At least one email is required.') }),
+  });
+  return { schema };
+};
 
 interface InviteResult {
   email: string;
@@ -20,15 +24,19 @@ interface InviteResult {
 }
 
 export const bulkInviteEmployees = createSafeActionClient()
-  .inputSchema(schema)
+  .inputSchema(async () => {
+    const { schema } = await createSchemas();
+    return schema;
+  })
   .action(async ({ parsedInput }) => {
     const { organizationId, emails } = parsedInput;
+    const t = await getGT();
 
     const session = await auth.api.getSession({ headers: await headers() });
     if (session?.session.activeOrganizationId !== organizationId) {
       return {
         success: false,
-        error: 'Unauthorized or invalid organization.',
+        error: t('Unauthorized or invalid organization.'),
       };
     }
 
@@ -45,7 +53,7 @@ export const bulkInviteEmployees = createSafeActionClient()
       } catch (error) {
         allSuccess = false;
         console.error(`Failed to invite ${email}:`, error);
-        const errorMessage = error instanceof Error ? error.message : 'Invitation failed';
+        const errorMessage = error instanceof Error ? error.message : t('Invitation failed');
         results.push({ email, success: false, error: errorMessage });
       }
     }

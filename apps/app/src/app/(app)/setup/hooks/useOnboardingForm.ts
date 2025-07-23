@@ -2,6 +2,7 @@
 
 import { trackEvent, trackOnboardingEvent } from '@/utils/tracking';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useGT } from 'gt-next';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -11,7 +12,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { createOrganizationMinimal } from '../actions/create-organization-minimal';
 import type { OnboardingFormFields } from '../components/OnboardingStepInput';
-import { companyDetailsSchema, steps } from '../lib/constants';
+import { createCompanyDetailsSchema, createSteps } from '../lib/constants';
 import { updateSetupSession } from '../lib/setup-session';
 import type { CompanyDetails } from '../lib/types';
 
@@ -21,8 +22,7 @@ interface UseOnboardingFormProps {
   currentStep?: string;
 }
 
-// Only use the first 3 steps for the minimal flow
-const prePaymentSteps = steps.slice(0, 3);
+// We'll get steps dynamically within the hook
 
 export function useOnboardingForm({
   setupId,
@@ -31,6 +31,9 @@ export function useOnboardingForm({
 }: UseOnboardingFormProps = {}) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useGT();
+  const [steps, setSteps] = useState<any[]>([]);
+  const [companyDetailsSchema, setCompanyDetailsSchema] = useState<any>(null);
 
   // Helper to build URL with search params
   const buildUrlWithParams = (path: string, params?: Record<string, string>) => {
@@ -57,17 +60,27 @@ export function useOnboardingForm({
     setupId && initialData ? initialData : {},
   );
 
-  // Determine the initial step index based on currentStep
-  const initialStepIndex = currentStep
-    ? prePaymentSteps.findIndex((s) => s.key === currentStep)
-    : 0;
-
-  const [stepIndex, setStepIndex] = useState(Math.max(0, initialStepIndex));
+  // Determine the initial step index based on currentStep (will be calculated after steps load)
+  const [stepIndex, setStepIndex] = useState(0);
   const [isOnboarding, setIsOnboarding] = useState(false);
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // Load steps and schema
   useEffect(() => {
+    async function loadConstants() {
+      try {
+        const [stepsData, schemaData] = await Promise.all([
+          createSteps(),
+          createCompanyDetailsSchema(),
+        ]);
+        setSteps(stepsData.slice(0, 3)); // Only use the first 3 steps for the minimal flow
+        setCompanyDetailsSchema(schemaData);
+      } catch (error) {
+        console.error('Failed to load constants:', error);
+      }
+    }
+    loadConstants();
     setMounted(true);
   }, []);
 
@@ -81,32 +94,42 @@ export function useOnboardingForm({
     }
   }, [mounted, stepIndex, savedAnswers.frameworkIds, setupId]);
 
+  // Update step index when steps load and currentStep is provided
+  useEffect(() => {
+    if (steps.length > 0 && currentStep) {
+      const initialStepIndex = steps.findIndex((s) => s.key === currentStep);
+      setStepIndex(Math.max(0, initialStepIndex));
+    }
+  }, [steps, currentStep]);
+
   // Save progress to KV if we have a setupId
   useEffect(() => {
-    if (setupId && mounted) {
-      const currentStepKey = prePaymentSteps[stepIndex]?.key;
+    if (setupId && mounted && steps.length > 0) {
+      const currentStepKey = steps[stepIndex]?.key;
       updateSetupSession(setupId, {
         currentStep: currentStepKey,
         formData: savedAnswers as Record<string, any>,
       });
     }
-  }, [setupId, stepIndex, savedAnswers, mounted]);
+  }, [setupId, stepIndex, savedAnswers, mounted, steps]);
 
-  const step = prePaymentSteps[stepIndex];
-  const stepSchema = z.object({
+  const step = steps[stepIndex];
+  const stepSchema = step && companyDetailsSchema ? z.object({
     [step.key]: companyDetailsSchema.shape[step.key],
-  });
+  }) : z.object({});
 
   const form = useForm<OnboardingFormFields>({
     resolver: zodResolver(stepSchema),
     mode: 'onSubmit',
-    defaultValues: { [step.key]: savedAnswers[step.key] || '' },
+    defaultValues: step ? { [step.key]: savedAnswers[step.key] || '' } : {},
   });
 
   // Reset form defaultValues when stepIndex or savedAnswers change for the current step
   useEffect(() => {
-    form.reset({ [step.key]: savedAnswers[step.key] || '' });
-  }, [savedAnswers, step.key, form]);
+    if (step) {
+      form.reset({ [step.key]: savedAnswers[step.key] || '' });
+    }
+  }, [savedAnswers, step, form]);
 
   const createOrganizationAction = useAction(createOrganizationMinimal, {
     onSuccess: async ({ data }) => {
@@ -127,13 +150,13 @@ export function useOnboardingForm({
         // Clear answers after successful creation
         setSavedAnswers({});
       } else {
-        toast.error('Failed to create organization');
+        toast.error(t('Failed to create organization'));
         setIsFinalizing(false);
         setIsOnboarding(false);
       }
     },
     onError: () => {
-      toast.error('Failed to create organization');
+      toast.error(t('Failed to create organization'));
       setIsFinalizing(false);
       setIsOnboarding(false);
     },
@@ -186,7 +209,7 @@ export function useOnboardingForm({
       });
     }
 
-    if (stepIndex < prePaymentSteps.length - 1) {
+    if (stepIndex < steps.length - 1) {
       setStepIndex(stepIndex + 1);
     } else {
       handleCreateOrganizationAction(newAnswers);
@@ -197,7 +220,7 @@ export function useOnboardingForm({
     if (stepIndex > 0) {
       // Save current form values before going back
       const currentValues = form.getValues();
-      if (currentValues[step.key]) {
+      if (step && currentValues[step.key]) {
         setSavedAnswers({ ...savedAnswers, [step.key]: currentValues[step.key] });
       }
 
@@ -209,11 +232,11 @@ export function useOnboardingForm({
     }
   };
 
-  const isLastStep = stepIndex === prePaymentSteps.length - 1;
+  const isLastStep = steps.length > 0 && stepIndex === steps.length - 1;
 
   return {
     stepIndex,
-    steps: prePaymentSteps,
+    steps,
     step,
     form,
     savedAnswers,
