@@ -2,6 +2,7 @@
 
 import type { Member, Task, User } from '@comp/db/types';
 import clsx from 'clsx';
+import { T } from 'gt-next';
 import { useRef } from 'react';
 import { useDrop } from 'react-dnd';
 import { updateTaskOrder } from '../actions/updateTaskOrder';
@@ -121,9 +122,11 @@ export function StatusGroup({
 
         {/* Placeholder ONLY when empty AND dragging over */}
         {shouldRenderTasks && tasks.length === 0 && isOver && canDrop && (
-          <div className="text-muted-foreground m-2 rounded-sm border border-dashed p-4 text-center text-sm">
-            Drop task here
-          </div>
+          <T>
+            <div className="text-muted-foreground m-2 rounded-sm border border-dashed p-4 text-center text-sm">
+              Drop task here
+            </div>
+          </T>
         )}
       </div>
     </div>

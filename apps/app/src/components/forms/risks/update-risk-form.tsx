@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@comp/ui/input';
 import { Textarea } from '@comp/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useGT } from 'gt-next';
 import { Loader2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useQueryState } from 'nuqs';
@@ -18,14 +19,15 @@ import type { z } from 'zod';
 
 export function UpdateRiskForm({ risk }: { risk: Risk }) {
   const [open, setOpen] = useQueryState('risk-overview-sheet');
+  const t = useGT();
 
   const updateRisk = useAction(updateRiskAction, {
     onSuccess: () => {
-      toast.success('Risk updated successfully');
+      toast.success(t('Risk updated successfully'));
       setOpen(null);
     },
     onError: () => {
-      toast.error('Failed to update risk');
+      toast.error(t('Failed to update risk'));
     },
   });
 
@@ -59,7 +61,7 @@ export function UpdateRiskForm({ risk }: { risk: Risk }) {
       <div className="scrollbar-hide h-[calc(100vh-250px)] overflow-auto">
         <Accordion type="multiple" defaultValue={['risk']}>
           <AccordionItem value="risk">
-            <AccordionTrigger>{'Risk'}</AccordionTrigger>
+            <AccordionTrigger>{t('Risk')}</AccordionTrigger>
             <AccordionContent>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="space-y-4">
@@ -68,13 +70,13 @@ export function UpdateRiskForm({ risk }: { risk: Risk }) {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{'Risk Title'}</FormLabel>
+                        <FormLabel>{t('Risk Title')}</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             autoFocus
                             className="mt-3"
-                            placeholder={'A short, descriptive title for the risk.'}
+                            placeholder={t('A short, descriptive title for the risk.')}
                             autoCorrect="off"
                           />
                         </FormControl>
@@ -87,14 +89,14 @@ export function UpdateRiskForm({ risk }: { risk: Risk }) {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>{t('Description')}</FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
                             className="mt-3 min-h-[80px]"
-                            placeholder={
+                            placeholder={t(
                               'A detailed description of the risk, its potential impact, and its causes.'
-                            }
+                            )}
                           />
                         </FormControl>
                         <FormMessage />
@@ -111,7 +113,7 @@ export function UpdateRiskForm({ risk }: { risk: Risk }) {
                     {updateRisk.status === 'executing' ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      'Save'
+                      t('Save')
                     )}
                   </Button>
                 </div>

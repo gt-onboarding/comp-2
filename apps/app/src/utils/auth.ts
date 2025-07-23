@@ -11,6 +11,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
 import { emailOTP, magicLink, organization } from 'better-auth/plugins';
 import { Dub } from 'dub';
+import { getGT } from 'gt-next/server';
 import { ac, allRoles } from './permissions';
 
 const dub = env.DUB_API_KEY
@@ -150,10 +151,11 @@ export const auth = betterAuth({
     }),
     magicLink({
       sendMagicLink: async ({ email, url }, request) => {
+        const t = await getGT();
         const urlWithInviteCode = `${url}`;
         await sendEmail({
           to: email,
-          subject: 'Login to Comp AI',
+          subject: t('Login to Comp AI'),
           react: MagicLinkEmail({
             email,
             url: urlWithInviteCode,
@@ -165,9 +167,10 @@ export const auth = betterAuth({
       otpLength: 6,
       expiresIn: 10 * 60,
       async sendVerificationOTP({ email, otp }) {
+        const t = await getGT();
         await sendEmail({
           to: email,
-          subject: 'One-Time Password for Comp AI',
+          subject: t('One-Time Password for Comp AI'),
           react: OTPVerificationEmail({ email, otp }),
         });
       },

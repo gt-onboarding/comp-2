@@ -7,13 +7,8 @@ import { useRealtimeRun } from '@trigger.dev/react-hooks';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, Rocket, ShieldAlert, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { T, useGT, Var } from 'gt-next';
 
-const PROGRESS_MESSAGES = [
-  'Learning about your company...',
-  'Creating Risks...',
-  'Creating Vendors...',
-  'Tailoring Policies...',
-];
 
 const IN_PROGRESS_STATUSES = [
   'QUEUED',
@@ -39,11 +34,19 @@ export const OnboardingTracker = ({
   onboarding: Onboarding;
   publicAccessToken: string;
 }) => {
+  const t = useGT();
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const triggerJobId = onboarding.triggerJobId;
+  
+  const PROGRESS_MESSAGES = [
+    t('Learning about your company...'),
+    t('Creating Risks...'),
+    t('Creating Vendors...'),
+    t('Tailoring Policies...'),
+  ];
 
   if (!triggerJobId || !publicAccessToken) {
-    return <div className="text-muted-foreground text-sm">Unable to load onboarding tracker.</div>;
+    return <T><div className="text-muted-foreground text-sm">Unable to load onboarding tracker.</div></T>;
   }
 
   const { run, error } = useRealtimeRun(triggerJobId, {
@@ -64,54 +67,60 @@ export const OnboardingTracker = ({
 
   if (!triggerJobId) {
     return (
-      <Card className="bg-card text-card-foreground mx-auto my-2 w-full max-w-2xl shadow-xl">
-        <CardHeader className="p-4 text-center">
-          <CardTitle className="text-foreground text-xl font-semibold">Onboarding Status</CardTitle>
-          <CardDescription className="text-muted-foreground mt-0.5 text-xs">
-            Organization setup has not started yet.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex min-h-[80px] items-center justify-center p-4">
-          <div className="flex flex-col items-center justify-center gap-2 text-center">
-            <AlertTriangle className="text-warning h-6 w-6" /> {/* Use theme warning color */}
-            <div>
-              <p className="text-warning text-base font-medium">Awaiting Initiation</p>
-              <p className="text-muted-foreground mt-0.5 text-xs">
-                No onboarding process has been started.
-              </p>
+      <T>
+        <Card className="bg-card text-card-foreground mx-auto my-2 w-full max-w-2xl shadow-xl">
+          <CardHeader className="p-4 text-center">
+            <CardTitle className="text-foreground text-xl font-semibold">Onboarding Status</CardTitle>
+            <CardDescription className="text-muted-foreground mt-0.5 text-xs">
+              Organization setup has not started yet.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex min-h-[80px] items-center justify-center p-4">
+            <div className="flex flex-col items-center justify-center gap-2 text-center">
+              <AlertTriangle className="text-warning h-6 w-6" /> {/* Use theme warning color */}
+              <div>
+                <p className="text-warning text-base font-medium">Awaiting Initiation</p>
+                <p className="text-muted-foreground mt-0.5 text-xs">
+                  No onboarding process has been started.
+                </p>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </T>
     );
   }
 
   const renderStatusContent = () => {
     if (!run && !error) {
       return (
-        <div className="flex flex-col items-center justify-center gap-2 text-center">
-          <LogoSpinner />
-          <div>
-            <p className="text-primary text-base font-medium">Initializing Status</p>
-            <p className="text-muted-foreground mt-1 text-xs">
-              Checking the current onboarding status...
-            </p>
+        <T>
+          <div className="flex flex-col items-center justify-center gap-2 text-center">
+            <LogoSpinner />
+            <div>
+              <p className="text-primary text-base font-medium">Initializing Status</p>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Checking the current onboarding status...
+              </p>
+            </div>
           </div>
-        </div>
+        </T>
       );
     }
     if (!run) {
       return (
-        <div className="flex flex-col items-center justify-center gap-2 text-center">
-          <AlertTriangle className="text-warning h-6 w-6" /> {/* Use theme warning color */}
-          <div>
-            <p className="text-warning text-base font-medium">Status Unavailable</p>{' '}
-            {/* Use theme warning color */}
-            <p className="text-muted-foreground mt-1 text-xs">
-              Could not retrieve current onboarding status.
-            </p>
+        <T>
+          <div className="flex flex-col items-center justify-center gap-2 text-center">
+            <AlertTriangle className="text-warning h-6 w-6" /> {/* Use theme warning color */}
+            <div>
+              <p className="text-warning text-base font-medium">Status Unavailable</p>{' '}
+              {/* Use theme warning color */}
+              <p className="text-muted-foreground mt-1 text-xs">
+                Could not retrieve current onboarding status.
+              </p>
+            </div>
           </div>
-        </div>
+        </T>
       );
     }
 
@@ -125,36 +134,40 @@ export const OnboardingTracker = ({
       case 'FROZEN':
       case 'DELAYED':
         return (
-          <div className="flex flex-col items-center justify-center gap-2 text-center">
-            <LogoSpinner />
-            <div>
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={currentMessageIndex} // Important for AnimatePresence to detect changes
-                  className="text-primary h-6 text-base font-medium" // Added h-6 for consistent height
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {PROGRESS_MESSAGES[currentMessageIndex]}
-                </motion.p>
-              </AnimatePresence>
-              <p className="text-muted-foreground mt-1 text-xs">
-                We are setting up your organization. This may take a few moments.
-              </p>
+          <T>
+            <div className="flex flex-col items-center justify-center gap-2 text-center">
+              <LogoSpinner />
+              <div>
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={currentMessageIndex} // Important for AnimatePresence to detect changes
+                    className="text-primary h-6 text-base font-medium" // Added h-6 for consistent height
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Var>{PROGRESS_MESSAGES[currentMessageIndex]}</Var>
+                  </motion.p>
+                </AnimatePresence>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  We are setting up your organization. This may take a few moments.
+                </p>
+              </div>
             </div>
-          </div>
+          </T>
         );
       case 'COMPLETED':
         return (
-          <div className="flex flex-col items-center justify-center gap-2 text-center">
-            <Rocket className="text-chart-positive h-6 w-6" />
-            <div>
-              <p className="text-chart-positive text-base font-medium">Setup Complete</p>
-              <p className="text-muted-foreground mt-1 text-xs">Your organization is ready.</p>
+          <T>
+            <div className="flex flex-col items-center justify-center gap-2 text-center">
+              <Rocket className="text-chart-positive h-6 w-6" />
+              <div>
+                <p className="text-chart-positive text-base font-medium">Setup Complete</p>
+                <p className="text-muted-foreground mt-1 text-xs">Your organization is ready.</p>
+              </div>
             </div>
-          </div>
+          </T>
         );
       case 'FAILED':
       case 'CANCELED':
@@ -163,34 +176,38 @@ export const OnboardingTracker = ({
       case 'SYSTEM_FAILURE':
       case 'EXPIRED':
       case 'TIMED_OUT': {
-        const errorMessage = run.error?.message || 'An unexpected issue occurred.';
+        const errorMessage = run.error?.message || t('An unexpected issue occurred.');
         const truncatedMessage =
           errorMessage.length > 100 ? `${errorMessage.substring(0, 97)}...` : errorMessage;
         return (
-          <div className="flex flex-col items-center justify-center gap-2 text-center">
-            <ShieldAlert className="text-destructive h-6 w-6" />{' '}
-            <div>
-              <p className="text-destructive text-base font-medium">
-                Setup <span className="capitalize">{friendlyStatus}</span>
-              </p>
-              <p className="text-destructive/80 mt-1 text-xs">{truncatedMessage}</p>
+          <T>
+            <div className="flex flex-col items-center justify-center gap-2 text-center">
+              <ShieldAlert className="text-destructive h-6 w-6" />{' '}
+              <div>
+                <p className="text-destructive text-base font-medium">
+                  Setup <span className="capitalize"><Var>{friendlyStatus}</Var></span>
+                </p>
+                <p className="text-destructive/80 mt-1 text-xs"><Var>{truncatedMessage}</Var></p>
+              </div>
             </div>
-          </div>
+          </T>
         );
       }
       default: {
         const exhaustiveCheck: never = run.status as never;
 
         return (
-          <div className="flex flex-col items-center justify-center gap-2 text-center">
-            <Zap className="text-warning h-6 w-6" />
-            <div>
-              <p className="text-warning text-base font-medium">Unknown Status</p>
-              <p className="text-muted-foreground mt-1 text-xs">
-                Received an unhandled status: {exhaustiveCheck}
-              </p>
+          <T>
+            <div className="flex flex-col items-center justify-center gap-2 text-center">
+              <Zap className="text-warning h-6 w-6" />
+              <div>
+                <p className="text-warning text-base font-medium">Unknown Status</p>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  Received an unhandled status: <Var>{exhaustiveCheck}</Var>
+                </p>
+              </div>
             </div>
-          </div>
+          </T>
         );
       }
     }

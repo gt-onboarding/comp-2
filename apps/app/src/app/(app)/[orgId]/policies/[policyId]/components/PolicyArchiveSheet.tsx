@@ -7,6 +7,7 @@ import { Drawer, DrawerContent, DrawerTitle } from '@comp/ui/drawer';
 import { useMediaQuery } from '@comp/ui/hooks';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@comp/ui/sheet';
 import { ArchiveIcon, ArchiveRestoreIcon, X } from 'lucide-react';
+import { T, Branch, useGT } from 'gt-next';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import { useQueryState } from 'nuqs';
@@ -14,6 +15,7 @@ import { toast } from 'sonner';
 
 export function PolicyArchiveSheet({ policy }: { policy: Policy }) {
   const router = useRouter();
+  const t = useGT();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [open, setOpen] = useQueryState('archive-policy-sheet');
   const isOpen = Boolean(open);
@@ -22,18 +24,18 @@ export function PolicyArchiveSheet({ policy }: { policy: Policy }) {
   const archivePolicy = useAction(archivePolicyAction, {
     onSuccess: (result) => {
       if (result) {
-        toast.success('Policy archived successfully');
+        toast.success(t('Policy archived successfully'));
         // Redirect to policies list after successful archive
         router.push(`/${policy.organizationId}/policies/all`);
       } else {
-        toast.success('Policy restored successfully');
+        toast.success(t('Policy restored successfully'));
         // Stay on the policy page after restore
         router.refresh();
       }
       handleOpenChange(false);
     },
     onError: () => {
-      toast.error('Failed to update policy archive status');
+      toast.error(t('Failed to update policy archive status'));
     },
   });
 
@@ -51,18 +53,22 @@ export function PolicyArchiveSheet({ policy }: { policy: Policy }) {
 
   const content = (
     <div className="space-y-6">
-      <p className="text-muted-foreground text-sm">
-        {isArchived
-          ? 'Are you sure you want to restore this policy?'
-          : 'Are you sure you want to archive this policy?'}
-      </p>
+      <T>
+        <p className="text-muted-foreground text-sm">
+          <Branch
+            branch={isArchived.toString()}
+            true="Are you sure you want to restore this policy?"
+            false="Are you sure you want to archive this policy?"
+          />
+        </p>
+      </T>
       <div className="flex justify-end gap-2">
         <Button
           variant="outline"
           onClick={() => handleOpenChange(false)}
           disabled={archivePolicy.status === 'executing'}
         >
-          {'Cancel'}
+          <T>Cancel</T>
         </Button>
         <Button
           variant={isArchived ? 'default' : 'destructive'}
@@ -70,24 +76,36 @@ export function PolicyArchiveSheet({ policy }: { policy: Policy }) {
           disabled={archivePolicy.status === 'executing'}
         >
           {archivePolicy.status === 'executing' ? (
-            <span className="flex items-center gap-2">
-              <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              {isArchived ? 'Restore' : 'Archive'}
-            </span>
+            <T>
+              <span className="flex items-center gap-2">
+                <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                <Branch
+                  branch={isArchived.toString()}
+                  true="Restore"
+                  false="Archive"
+                />
+              </span>
+            </T>
           ) : (
-            <span className="flex items-center gap-2">
-              {isArchived ? (
-                <>
-                  <ArchiveRestoreIcon className="h-3 w-3" />
-                  {'Restore'}
-                </>
-              ) : (
-                <>
-                  <ArchiveIcon className="h-3 w-3" />
-                  {'Archive'}
-                </>
-              )}
-            </span>
+            <T>
+              <span className="flex items-center gap-2">
+                <Branch
+                  branch={isArchived.toString()}
+                  true={
+                    <>
+                      <ArchiveRestoreIcon className="h-3 w-3" />
+                      Restore
+                    </>
+                  }
+                  false={
+                    <>
+                      <ArchiveIcon className="h-3 w-3" />
+                      Archive
+                    </>
+                  }
+                />
+              </span>
+            </T>
           )}
         </Button>
       </div>
@@ -100,7 +118,15 @@ export function PolicyArchiveSheet({ policy }: { policy: Policy }) {
         <SheetContent>
           <SheetHeader className="mb-6">
             <div className="flex flex-row items-center justify-between">
-              <SheetTitle>{isArchived ? 'Restore Policy' : 'Archive Policy'}</SheetTitle>
+              <T>
+                <SheetTitle>
+                  <Branch
+                    branch={isArchived.toString()}
+                    true="Restore Policy"
+                    false="Archive Policy"
+                  />
+                </SheetTitle>
+              </T>
               <Button
                 size="icon"
                 variant="ghost"
@@ -120,12 +146,26 @@ export function PolicyArchiveSheet({ policy }: { policy: Policy }) {
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-      <DrawerTitle hidden>{isArchived ? 'Restore Policy' : 'Archive Policy'}</DrawerTitle>
+      <T>
+        <DrawerTitle hidden>
+          <Branch
+            branch={isArchived.toString()}
+            true="Restore Policy"
+            false="Archive Policy"
+          />
+        </DrawerTitle>
+      </T>
       <DrawerContent className="p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-medium">
-            {isArchived ? 'Restore Policy' : 'Archive Policy'}
-          </h3>
+          <T>
+            <h3 className="text-lg font-medium">
+              <Branch
+                branch={isArchived.toString()}
+                true="Restore Policy"
+                false="Archive Policy"
+              />
+            </h3>
+          </T>
           <p className="text-muted-foreground mt-1 text-sm">{policy.name}</p>
         </div>
         {content}

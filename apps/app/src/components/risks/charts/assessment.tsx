@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
 import { type ChartConfig, ChartContainer, ChartTooltip } from '@comp/ui/chart';
+import { T } from 'gt-next';
 import { Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
 
 interface AssessmentChartProps {
@@ -26,7 +27,9 @@ export function AssessmentChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Risk Assessment</CardTitle>
+        <CardTitle>
+          <T>Risk Assessment</T>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={config}>

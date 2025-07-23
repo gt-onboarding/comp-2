@@ -6,6 +6,7 @@ import type { Departments } from '@comp/db/types';
 import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { getGT } from 'gt-next/server';
 import { appErrors } from '../types';
 
 const schema = z.object({
@@ -111,7 +112,8 @@ export const updateEmployee = authActionClient
         if (error.code === 'P2002') {
           const targetFields = error.meta?.target as string[] | undefined;
           if (targetFields?.includes('email')) {
-            throw new Error('Email address is already in use.');
+            const t = await getGT();
+            throw new Error(t('Email address is already in use.'));
           }
         }
       }

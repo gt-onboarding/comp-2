@@ -5,6 +5,7 @@ import { TableHead, TableHeader, TableRow } from '@comp/ui/table';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
+import { useGT } from 'gt-next';
 
 type Props = {
   table?: {
@@ -24,6 +25,7 @@ export function FrameworkControlsTableHeader({ table, loading }: Props) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
+  const t = useGT();
   const sortParam = searchParams.get('sort');
   const [column, value] = sortParam ? sortParam.split(':') : [];
 
@@ -62,7 +64,7 @@ export function FrameworkControlsTableHeader({ table, loading }: Props) {
               variant="ghost"
               onClick={() => createSortQuery('name')}
             >
-              <span>{'Control'}</span>
+              <span>{t('Control')}</span>
               {'name' === column && value === 'asc' && <ArrowDown size={16} />}
               {'name' === column && value === 'desc' && <ArrowUp size={16} />}
             </Button>
@@ -76,7 +78,7 @@ export function FrameworkControlsTableHeader({ table, loading }: Props) {
               variant="ghost"
               onClick={() => createSortQuery('category')}
             >
-              <span>{'Category'}</span>
+              <span>{t('Category')}</span>
               {'category' === column && value === 'asc' && <ArrowDown size={16} />}
               {'category' === column && value === 'desc' && <ArrowUp size={16} />}
             </Button>
@@ -90,7 +92,7 @@ export function FrameworkControlsTableHeader({ table, loading }: Props) {
               variant="ghost"
               onClick={() => createSortQuery('status')}
             >
-              <span>{'Status'}</span>
+              <span>{t('Status')}</span>
               {'status' === column && value === 'asc' && <ArrowDown size={16} />}
               {'status' === column && value === 'desc' && <ArrowUp size={16} />}
             </Button>

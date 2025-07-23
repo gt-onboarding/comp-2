@@ -9,6 +9,7 @@ import { CommentList } from '../../../../../../components/comments/CommentList';
 import { CommentWithAuthor } from '../../../../../../components/comments/Comments';
 import { updateTask } from '../../actions/updateTask';
 import { TaskBody } from './TaskBody';
+import { T, useGT } from 'gt-next';
 
 interface TaskMainContentProps {
   task: Task & { fileUrls?: string[] };
@@ -19,6 +20,7 @@ interface TaskMainContentProps {
 export function TaskMainContent({ task, comments, attachments }: TaskMainContentProps) {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description ?? '');
+  const t = useGT();
 
   const debouncedUpdateTask = useDebouncedCallback(
     (field: 'title' | 'description', value: string) => {
@@ -61,7 +63,9 @@ export function TaskMainContent({ task, comments, attachments }: TaskMainContent
 
       {/* Comment Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Comments</h3>
+        <T>
+          <h3 className="text-lg font-medium">Comments</h3>
+        </T>
         <CommentForm entityId={task.id} entityType={CommentEntityType.task} />
         <CommentList comments={comments} />
       </div>

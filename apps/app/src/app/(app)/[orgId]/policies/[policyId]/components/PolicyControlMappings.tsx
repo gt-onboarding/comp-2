@@ -1,6 +1,7 @@
 import { Control } from '@comp/db/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@comp/ui/card';
 import { SelectPills } from '@comp/ui/select-pills';
+import { T, useGT } from 'gt-next';
 import { useAction } from 'next-safe-action/hooks';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
@@ -18,25 +19,26 @@ export const PolicyControlMappings = ({
   isPendingApproval: boolean;
 }) => {
   const { policyId } = useParams<{ policyId: string }>();
+  const t = useGT();
   const [loading, setLoading] = useState(false);
 
   const mapControlsAction = useAction(mapPolicyToControls, {
     onSuccess: () => {
-      toast.success('Controls mapped successfully');
+      toast.success(t('Controls mapped successfully'));
     },
     onError: (err) => {
-      toast.error(err.error.serverError || 'Failed to map controls');
+      toast.error(err.error.serverError || t('Failed to map controls'));
       setLoading(false);
     },
   });
 
   const unmapControlAction = useAction(unmapPolicyFromControl, {
     onSuccess: () => {
-      toast.success('Controls unmapped successfully');
+      toast.success(t('Controls unmapped successfully'));
       setLoading(false);
     },
     onError: (err) => {
-      toast.error(err.error.serverError || 'Failed to unmap control');
+      toast.error(err.error.serverError || t('Failed to unmap control'));
       setLoading(false);
     },
   });
@@ -67,7 +69,7 @@ export const PolicyControlMappings = ({
         });
       }
     } catch (err) {
-      toast.error('Failed to update controls');
+      toast.error(t('Failed to update controls'));
     } finally {
       setLoading(false);
     }
@@ -76,15 +78,19 @@ export const PolicyControlMappings = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Map Controls</CardTitle>
-        <CardDescription>Map controls that are relevant to this policy.</CardDescription>
+        <T>
+          <CardTitle>Map Controls</CardTitle>
+        </T>
+        <T>
+          <CardDescription>Map controls that are relevant to this policy.</CardDescription>
+        </T>
       </CardHeader>
       <CardContent className="flex w-full flex-col gap-2">
         <SelectPills
           data={allControls.map((c) => ({ id: c.id, name: c.name }))}
           value={mappedNames}
           onValueChange={handleValueChange}
-          placeholder="Search controls..."
+          placeholder={t('Search controls...')}
           disabled={isPendingApproval || loading}
         />
       </CardContent>

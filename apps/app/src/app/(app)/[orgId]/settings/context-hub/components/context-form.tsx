@@ -7,6 +7,7 @@ import { Button } from '@comp/ui/button';
 import { Input } from '@comp/ui/input';
 import { Label } from '@comp/ui/label';
 import { Textarea } from '@comp/ui/textarea';
+import { T, useGT, Branch } from 'gt-next';
 import type { Context } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import { useTransition } from 'react';
@@ -14,6 +15,7 @@ import { toast } from 'sonner';
 
 export function ContextForm({ entry, onSuccess }: { entry?: Context; onSuccess?: () => void }) {
   const [isPending, startTransition] = useTransition();
+  const t = useGT();
 
   async function onSubmit(formData: FormData) {
     startTransition(async () => {
@@ -25,7 +27,7 @@ export function ContextForm({ entry, onSuccess }: { entry?: Context; onSuccess?:
             answer: formData.get('answer') as string,
           });
           if (result?.data) {
-            toast.success('Context entry updated');
+            toast.success(t('Context entry updated'));
             onSuccess?.();
           }
         } else {
@@ -34,12 +36,12 @@ export function ContextForm({ entry, onSuccess }: { entry?: Context; onSuccess?:
             answer: formData.get('answer') as string,
           });
           if (result?.data) {
-            toast.success('Context entry created');
+            toast.success(t('Context entry created'));
             onSuccess?.();
           }
         }
       } catch (error) {
-        toast.error('Something went wrong');
+        toast.error(t('Something went wrong'));
       }
     });
   }
@@ -48,36 +50,42 @@ export function ContextForm({ entry, onSuccess }: { entry?: Context; onSuccess?:
     <div className="scrollbar-hide h-[calc(100vh-250px)] overflow-auto">
       <Accordion type="multiple" defaultValue={['context']}>
         <AccordionItem value="context">
-          <AccordionTrigger>{'Context Entry'}</AccordionTrigger>
+          <AccordionTrigger><T>Context Entry</T></AccordionTrigger>
           <AccordionContent>
             <form action={onSubmit} className="flex flex-col gap-4 space-y-4">
               <input type="hidden" name="id" value={entry?.id} />
               <div className="space-y-2">
-                <Label htmlFor="question">Question</Label>
+                <Label htmlFor="question"><T>Question</T></Label>
                 <div className="mt-3">
                   <Input
                     id="question"
                     name="question"
-                    placeholder="What is the company's mission?"
+                    placeholder={t("What is the company's mission?")}
                     defaultValue={entry?.question}
                     required
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="answer">Answer</Label>
+                <Label htmlFor="answer"><T>Answer</T></Label>
                 <div className="mt-3">
                   <Textarea
                     id="answer"
                     name="answer"
-                    placeholder="Our mission is to provide the best possible service to our customers."
+                    placeholder={t('Our mission is to provide the best possible service to our customers.')}
                     defaultValue={entry?.answer}
                     required
                   />
                 </div>
               </div>
               <Button type="submit" disabled={isPending} className="justify-self-end">
-                {entry ? 'Update' : 'Create'}{' '}
+                <T>
+                  <Branch
+                    branch={entry ? 'update' : 'create'}
+                    update="Update"
+                    create="Create"
+                  />
+                </T>{' '}
                 {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
               </Button>
             </form>

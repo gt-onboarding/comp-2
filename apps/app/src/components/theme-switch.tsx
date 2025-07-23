@@ -2,6 +2,7 @@
 
 import { Monitor, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useGT } from 'gt-next';
 
 import {
   Select,
@@ -31,12 +32,13 @@ const ThemeIcon = ({ currentTheme }: Props) => {
 
 export const ThemeSwitch = () => {
   const { theme, setTheme, themes } = useTheme();
+  const t = useGT();
 
   return (
     <div className="relative flex items-center">
       <Select defaultValue={theme} onValueChange={(value: Theme) => setTheme(value)}>
         <SelectTrigger className="h-[32px] w-full bg-transparent py-1.5 pr-3 pl-6 text-xs capitalize outline-hidden">
-          <SelectValue placeholder={'Theme'} />
+          <SelectValue placeholder={t('Theme')} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>

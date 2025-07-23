@@ -6,6 +6,22 @@ import * as React from 'react';
 import { Dialog, DialogContent } from '@comp/ui/dialog';
 import { MultiRoleComboboxContent } from './MultiRoleComboboxContent';
 import { MultiRoleComboboxTrigger } from './MultiRoleComboboxTrigger';
+import { useGT } from 'gt-next';
+
+const getRoleLabel = (roleValue: Role, t: (content: string) => string) => {
+  switch (roleValue) {
+    case 'owner':
+      return t('Owner');
+    case 'admin':
+      return t('Admin');
+    case 'auditor':
+      return t('Auditor');
+    case 'employee':
+      return t('Employee');
+    default:
+      return roleValue;
+  }
+};
 
 // Define the selectable roles explicitly (exclude owner)
 const selectableRoles: {
@@ -52,6 +68,7 @@ export function MultiRoleCombobox({
 }: MultiRoleComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState('');
+  const t = useGT();
 
   // Process selected roles to handle comma-separated values
   const selectedRoles = React.useMemo(() => {
@@ -85,39 +102,15 @@ export function MultiRoleCombobox({
     onSelectedRolesChange(newSelectedRoles);
   };
 
-  const getRoleLabel = (roleValue: Role) => {
-    switch (roleValue) {
-      case 'owner':
-        return 'Owner';
-      case 'admin':
-        return 'Admin';
-      case 'auditor':
-        return 'Auditor';
-      case 'employee':
-        return 'Employee';
-      default:
-        return roleValue;
-    }
+  const getRoleLabelWithTranslation = (roleValue: Role) => {
+    return getRoleLabel(roleValue, t);
   };
 
   const triggerText =
-    selectedRoles.length > 0 ? `${selectedRoles.length} selected` : placeholder || 'Select role(s)';
+    selectedRoles.length > 0 ? t('{count} selected', { count: selectedRoles.length }) : placeholder || t('Select role(s)');
 
   const filteredRoles = availableRoles.filter((role) => {
-    const label = (() => {
-      switch (role.value) {
-        case 'admin':
-          return 'Admin';
-        case 'auditor':
-          return 'Auditor';
-        case 'employee':
-          return 'Employee';
-        case 'owner':
-          return 'Owner';
-        default:
-          return role.value;
-      }
-    })();
+    const label = getRoleLabel(role.value, t);
     return label.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
@@ -129,7 +122,7 @@ export function MultiRoleCombobox({
         triggerText={triggerText}
         disabled={disabled}
         handleSelect={handleSelect} // For badge clicks
-        getRoleLabel={getRoleLabel}
+        getRoleLabel={getRoleLabelWithTranslation}
         onClick={() => setOpen(true)}
         ariaExpanded={open}
       />

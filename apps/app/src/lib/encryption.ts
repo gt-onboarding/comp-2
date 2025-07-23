@@ -23,11 +23,11 @@ function deriveKey(secret: string, salt: Buffer): Buffer {
   });
 }
 
-export async function encrypt(text: string): Promise<EncryptedData> {
+export async function encrypt(text: string, t?: (content: string) => string): Promise<EncryptedData> {
   const secretKey = process.env.SECRET_KEY;
 
   if (!secretKey) {
-    throw new Error('SECRET_KEY environment variable is not set');
+    throw new Error(t ? t('SECRET_KEY environment variable is not set') : 'SECRET_KEY environment variable is not set');
   }
 
   const salt = randomBytes(SALT_LENGTH);
@@ -47,10 +47,10 @@ export async function encrypt(text: string): Promise<EncryptedData> {
   };
 }
 
-export async function decrypt(encryptedData: EncryptedData): Promise<string> {
+export async function decrypt(encryptedData: EncryptedData, t?: (content: string) => string): Promise<string> {
   const secretKey = process.env.SECRET_KEY;
   if (!secretKey) {
-    throw new Error('SECRET_KEY environment variable is not set');
+    throw new Error(t ? t('SECRET_KEY environment variable is not set') : 'SECRET_KEY environment variable is not set');
   }
 
   const encrypted = Buffer.from(encryptedData.encrypted, 'base64');
@@ -68,14 +68,14 @@ export async function decrypt(encryptedData: EncryptedData): Promise<string> {
   return decrypted.toString('utf8');
 }
 
-export function encryptObject<T extends object>(obj: T): T {
+export function encryptObject<T extends object>(obj: T, t?: (content: string) => string): T {
   const encrypted: any = {};
 
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === 'string') {
-      encrypted[key] = encrypt(value);
+      encrypted[key] = encrypt(value, t);
     } else if (typeof value === 'object' && value !== null) {
-      encrypted[key] = encryptObject(value);
+      encrypted[key] = encryptObject(value, t);
     } else {
       encrypted[key] = value;
     }
@@ -84,14 +84,14 @@ export function encryptObject<T extends object>(obj: T): T {
   return encrypted as T;
 }
 
-export function decryptObject<T extends object>(obj: T): T {
+export function decryptObject<T extends object>(obj: T, t?: (content: string) => string): T {
   const decrypted: any = {};
 
   for (const [key, value] of Object.entries(obj)) {
     if (value && typeof value === 'object' && 'encrypted' in value) {
-      decrypted[key] = decrypt(value as EncryptedData);
+      decrypted[key] = decrypt(value as EncryptedData, t);
     } else if (typeof value === 'object' && value !== null) {
-      decrypted[key] = decryptObject(value);
+      decrypted[key] = decryptObject(value, t);
     } else {
       decrypted[key] = value;
     }

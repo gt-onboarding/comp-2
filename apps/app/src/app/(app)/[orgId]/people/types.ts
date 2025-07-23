@@ -1,20 +1,21 @@
 import { z } from 'zod';
+import { InlineTranslationOptions } from 'gt-next/types';
 
 export interface AppError {
   code: string;
   message: string;
 }
 
-export const appErrors = {
+export const getAppErrors = (t: (content: string, options?: InlineTranslationOptions) => string) => ({
   UNAUTHORIZED: {
     code: 'UNAUTHORIZED',
-    message: 'You are not authorized to access this resource',
+    message: t('You are not authorized to access this resource'),
   },
   UNEXPECTED_ERROR: {
     code: 'UNEXPECTED_ERROR',
-    message: 'An unexpected error occurred',
+    message: t('An unexpected error occurred'),
   },
-};
+});
 
 export interface EmployeesInput {
   search?: string;

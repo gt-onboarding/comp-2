@@ -4,6 +4,8 @@ import { CreateRiskSheet } from '@/components/sheets/create-risk-sheet';
 import { getValidFilters } from '@/lib/data-table';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
+import { T, getGT } from 'gt-next';
+import { getGT as getGTServer } from 'gt-next/server';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { cache } from 'react';
@@ -45,30 +47,30 @@ export default async function RiskRegisterPage(props: {
     return (
       <div className="py-4">
         <AppOnboarding
-          title={'Risk Management'}
+          title={<T>Risk Management</T>}
           description={
-            "Identify, assess, and mitigate risks to protect your organization's assets and ensure compliance."
+            <T>Identify, assess, and mitigate risks to protect your organization's assets and ensure compliance.</T>
           }
-          cta={'Create risk'}
+          cta={<T>Create risk</T>}
           imageSrcLight="/onboarding/risk-light.webp"
           imageSrcDark="/onboarding/risk-dark.webp"
-          imageAlt="Risk Management"
+          imageAlt={<T>Risk Management</T>}
           sheetName="create-risk-sheet"
           faqs={[
             {
-              questionKey: 'What is risk management?',
+              questionKey: <T>What is risk management?</T>,
               answerKey:
-                "Risk management is the process of identifying, assessing, and controlling threats to an organization's capital and earnings.",
+                <T>Risk management is the process of identifying, assessing, and controlling threats to an organization's capital and earnings.</T>,
             },
             {
-              questionKey: 'Why is risk management important?',
+              questionKey: <T>Why is risk management important?</T>,
               answerKey:
-                'It helps organizations protect their assets, ensure stability, and achieve their objectives by minimizing potential disruptions.',
+                <T>It helps organizations protect their assets, ensure stability, and achieve their objectives by minimizing potential disruptions.</T>,
             },
             {
-              questionKey: 'What are the key steps in risk management?',
+              questionKey: <T>What are the key steps in risk management?</T>,
               answerKey:
-                'The key steps are risk identification, risk analysis, risk evaluation, risk treatment, and risk monitoring and review.',
+                <T>The key steps are risk identification, risk analysis, risk evaluation, risk treatment, and risk monitoring and review.</T>,
             },
           ]}
         />
@@ -78,7 +80,7 @@ export default async function RiskRegisterPage(props: {
   }
 
   return (
-    <PageWithBreadcrumb breadcrumbs={[{ label: 'Risks', href: `/${orgId}/risk`, current: true }]}>
+    <PageWithBreadcrumb breadcrumbs={[{ label: <T>Risks</T>, href: `/${orgId}/risk`, current: true }]}>
       <RisksTable
         risks={risksResult?.data || []}
         pageCount={risksResult.pageCount}
@@ -89,8 +91,9 @@ export default async function RiskRegisterPage(props: {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGTServer();
   return {
-    title: 'Risks',
+    title: t('Risks'),
   };
 }
 

@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@comp/ui/dropdown-menu';
+import { T, useGT } from 'gt-next';
 import { MoreVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { TaskStatusIndicator } from '../../components/TaskStatusIndicator';
@@ -31,12 +32,13 @@ export function TaskPropertiesSidebar({
   handleUpdateTask,
   onDeleteClick,
 }: TaskPropertiesSidebarProps) {
+  const t = useGT();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   return (
     <aside className="hidden w-full shrink-0 flex-col md:w-64 md:border-l md:pt-8 md:pl-8 lg:flex lg:w-72">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-muted-foreground shrink-0 text-xs font-semibold tracking-wider uppercase">
-          Properties
+          <T>Properties</T>
         </h2>
         <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
           <DropdownMenuTrigger asChild>
@@ -53,7 +55,7 @@ export function TaskPropertiesSidebar({
               className="text-destructive focus:text-destructive"
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              Delete
+              <T>Delete</T>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -61,7 +63,7 @@ export function TaskPropertiesSidebar({
       <div className="space-y-4 overflow-y-auto">
         {/* Status Selector */}
         <div className="group flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Status</span>
+          <span className="text-muted-foreground"><T>Status</T></span>
           <PropertySelector<TaskStatus>
             value={task.status}
             options={taskStatuses}
@@ -86,15 +88,15 @@ export function TaskPropertiesSidebar({
                 {task.status.replace('_', ' ')}
               </Button>
             }
-            searchPlaceholder="Change status..."
-            emptyText="No status found."
+            searchPlaceholder={t('Change status...')}
+            emptyText={t('No status found.')}
             contentWidth="w-48"
           />
         </div>
 
         {/* Assignee Selector */}
         <div className="group flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Assignee</span>
+          <span className="text-muted-foreground"><T>Assignee</T></span>
           <PropertySelector<Member & { user: User }>
             value={task.assigneeId}
             options={members ?? []}
@@ -137,12 +139,12 @@ export function TaskPropertiesSidebar({
                     <span className="text-foreground font-medium">{assignedMember.user.name}</span>
                   </>
                 ) : (
-                  <span className="text-muted-foreground">Unassigned</span>
+                  <span className="text-muted-foreground"><T>Unassigned</T></span>
                 )}
               </Button>
             }
-            searchPlaceholder="Change assignee..."
-            emptyText="No member found."
+            searchPlaceholder={t('Change assignee...')}
+            emptyText={t('No member found.')}
             contentWidth="w-56"
             disabled={members?.length === 0}
             allowUnassign={true} // Enable unassign option
@@ -151,7 +153,7 @@ export function TaskPropertiesSidebar({
 
         {/* Frequency Selector */}
         <div className="group flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Frequency</span>
+          <span className="text-muted-foreground"><T>Frequency</T></span>
           <PropertySelector<TaskFrequency>
             value={task.frequency}
             options={taskFrequencies}
@@ -168,20 +170,20 @@ export function TaskPropertiesSidebar({
                 variant="ghost"
                 className="hover:bg-muted data-[state=open]:bg-muted h-auto w-auto px-2 py-0.5 font-medium capitalize"
               >
-                {task.frequency ? task.frequency.replace('_', ' ') : 'None'}
+                {task.frequency ? task.frequency.replace('_', ' ') : t('None')}
               </Button>
             }
-            searchPlaceholder="Change frequency..."
-            emptyText="No frequency found."
+            searchPlaceholder={t('Change frequency...')}
+            emptyText={t('No frequency found.')}
             contentWidth="w-48"
             allowUnassign={true}
-            unassignLabel="None"
+            unassignLabel={t('None')}
           />
         </div>
 
         {/* Department Selector */}
         <div className="group flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Department</span>
+          <span className="text-muted-foreground"><T>Department</T></span>
           <PropertySelector<Departments>
             value={task.department ?? 'none'}
             options={taskDepartments}
@@ -189,7 +191,7 @@ export function TaskPropertiesSidebar({
             renderOption={(dept) => {
               if (dept === 'none') {
                 // Render 'none' as plain text
-                return <span className="text-muted-foreground">None</span>;
+                return <span className="text-muted-foreground"><T>None</T></span>;
               }
               // Render other departments as colored badges
               const mainColor = DEPARTMENT_COLORS[dept] ?? DEPARTMENT_COLORS.none;
@@ -222,7 +224,7 @@ export function TaskPropertiesSidebar({
                   const currentDept = task.department ?? 'none';
                   if (currentDept === 'none') {
                     // Render 'None' as plain text for the trigger
-                    return <span className="text-muted-foreground px-1">None</span>;
+                    return <span className="text-muted-foreground px-1"><T>None</T></span>;
                   }
                   // Render other departments as colored badges
                   const mainColor = DEPARTMENT_COLORS[currentDept] ?? DEPARTMENT_COLORS.none; // Fallback
@@ -242,8 +244,8 @@ export function TaskPropertiesSidebar({
                 })()}
               </Button>
             }
-            searchPlaceholder="Change department..."
-            emptyText="No department found."
+            searchPlaceholder={t('Change department...')}
+            emptyText={t('No department found.')}
             contentWidth="w-48"
           />
         </div>

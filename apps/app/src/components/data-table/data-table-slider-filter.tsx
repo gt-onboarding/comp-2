@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@comp/ui/popover';
 import { Separator } from '@comp/ui/separator';
 import { Slider } from '@comp/ui/slider';
 import { PlusCircle, XCircle } from 'lucide-react';
+import { T, useGT } from 'gt-next';
 
 interface Range {
   min: number;
@@ -34,6 +35,7 @@ interface DataTableSliderFilterProps<TData> {
 
 export function DataTableSliderFilter<TData>({ column, title }: DataTableSliderFilterProps<TData>) {
   const id = React.useId();
+  const t = useGT();
 
   const columnFilterValue = getIsValidRange(column.getFilterValue())
     ? (column.getFilterValue() as RangeValue)
@@ -123,7 +125,7 @@ export function DataTableSliderFilter<TData>({ column, title }: DataTableSliderF
         <Button variant="outline" size="sm" className="border-dashed">
           {columnFilterValue ? (
             <div
-              aria-label={`Clear ${title} filter`}
+              aria-label={t('Clear {title} filter', { title })}
               className="focus-visible:ring-ring rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-1 focus-visible:outline-hidden"
               onClick={onReset}
             >
@@ -203,8 +205,8 @@ export function DataTableSliderFilter<TData>({ column, title }: DataTableSliderF
             onValueChange={onSliderValueChange}
           />
         </div>
-        <Button aria-label={`Clear ${title} filter`} variant="outline" size="sm" onClick={onReset}>
-          Clear
+        <Button aria-label={t('Clear {title} filter', { title })} variant="outline" size="sm" onClick={onReset}>
+          <T>Clear</T>
         </Button>
       </PopoverContent>
     </Popover>

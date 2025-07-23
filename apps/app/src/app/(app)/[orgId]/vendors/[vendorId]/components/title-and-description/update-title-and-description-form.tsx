@@ -42,7 +42,7 @@ export function UpdateTitleAndDescriptionForm({ vendor }: { vendor: Vendor }) {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof updateVendorSchema>) => {
+  const onSubmit = (data: z.infer<ReturnType<typeof getUpdateVendorSchema>>) => {
     updateVendor.execute({
       id: data.id,
       name: data.name,
@@ -58,7 +58,7 @@ export function UpdateTitleAndDescriptionForm({ vendor }: { vendor: Vendor }) {
       <div className="scrollbar-hide h-[calc(100vh-250px)] overflow-auto">
         <Accordion type="multiple" defaultValue={['vendor']}>
           <AccordionItem value="vendor">
-            <AccordionTrigger>{'Vendor'}</AccordionTrigger>
+            <AccordionTrigger><T>Vendor</T></AccordionTrigger>
             <AccordionContent>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -66,13 +66,13 @@ export function UpdateTitleAndDescriptionForm({ vendor }: { vendor: Vendor }) {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{'Name'}</FormLabel>
+                      <FormLabel><T>Name</T></FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           autoFocus
                           className="mt-3"
-                          placeholder={'A short, descriptive name for the vendor.'}
+                          placeholder={t('A short, descriptive name for the vendor.')}
                           autoCorrect="off"
                         />
                       </FormControl>
@@ -85,12 +85,12 @@ export function UpdateTitleAndDescriptionForm({ vendor }: { vendor: Vendor }) {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{'Description'}</FormLabel>
+                      <FormLabel><T>Description</T></FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
                           className="mt-3 min-h-[80px]"
-                          placeholder={'A detailed description of the vendor and its services.'}
+                          placeholder={t('A detailed description of the vendor and its services.')}
                         />
                       </FormControl>
                       <FormMessage />
@@ -106,7 +106,7 @@ export function UpdateTitleAndDescriptionForm({ vendor }: { vendor: Vendor }) {
                     {updateVendor.status === 'executing' ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      'Save'
+                      <T>Save</T>
                     )}
                   </Button>
                 </div>

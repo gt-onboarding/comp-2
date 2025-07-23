@@ -1,4 +1,7 @@
+'use client';
+
 import { cn } from '@comp/ui/cn';
+import { useGT } from 'gt-next';
 
 export const VENDOR_STATUS_TYPES = ['not_assessed', 'in_progress', 'assessed'] as const;
 
@@ -11,6 +14,21 @@ const VENDOR_STATUS_COLORS: Record<VendorStatusType, string> = {
 } as const;
 
 export function VendorStatus({ status }: { status: VendorStatusType }) {
+  const t = useGT();
+  
+  const getStatusLabel = (status: VendorStatusType) => {
+    switch (status) {
+      case 'not_assessed':
+        return t('Not Assessed');
+      case 'in_progress':
+        return t('In Progress');
+      case 'assessed':
+        return t('Assessed');
+      default:
+        return status.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
+    }
+  };
+
   return (
     <div className="flex items-center gap-2">
       <div
@@ -19,7 +37,7 @@ export function VendorStatus({ status }: { status: VendorStatusType }) {
           backgroundColor: VENDOR_STATUS_COLORS[status] ?? '  ',
         }}
       />
-      {status.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase())}
+      {getStatusLabel(status)}
     </div>
   );
 }

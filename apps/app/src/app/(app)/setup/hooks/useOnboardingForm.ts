@@ -3,6 +3,7 @@
 import { trackEvent, trackOnboardingEvent } from '@/utils/tracking';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { sendGTMEvent } from '@next/third-parties/google';
+import { useGT } from 'gt-next';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -11,7 +12,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { createOrganizationMinimal } from '../actions/create-organization-minimal';
 import type { OnboardingFormFields } from '../components/OnboardingStepInput';
-import { companyDetailsSchema, steps } from '../lib/constants';
+import { createCompanyDetailsSchema, createSteps } from '../lib/constants';
 import { updateSetupSession } from '../lib/setup-session';
 import type { CompanyDetails } from '../lib/types';
 
@@ -21,16 +22,18 @@ interface UseOnboardingFormProps {
   currentStep?: string;
 }
 
-// Only use the first 3 steps for the minimal flow
-const prePaymentSteps = steps.slice(0, 3);
+// Only use the first 3 steps for the minimal flow - will be set async
+let prePaymentSteps: any[] = [];
 
 export function useOnboardingForm({
   setupId,
   initialData,
   currentStep,
 }: UseOnboardingFormProps = {}) {
+  const t = useGT();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [steps, setSteps] = useState<any[]>([]);
 
   // Helper to build URL with search params
   const buildUrlWithParams = (path: string, params?: Record<string, string>) => {
@@ -58,17 +61,28 @@ export function useOnboardingForm({
   );
 
   // Determine the initial step index based on currentStep
-  const initialStepIndex = currentStep
-    ? prePaymentSteps.findIndex((s) => s.key === currentStep)
-    : 0;
-
-  const [stepIndex, setStepIndex] = useState(Math.max(0, initialStepIndex));
+  const [stepIndex, setStepIndex] = useState(0);
+  const [initializedSteps, setInitializedSteps] = useState(false);
   const [isOnboarding, setIsOnboarding] = useState(false);
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    // Initialize steps async
+    const initSteps = async () => {
+      const allSteps = await createSteps();
+      prePaymentSteps = allSteps.slice(0, 3);
+      setSteps(prePaymentSteps);
+      
+      // Set initial step index after steps are loaded
+      const initialStepIndex = currentStep
+        ? prePaymentSteps.findIndex((s) => s.key === currentStep)
+        : 0;
+      setStepIndex(Math.max(0, initialStepIndex));
+      setInitializedSteps(true);
+    };
+    initSteps();
   }, []);
 
   // Track when user starts onboarding
@@ -83,19 +97,30 @@ export function useOnboardingForm({
 
   // Save progress to KV if we have a setupId
   useEffect(() => {
-    if (setupId && mounted) {
-      const currentStepKey = prePaymentSteps[stepIndex]?.key;
+    if (setupId && mounted && initializedSteps) {
+      const currentStepKey = steps[stepIndex]?.key;
       updateSetupSession(setupId, {
         currentStep: currentStepKey,
         formData: savedAnswers as Record<string, any>,
       });
     }
-  }, [setupId, stepIndex, savedAnswers, mounted]);
+  }, [setupId, stepIndex, savedAnswers, mounted, initializedSteps, steps]);
 
-  const step = prePaymentSteps[stepIndex];
-  const stepSchema = z.object({
-    [step.key]: companyDetailsSchema.shape[step.key],
-  });
+  const step = steps[stepIndex] || { key: 'frameworkIds', question: '', placeholder: '' };
+  const [stepSchema, setStepSchema] = useState<any>(z.object({}));
+  
+  // Update schema when step changes
+  useEffect(() => {
+    const updateSchema = async () => {
+      if (step?.key && initializedSteps) {
+        const schema = await createCompanyDetailsSchema();
+        setStepSchema(z.object({
+          [step.key]: schema.shape[step.key],
+        }));
+      }
+    };
+    updateSchema();
+  }, [step?.key, initializedSteps]);
 
   const form = useForm<OnboardingFormFields>({
     resolver: zodResolver(stepSchema),
@@ -127,13 +152,13 @@ export function useOnboardingForm({
         // Clear answers after successful creation
         setSavedAnswers({});
       } else {
-        toast.error('Failed to create organization');
+        toast.error(t('Failed to create organization'));
         setIsFinalizing(false);
         setIsOnboarding(false);
       }
     },
     onError: () => {
-      toast.error('Failed to create organization');
+      toast.error(t('Failed to create organization'));
       setIsFinalizing(false);
       setIsOnboarding(false);
     },
@@ -186,7 +211,7 @@ export function useOnboardingForm({
       });
     }
 
-    if (stepIndex < prePaymentSteps.length - 1) {
+    if (stepIndex < steps.length - 1) {
       setStepIndex(stepIndex + 1);
     } else {
       handleCreateOrganizationAction(newAnswers);
@@ -209,17 +234,17 @@ export function useOnboardingForm({
     }
   };
 
-  const isLastStep = stepIndex === prePaymentSteps.length - 1;
+  const isLastStep = stepIndex === steps.length - 1;
 
   return {
     stepIndex,
-    steps: prePaymentSteps,
+    steps,
     step,
     form,
     savedAnswers,
     isOnboarding,
     isFinalizing,
-    mounted,
+    mounted: mounted && initializedSteps,
     onSubmit,
     handleBack,
     isLastStep,

@@ -7,6 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@comp/ui/form
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@comp/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Impact, Likelihood } from '@prisma/client';
+import { T, useGT } from 'gt-next';
 import { Loader2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useQueryState } from 'nuqs';
@@ -21,21 +22,21 @@ interface ResidualRiskFormProps {
   onSuccess?: () => void;
 }
 
-const LIKELIHOOD_LABELS: Record<Likelihood, string> = {
-  [Likelihood.very_unlikely]: 'Very Unlikely',
-  [Likelihood.unlikely]: 'Unlikely',
-  [Likelihood.possible]: 'Possible',
-  [Likelihood.likely]: 'Likely',
-  [Likelihood.very_likely]: 'Very Likely',
-};
+const getLikelihoodLabels = (t: (content: string) => string): Record<Likelihood, string> => ({
+  [Likelihood.very_unlikely]: t('Very Unlikely'),
+  [Likelihood.unlikely]: t('Unlikely'),
+  [Likelihood.possible]: t('Possible'),
+  [Likelihood.likely]: t('Likely'),
+  [Likelihood.very_likely]: t('Very Likely'),
+});
 
-const IMPACT_LABELS: Record<Impact, string> = {
-  [Impact.insignificant]: 'Insignificant',
-  [Impact.minor]: 'Minor',
-  [Impact.moderate]: 'Moderate',
-  [Impact.major]: 'Major',
-  [Impact.severe]: 'Severe',
-};
+const getImpactLabels = (t: (content: string) => string): Record<Impact, string> => ({
+  [Impact.insignificant]: t('Insignificant'),
+  [Impact.minor]: t('Minor'),
+  [Impact.moderate]: t('Moderate'),
+  [Impact.major]: t('Major'),
+  [Impact.severe]: t('Severe'),
+});
 
 export function ResidualRiskForm({
   riskId,
@@ -43,6 +44,9 @@ export function ResidualRiskForm({
   initialImpact,
 }: ResidualRiskFormProps) {
   const [_, setOpen] = useQueryState('residual-risk-sheet');
+  const t = useGT();
+  const likelihoodLabels = getLikelihoodLabels(t);
+  const impactLabels = getImpactLabels(t);
 
   const form = useForm<z.infer<typeof updateResidualRiskEnumSchema>>({
     resolver: zodResolver(updateResidualRiskEnumSchema),
@@ -55,11 +59,11 @@ export function ResidualRiskForm({
 
   const updateResidualRisk = useAction(updateResidualRiskEnumAction, {
     onSuccess: () => {
-      toast.success('Residual risk updated successfully');
+      toast.success(t('Residual risk updated successfully'));
       setOpen(null);
     },
     onError: () => {
-      toast.error('Failed to update residual risk');
+      toast.error(t('Failed to update residual risk'));
     },
   });
 
@@ -75,15 +79,17 @@ export function ResidualRiskForm({
           name="probability"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{'Probability'}</FormLabel>
+              <FormLabel>
+                <T>Probability</T>
+              </FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={'Select a probability'} />
+                    <SelectValue placeholder={t('Select a probability')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.entries(LIKELIHOOD_LABELS).map(([value, label]) => (
+                  {Object.entries(likelihoodLabels).map(([value, label]) => (
                     <SelectItem key={value} value={value}>
                       {label}
                     </SelectItem>
@@ -99,15 +105,17 @@ export function ResidualRiskForm({
           name="impact"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{'Impact'}</FormLabel>
+              <FormLabel>
+                <T>Impact</T>
+              </FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={'Select an impact'} />
+                    <SelectValue placeholder={t('Select an impact')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.entries(IMPACT_LABELS).map(([value, label]) => (
+                  {Object.entries(impactLabels).map(([value, label]) => (
                     <SelectItem key={value} value={value}>
                       {label}
                     </SelectItem>
@@ -127,7 +135,7 @@ export function ResidualRiskForm({
             {updateResidualRisk.status === 'executing' ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              'Save'
+              <T>Save</T>
             )}
           </Button>
         </div>

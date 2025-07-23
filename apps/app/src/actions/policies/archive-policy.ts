@@ -3,6 +3,7 @@
 import { db } from '@comp/db';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
+import { getGT } from 'gt-next/server';
 import { authActionClient } from '../safe-action';
 
 const archivePolicySchema = z.object({
@@ -24,11 +25,12 @@ export const archivePolicyAction = authActionClient
   .action(async ({ parsedInput, ctx }) => {
     const { id, action } = parsedInput;
     const { activeOrganizationId } = ctx.session;
+    const t = await getGT();
 
     if (!activeOrganizationId) {
       return {
         success: false,
-        error: 'Not authorized',
+        error: t('Not authorized'),
       };
     }
 
@@ -43,7 +45,7 @@ export const archivePolicyAction = authActionClient
       if (!policy) {
         return {
           success: false,
-          error: 'Policy not found',
+          error: t('Policy not found'),
         };
       }
 
@@ -70,7 +72,7 @@ export const archivePolicyAction = authActionClient
       console.error(error);
       return {
         success: false,
-        error: 'Failed to update policy archive status',
+        error: t('Failed to update policy archive status'),
       };
     }
   });

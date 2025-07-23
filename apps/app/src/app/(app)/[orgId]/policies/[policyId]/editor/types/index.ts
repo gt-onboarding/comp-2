@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { InlineTranslationOptions } from 'gt-next/types';
 
 export const policyDetailsSchema = z.object({
   id: z.string(),
@@ -30,17 +31,17 @@ export type AppError = {
   message: string;
 };
 
-export const appErrors = {
+export const getAppErrors = (t: (content: string, options?: InlineTranslationOptions) => string) => ({
   NOT_FOUND: {
     code: 'NOT_FOUND' as const,
-    message: 'Policy not found',
+    message: t('Policy not found'),
   },
   UNAUTHORIZED: {
     code: 'UNAUTHORIZED' as const,
-    message: 'You are not authorized to view this policy',
+    message: t('You are not authorized to view this policy'),
   },
   UNEXPECTED_ERROR: {
     code: 'UNEXPECTED_ERROR' as const,
-    message: 'An unexpected error occurred',
+    message: t('An unexpected error occurred'),
   },
-} as const;
+} as const);

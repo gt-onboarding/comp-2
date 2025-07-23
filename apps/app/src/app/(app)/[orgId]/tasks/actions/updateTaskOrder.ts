@@ -4,6 +4,7 @@ import type { ActionResponse } from '@/types/actions';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { TaskStatus } from '@comp/db/types';
+import { getGT } from 'gt-next/server';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod';
@@ -19,13 +20,14 @@ const updateTaskOrderSchema = z.array(
 export const updateTaskOrder = async (
   input: z.infer<typeof updateTaskOrderSchema>,
 ): Promise<ActionResponse> => {
+  const t = await getGT();
   const session = await auth.api.getSession({
     headers: await headers(),
   });
   if (!session?.session?.activeOrganizationId) {
     return {
       success: false,
-      error: 'Not authorized - no organization found',
+      error: t('Not authorized - no organization found'),
     };
   }
   try {
@@ -45,7 +47,7 @@ export const updateTaskOrder = async (
     console.error('Failed to update task order:', error);
     return {
       success: false,
-      error: 'Failed to update task order',
+      error: t('Failed to update task order'),
     };
   }
 };

@@ -5,6 +5,8 @@ import { RiskOverview } from '@/components/risks/risk-overview';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { AttachmentEntityType, CommentEntityType } from '@comp/db/types';
+import { T } from 'gt-next';
+import { getGT } from 'gt-next/server';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -34,7 +36,7 @@ export default async function RiskPage({ searchParams, params }: PageProps) {
   return (
     <PageWithBreadcrumb
       breadcrumbs={[
-        { label: 'Risks', href: `/${orgId}/risk` },
+        { label: <T>Risks</T>, href: `/${orgId}/risk` },
         { label: risk.title, current: true },
       ]}
     >
@@ -150,7 +152,8 @@ const getAssignees = cache(async () => {
 });
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
   return {
-    title: 'Risk Overview',
+    title: t('Risk Overview'),
   };
 }

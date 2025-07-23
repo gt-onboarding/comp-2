@@ -6,6 +6,7 @@ import { DataTable } from '@/components/data-table/data-table';
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
 import { CreatePolicySheet } from '@/components/sheets/create-policy-sheet';
 import { useDataTable } from '@/hooks/use-data-table';
+import { useGT } from 'gt-next';
 import { useParams } from 'next/navigation';
 import { getPolicies } from '../data/queries';
 import { getPolicyColumns } from './policies-table-columns';
@@ -17,6 +18,7 @@ interface PoliciesTableProps {
 export function PoliciesTable({ promises }: PoliciesTableProps) {
   const [{ data, pageCount }] = React.use(promises);
   const { orgId } = useParams();
+  const t = useGT();
 
   const columns = React.useMemo(() => getPolicyColumns(), []);
 
@@ -35,7 +37,7 @@ export function PoliciesTable({ promises }: PoliciesTableProps) {
   return (
     <>
       <DataTable table={table} getRowId={(row) => row.id} rowClickBasePath={`/${orgId}/policies`}>
-        <DataTableToolbar table={table} sheet="create-policy-sheet" action="Create Policy">
+        <DataTableToolbar table={table} sheet="create-policy-sheet" action={t("Create Policy")}>
           {/* <DataTableSortList table={table} align="end" /> */}
         </DataTableToolbar>
       </DataTable>

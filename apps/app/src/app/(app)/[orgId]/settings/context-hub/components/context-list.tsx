@@ -1,6 +1,7 @@
 'use client';
 
 import { deleteContextEntryAction } from '@/actions/context-hub/delete-context-entry-action';
+import { T, useGT } from 'gt-next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +39,7 @@ import { ContextForm } from './context-form';
 export function ContextList({ entries, locale }: { entries: Context[]; locale: string }) {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState<Record<string, boolean>>({});
+  const t = useGT();
 
   const handleEditOpen = (id: string, open: boolean) => {
     setEditDialogOpen((prev) => ({ ...prev, [id]: open }));
@@ -49,25 +51,35 @@ export function ContextList({ entries, locale }: { entries: Context[]; locale: s
         <CardHeader>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-1">
-              <CardTitle>Context Entries</CardTitle>
-              <CardDescription>
-                Add, edit, or remove context entries for your organization.
-              </CardDescription>
+              <T>
+                <CardTitle>Context Entries</CardTitle>
+              </T>
+              <T>
+                <CardDescription>
+                  Add, edit, or remove context entries for your organization.
+                </CardDescription>
+              </T>
             </div>
             <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
               <DialogTrigger asChild>
-                <Button
-                  onClick={() => setAddDialogOpen(true)}
-                  className="flex items-center gap-1 self-start"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Entry
-                </Button>
+                <T>
+                  <Button
+                    onClick={() => setAddDialogOpen(true)}
+                    className="flex items-center gap-1 self-start"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Entry
+                  </Button>
+                </T>
               </DialogTrigger>
               <DialogContent className="w-full max-w-lg">
                 <DialogHeader>
-                  <DialogTitle>Add New Entry</DialogTitle>
-                  <DialogDescription>Create a new context entry</DialogDescription>
+                  <T>
+                    <DialogTitle>Add New Entry</DialogTitle>
+                  </T>
+                  <T>
+                    <DialogDescription>Create a new context entry</DialogDescription>
+                  </T>
                 </DialogHeader>
                 <ContextForm onSuccess={() => setAddDialogOpen(false)} />
               </DialogContent>
@@ -77,7 +89,9 @@ export function ContextList({ entries, locale }: { entries: Context[]; locale: s
         <CardContent>
           {entries.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <p className="text-muted-foreground mb-6">No context entries yet</p>
+              <T>
+                <p className="text-muted-foreground mb-6">No context entries yet</p>
+              </T>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -103,8 +117,12 @@ export function ContextList({ entries, locale }: { entries: Context[]; locale: s
                         </DialogTrigger>
                         <DialogContent className="w-full max-w-lg">
                           <DialogHeader>
-                            <DialogTitle>Edit Entry</DialogTitle>
-                            <DialogDescription>Update your context entry</DialogDescription>
+                            <T>
+                              <DialogTitle>Edit Entry</DialogTitle>
+                            </T>
+                            <T>
+                              <DialogDescription>Update your context entry</DialogDescription>
+                            </T>
                           </DialogHeader>
                           <ContextForm
                             entry={entry}
@@ -123,35 +141,45 @@ export function ContextList({ entries, locale }: { entries: Context[]; locale: s
                     <div className="flex w-full justify-end">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="destructive" className="rounded-sm">
-                            Delete
-                          </Button>
+                          <T>
+                            <Button variant="destructive" className="rounded-sm">
+                              Delete
+                            </Button>
+                          </T>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone.
-                            </AlertDialogDescription>
+                            <T>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            </T>
+                            <T>
+                              <AlertDialogDescription>
+                                This action cannot be undone.
+                              </AlertDialogDescription>
+                            </T>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={async () => {
-                                try {
-                                  const result = await deleteContextEntryAction({
-                                    id: entry.id,
-                                  });
-                                  if (result?.data?.success) {
-                                    toast.success('Context entry deleted');
+                            <T>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            </T>
+                            <T>
+                              <AlertDialogAction
+                                onClick={async () => {
+                                  try {
+                                    const result = await deleteContextEntryAction({
+                                      id: entry.id,
+                                    });
+                                    if (result?.data?.success) {
+                                      toast.success(t('Context entry deleted'));
+                                    }
+                                  } catch (error) {
+                                    toast.error(t('Something went wrong'));
                                   }
-                                } catch (error) {
-                                  toast.error('Something went wrong');
-                                }
-                              }}
-                            >
-                              Delete
-                            </AlertDialogAction>
+                                }}
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </T>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>

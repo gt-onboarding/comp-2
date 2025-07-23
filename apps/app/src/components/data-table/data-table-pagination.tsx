@@ -6,6 +6,7 @@ import * as React from 'react';
 import { Button } from '@comp/ui/button';
 import { cn } from '@comp/ui/cn';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@comp/ui/select';
+import { T, Var, useGT } from 'gt-next';
 
 interface DataTablePaginationProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
@@ -22,6 +23,7 @@ export function DataTablePagination<TData>({
 }: DataTablePaginationProps<TData>) {
   const pageParam = tableId ? `${tableId}_page` : 'page';
   const perPageParam = tableId ? `${tableId}_perPage` : 'perPage';
+  const t = useGT();
 
   const [page, setPage] = useQueryState(pageParam);
   const [perPage, setPerPage] = useQueryState(perPageParam);
@@ -93,7 +95,7 @@ export function DataTablePagination<TData>({
   return (
     <div className={cn('flex items-center justify-between px-2 py-4', className)} {...props}>
       <div className="text-muted-foreground flex items-center gap-4 text-sm">
-        <span className="hidden sm:inline">{table.getCoreRowModel().rows.length} items</span>
+        <span className="hidden sm:inline"><T><Var>{table.getCoreRowModel().rows.length}</Var> items</T></span>
         <div className="hidden items-center gap-2 sm:flex">
           <Select
             value={`${table.getState().pagination.pageSize}`}
@@ -110,13 +112,13 @@ export function DataTablePagination<TData>({
               ))}
             </SelectContent>
           </Select>
-          <span>per page</span>
+          <span><T>per page</T></span>
         </div>
       </div>
 
       <div className="flex items-center gap-1">
         <span className="text-muted-foreground mr-2 hidden text-sm sm:inline">
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          <T>Page <Var>{table.getState().pagination.pageIndex + 1}</Var> of <Var>{table.getPageCount()}</Var></T>
         </span>
         <Button
           variant="outline"

@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback } from '@comp/ui/avatar';
 import { Badge } from '@comp/ui/badge';
 import { Button } from '@comp/ui/button';
+import { T, useGT } from 'gt-next';
 import {
   Dialog,
   DialogContent,
@@ -34,6 +35,7 @@ export function PendingInvitationRow({ invitation, onCancel }: PendingInvitation
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const t = useGT();
   const dropdownTriggerRef = useRef<HTMLButtonElement>(null);
   const focusRef = useRef<HTMLButtonElement | null>(null);
 
@@ -85,7 +87,7 @@ export function PendingInvitationRow({ invitation, onCancel }: PendingInvitation
               <span>{invitation.email}</span>
               <Badge variant="outline" className="hidden md:flex items-center gap-1 text-xs">
                 <Clock className="mr-1 h-3 w-3" />
-                Pending
+                {t('Pending')}
               </Badge>
             </div>
             {/* No secondary email line for invitations */}
@@ -108,7 +110,7 @@ export function PendingInvitationRow({ invitation, onCancel }: PendingInvitation
             <DropdownMenuTrigger ref={dropdownTriggerRef} asChild disabled={isCancelling}>
               <Button variant="ghost" className="data-[state=open]:bg-muted flex h-8 w-8 p-0">
                 <MoreHorizontal className="h-4 w-4" />
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only"><T>Open menu</T></span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -131,7 +133,7 @@ export function PendingInvitationRow({ invitation, onCancel }: PendingInvitation
                     }}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
-                    <span>Cancel Invitation</span>
+                    <span>{t('Cancel Invitation')}</span>
                   </DropdownMenuItem>
                 </DialogTrigger>
                 <DialogContent
@@ -140,24 +142,26 @@ export function PendingInvitationRow({ invitation, onCancel }: PendingInvitation
                   showCloseButton={false}
                 >
                   <DialogHeader>
-                    <DialogTitle>Cancel Invitation</DialogTitle>
+                    <DialogTitle>{t('Cancel Invitation')}</DialogTitle>
                     <DialogDescription>
-                      Are you sure you want to cancel the invitation for {invitation.email}?
+                      {t('Are you sure you want to cancel the invitation for {email}?', { email: invitation.email })}
                     </DialogDescription>
                   </DialogHeader>
-                  <p className="text-muted-foreground mt-1 text-xs">
-                    This action cannot be undone.
-                  </p>
+                  <T>
+                    <p className="text-muted-foreground mt-1 text-xs">
+                      This action cannot be undone.
+                    </p>
+                  </T>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
-                      Cancel
+                      {t('Cancel')}
                     </Button>
                     <Button
                       variant="destructive"
                       onClick={handleCancelClick}
                       disabled={isCancelling}
                     >
-                      Confirm
+                      {t('Confirm')}
                     </Button>
                   </DialogFooter>
                 </DialogContent>

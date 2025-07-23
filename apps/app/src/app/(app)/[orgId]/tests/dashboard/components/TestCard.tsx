@@ -4,6 +4,7 @@ import { Badge, BadgeProps } from '@comp/ui/badge';
 import { Button } from '@comp/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@comp/ui/card';
 import { cn } from '@comp/ui/cn';
+import { T, useGT } from 'gt-next';
 import { ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 
@@ -41,6 +42,7 @@ export function TestCard({
     };
   };
 }) {
+  const t = useGT();
   const [showRemediation, setShowRemediation] = useState(false);
 
   if (showRemediation) {
@@ -54,7 +56,7 @@ export function TestCard({
         )}
       >
         <CardHeader>
-          <CardTitle>Remediation</CardTitle>
+          <CardTitle><T>Remediation</T></CardTitle>
         </CardHeader>
         <CardContent className="text-md break-before-auto break-all">
           {test.remediation?.split(/\b(https?:\/\/\S+)\b/).map((part, i) => {
@@ -77,7 +79,7 @@ export function TestCard({
         </CardContent>
         <CardFooter className="flex justify-end py-4">
           <Button size="sm" variant="outline" onClick={() => setShowRemediation(false)}>
-            Close
+            <T>Close</T>
           </Button>
         </CardFooter>
       </Card>
@@ -96,7 +98,7 @@ export function TestCard({
       <CardHeader className="relative flex flex-col gap-2 break-all">
         <div className="flex flex-row items-center justify-between">
           <div className="text-muted-foreground text-xs">
-            Last Checked: {test.completedAt?.toLocaleString()}
+            <T>Last Checked:</T> {test.completedAt?.toLocaleString()}
           </div>
           {test.severity && (
             <Badge
@@ -110,16 +112,16 @@ export function TestCard({
             </Badge>
           )}
         </div>
-        <CardTitle>{test.title || 'Untitled Test'}</CardTitle>
+        <CardTitle>{test.title || t('Untitled Test')}</CardTitle>
       </CardHeader>
       <CardContent className="text-muted-foreground flex h-full flex-col gap-3 text-sm">
         {test.description && <p>{test.description}</p>}
         <span className="flex-grow" />
       </CardContent>
       <CardFooter className="flex items-center justify-between py-4">
-        <div className="text-muted-foreground text-xs">Status: {test.status}</div>
+        <div className="text-muted-foreground text-xs"><T>Status:</T> {test.status}</div>
         <Button size="sm" variant="outline" onClick={() => setShowRemediation(true)}>
-          Remediate <ArrowRight className="ml-2 h-4 w-4" />
+          <T>Remediate</T> <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </CardFooter>
     </Card>

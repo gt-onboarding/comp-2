@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { T, useGT } from 'gt-next';
 import { Label, Pie, PieChart } from 'recharts';
 
 import { Badge } from '@comp/ui/badge';
@@ -49,14 +50,16 @@ const StatusTooltip = ({ active, payload }: any) => {
 };
 
 export function PolicyStatusChart({ data }: PolicyStatusChartProps) {
+  const t = useGT();
+  
   if (!data) {
     return (
       <Card className="flex flex-col overflow-hidden border">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">{'Policy by Status'}</CardTitle>
+            <CardTitle className="flex items-center gap-2">{t('Policy by Status')}</CardTitle>
             <Badge variant="outline" className="text-xs">
-              Overview
+              <T>Overview</T>
             </Badge>
           </div>
         </CardHeader>
@@ -65,7 +68,9 @@ export function PolicyStatusChart({ data }: PolicyStatusChartProps) {
             <div className="text-muted-foreground flex justify-center">
               <Info className="h-10 w-10 opacity-30" />
             </div>
-            <p className="text-muted-foreground text-center text-sm">No policy data available</p>
+            <T>
+              <p className="text-muted-foreground text-center text-sm">No policy data available</p>
+            </T>
           </div>
         </CardContent>
         <CardFooter className="bg-muted/30 border-t py-3">
@@ -78,33 +83,33 @@ export function PolicyStatusChart({ data }: PolicyStatusChartProps) {
   const chartData = React.useMemo(() => {
     const items = [
       {
-        name: 'Published',
+        name: t('Published'),
         value: data.publishedPolicies,
         fill: CHART_COLORS.published,
       },
       {
-        name: 'Draft',
+        name: t('Draft'),
         value: data.draftPolicies,
         fill: CHART_COLORS.draft,
       },
       {
-        name: 'Archived',
+        name: t('Archived'),
         value: data.archivedPolicies,
         fill: CHART_COLORS.archived,
       },
       {
-        name: 'Needs Review',
+        name: t('Needs Review'),
         value: data.needsReviewPolicies,
         fill: CHART_COLORS.needs_review,
       },
     ];
 
     return items.filter((item) => item.value);
-  }, [data]);
+  }, [data, t]);
 
   const chartConfig = {
     value: {
-      label: 'Count',
+      label: t('Count'),
     },
   } satisfies ChartConfig;
 
@@ -118,7 +123,7 @@ export function PolicyStatusChart({ data }: PolicyStatusChartProps) {
     <Card className="flex flex-col overflow-hidden border">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">{'Policy by Status'}</CardTitle>
+          <CardTitle className="flex items-center gap-2">{t('Policy by Status')}</CardTitle>
 
           {data.totalPolicies > 0 && mostCommonStatus && (
             <Badge
@@ -128,7 +133,7 @@ export function PolicyStatusChart({ data }: PolicyStatusChartProps) {
                 color: mostCommonStatus.fill,
               }}
             >
-              Most: {mostCommonStatus.name}
+              {t('Most: {name}', { name: mostCommonStatus.name })}
             </Badge>
           )}
         </div>
@@ -191,7 +196,7 @@ export function PolicyStatusChart({ data }: PolicyStatusChartProps) {
                             y={(viewBox.cy || 0) + 26}
                             className="fill-muted-foreground text-xs"
                           >
-                            Policies
+                            {t('Policies')}
                           </tspan>
                         </text>
                         <circle

@@ -2,6 +2,7 @@ import { getPostHogClient } from '@/app/posthog';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { SecondaryMenu } from '@comp/ui/secondary-menu';
+import { getGT } from 'gt-next/server';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -32,19 +33,21 @@ export default async function Layout({ children }: { children: React.ReactNode }
     session?.session.userId,
   );
 
+  const t = await getGT();
+
   return (
     <div className="m-auto max-w-[1200px]">
       <SecondaryMenu
         items={[
           {
             path: `/${orgId}/people/all`,
-            label: 'People',
+            label: t('People'),
           },
           ...(employees.length > 0
             ? [
                 {
                   path: `/${orgId}/people/dashboard`,
-                  label: 'Employee Tasks',
+                  label: t('Employee Tasks'),
                 },
               ]
             : []),
@@ -52,7 +55,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
             ? [
                 {
                   path: `/${orgId}/people/devices`,
-                  label: 'Employee Devices',
+                  label: t('Employee Devices'),
                 },
               ]
             : []),

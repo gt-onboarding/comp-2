@@ -2,6 +2,7 @@ import type { EmployeeStatusType } from '@/components/tables/people/employee-sta
 import { cn } from '@comp/ui/cn';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@comp/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@comp/ui/select';
+import { T, useGT, Var } from 'gt-next';
 import type { Control } from 'react-hook-form';
 import type { EmployeeFormValues } from '../EmployeeDetails';
 
@@ -17,6 +18,8 @@ export const EMPLOYEE_STATUS_HEX_COLORS: Record<EmployeeStatusType, string> = {
 };
 
 export const Status = ({ control }: { control: Control<EmployeeFormValues> }) => {
+  const t = useGT();
+  
   return (
     <FormField
       control={control}
@@ -24,12 +27,12 @@ export const Status = ({ control }: { control: Control<EmployeeFormValues> }) =>
       render={({ field }) => (
         <FormItem className="flex flex-col">
           <FormLabel className="text-muted-foreground text-xs font-medium uppercase">
-            Status
+            <T>Status</T>
           </FormLabel>
           <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
             <FormControl>
               <SelectTrigger className="h-10">
-                <SelectValue placeholder="Select status" />
+                <SelectValue placeholder={t('Select status')} />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
@@ -42,7 +45,7 @@ export const Status = ({ control }: { control: Control<EmployeeFormValues> }) =>
                         backgroundColor: EMPLOYEE_STATUS_HEX_COLORS[option.value] ?? '',
                       }}
                     />
-                    {option.label}
+                    <T><Var>{option.label}</Var></T>
                   </div>
                 </SelectItem>
               ))}

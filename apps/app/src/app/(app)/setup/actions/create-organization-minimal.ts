@@ -8,19 +8,25 @@ import { createOrUpdateCompany, findCompanyByDomain } from '@/hubspot/companies'
 import { findContactByEmail } from '@/hubspot/contacts';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod';
 
 // Minimal schema - only the first 3 fields
-const minimalOrgSchema = z.object({
-  frameworkIds: z.array(z.string()).min(1, 'Please select at least one framework'),
-  organizationName: z.string().min(2, 'Organization name must be at least 2 characters'),
-  website: z.string().url('Please enter a valid URL'),
-});
+const createMinimalOrgSchema = async () => {
+  const t = await getGT();
+  return z.object({
+    frameworkIds: z.array(z.string()).min(1, t('Please select at least one framework')),
+    organizationName: z.string().min(2, t('Organization name must be at least 2 characters')),
+    website: z.string().url(t('Please enter a valid URL')),
+  });
+};
 
 export const createOrganizationMinimal = authActionClientWithoutOrg
-  .inputSchema(minimalOrgSchema)
+  .inputSchema(async () => {
+    return await createMinimalOrgSchema();
+  })
   .metadata({
     name: 'create-organization-minimal',
     track: {
@@ -30,6 +36,7 @@ export const createOrganizationMinimal = authActionClientWithoutOrg
   })
   .action(async ({ parsedInput, ctx }) => {
     try {
+      const t = await getGT();
       const session = await auth.api.getSession({
         headers: await headers(),
       });
@@ -37,7 +44,7 @@ export const createOrganizationMinimal = authActionClientWithoutOrg
       if (!session) {
         return {
           success: false,
-          error: 'Not authorized.',
+          error: t('Not authorized.'),
         };
       }
 
@@ -56,7 +63,7 @@ export const createOrganizationMinimal = authActionClientWithoutOrg
           // Only save the context for frameworkIds (we need this for later)
           context: {
             create: {
-              question: 'Which compliance frameworks do you need?',
+              question: t('Which compliance frameworks do you need?'),
               answer: parsedInput.frameworkIds.join(', '),
               tags: ['onboarding'],
             },
@@ -169,9 +176,10 @@ export const createOrganizationMinimal = authActionClientWithoutOrg
         };
       }
 
+      const t = await getGT();
       return {
         success: false,
-        error: 'Failed to create organization',
+        error: t('Failed to create organization'),
       };
     }
   });

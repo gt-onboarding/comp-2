@@ -1,4 +1,5 @@
 import type { Page } from 'playwright-core';
+import { getGT } from 'gt-next/server';
 
 // ------------------------------------------------------------------
 // 1) Standard DOM type definitions
@@ -271,6 +272,8 @@ function createSelectorMap(elementTree: DOMElementNode): Record<number, DOMEleme
 // 4) "Get the DOM" method, separate from highlighting
 // ------------------------------------------------------------------
 export async function getDomState(page: Page, highlightElements = true): Promise<DomResult> {
+  const t = await getGT();
+  
   // 1) Collect raw JSON from the browser
   const rawTree = await page.evaluate(
     ({ script, doHighlight }) => {
@@ -280,11 +283,11 @@ export async function getDomState(page: Page, highlightElements = true): Promise
     { script: GATHER_DOM_TREE_JS, doHighlight: highlightElements },
   );
 
-  if (!rawTree) throw new Error('No DOM returned from browser!');
+  if (!rawTree) throw new Error(t('No DOM returned from browser!'));
 
   // 2) Parse into typed structure
   const elementTree = parseNode(rawTree) as DOMElementNode;
-  if (!elementTree) throw new Error('Failed to parse root element node!');
+  if (!elementTree) throw new Error(t('Failed to parse root element node!'));
 
   // 3) Build highlightIndex -> DOMElement map
   const selectorMap = createSelectorMap(elementTree);
@@ -440,20 +443,24 @@ export async function clickElementByHighlightIndex(
   domState: DOMState,
   highlightIndex: number,
 ) {
+  const t = await getGT();
   const elemNode = domState.selectorMap[highlightIndex];
   if (!elemNode) {
-    return `No element found for highlightIndex=${highlightIndex}`;
+    return t('No element found for highlightIndex={highlightIndex}', { highlightIndex });
   }
 
   const xpath = elemNode.xpath;
   if (!xpath) {
-    return `Node has no xpath for highlightIndex=${highlightIndex}`;
+    return t('Node has no xpath for highlightIndex={highlightIndex}', { highlightIndex });
   }
 
   const locator = page.locator(`xpath=${xpath}`);
   const count = await locator.count();
   if (count < 1) {
-    return `Element not found in DOM for highlightIndex=${highlightIndex}, xpath=${xpath}`;
+    return t('Element not found in DOM for highlightIndex={highlightIndex}, xpath={xpath}', { 
+      highlightIndex, 
+      xpath 
+    });
   }
 
   await locator.first().click();

@@ -2,6 +2,7 @@
 
 import { Button } from '@comp/ui/button';
 import { Card } from '@comp/ui/card';
+import { T, useGT, Branch, Var } from 'gt-next';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -19,14 +20,8 @@ export function BookingStep({
   orgId: string;
   complianceFrameworks: string[];
   hasAccess: boolean;
-}) {
-  const title = !hasAccess ? `Let's get ${company} approved` : 'Talk to us to upgrade';
-
-  const description = !hasAccess
-    ? `A quick 20-minute call with our team to understand your compliance needs and approve your organization for access.`
-    : `A quick 20-minute call with our team to understand your compliance needs and upgrade your plan.`;
-
-  const cta = !hasAccess ? 'Book Your Demo' : 'Book a Call';
+) {
+  const t = useGT();
 
   return (
     <div className="flex justify-center w-full animate-in fade-in-50 duration-500">
@@ -34,8 +29,20 @@ export function BookingStep({
         <div className="p-8 space-y-8">
           {/* Header */}
           <div className="text-center space-y-3 mb-6">
-            <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-            <p className="text-muted-foreground text-base max-w-xl mx-auto">{description}</p>
+            <T>
+              <Branch
+                branch={hasAccess}
+                true={<h1 className="text-2xl font-semibold tracking-tight">Talk to us to upgrade</h1>}
+                false={<h1 className="text-2xl font-semibold tracking-tight">Let's get <Var>{company}</Var> approved</h1>}
+              />
+            </T>
+            <T>
+              <Branch
+                branch={hasAccess}
+                true={<p className="text-muted-foreground text-base max-w-xl mx-auto">A quick 20-minute call with our team to understand your compliance needs and upgrade your plan.</p>}
+                false={<p className="text-muted-foreground text-base max-w-xl mx-auto">A quick 20-minute call with our team to understand your compliance needs and approve your organization for access.</p>}
+              />
+            </T>
           </div>
 
           {/* CTA Button */}
@@ -46,16 +53,24 @@ export function BookingStep({
               rel="noopener noreferrer"
             >
               <Button size="lg" className="min-w-[200px]">
-                {cta} <ArrowRight className="w-4 h-4" />
+                <T>
+                  <Branch
+                    branch={hasAccess}
+                    true={<>Book a Call <ArrowRight className="w-4 h-4" /></>}
+                    false={<>Book Your Demo <ArrowRight className="w-4 h-4" /></>}
+                  />
+                </T>
               </Button>
             </Link>
           </div>
 
           {/* Already spoke to us section */}
           <div className="border-gray-200 dark:border-gray-800">
-            <p className="text-center text-sm text-muted-foreground">
-              Already had a demo? Ask your point of contact to activate your account.
-            </p>
+            <T>
+              <p className="text-center text-sm text-muted-foreground">
+                Already had a demo? Ask your point of contact to activate your account.
+              </p>
+            </T>
           </div>
         </div>
       </Card>

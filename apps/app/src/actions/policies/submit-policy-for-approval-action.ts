@@ -3,6 +3,7 @@
 import { db } from '@comp/db';
 import { PolicyStatus } from '@comp/db/types';
 import { revalidatePath } from 'next/cache';
+import { getGT } from 'gt-next/server';
 import { authActionClient } from '../safe-action';
 import { updatePolicyFormSchema } from '../schema';
 
@@ -27,13 +28,14 @@ export const submitPolicyForApprovalAction = authActionClient
       approverId,
     } = parsedInput;
     const { user, session } = ctx;
+    const t = await getGT();
 
     if (!user.id || !session.activeOrganizationId) {
-      throw new Error('Unauthorized');
+      throw new Error(t('Unauthorized'));
     }
 
     if (!approverId) {
-      throw new Error('Approver is required');
+      throw new Error(t('Approver is required'));
     }
 
     try {
