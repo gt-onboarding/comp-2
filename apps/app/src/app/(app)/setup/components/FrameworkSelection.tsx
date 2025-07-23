@@ -2,6 +2,7 @@
 
 import { FrameworkCard } from '@/components/framework-card';
 import type { FrameworkEditorFramework } from '@comp/db/types';
+import { useGT } from 'gt-next';
 import { useEffect, useState } from 'react';
 
 interface FrameworkSelectionProps {
@@ -11,6 +12,7 @@ interface FrameworkSelectionProps {
 }
 
 export function FrameworkSelection({ value, onChange, onLoadingChange }: FrameworkSelectionProps) {
+  const t = useGT();
   const [frameworks, setFrameworks] = useState<
     Pick<FrameworkEditorFramework, 'id' | 'name' | 'description' | 'version' | 'visible'>[]
   >([]);
@@ -21,7 +23,7 @@ export function FrameworkSelection({ value, onChange, onLoadingChange }: Framewo
       try {
         onLoadingChange?.(true);
         const response = await fetch('/api/frameworks');
-        if (!response.ok) throw new Error('Failed to fetch frameworks');
+        if (!response.ok) throw new Error(t('Failed to fetch frameworks'));
         const data = await response.json();
         setFrameworks(data.frameworks);
 
@@ -31,7 +33,7 @@ export function FrameworkSelection({ value, onChange, onLoadingChange }: Framewo
           onChange([visibleFrameworks[0].id]);
         }
       } catch (error) {
-        console.error('Error fetching frameworks:', error);
+        console.error(t('Error fetching frameworks:'), error);
       } finally {
         setIsLoading(false);
         onLoadingChange?.(false);

@@ -13,6 +13,7 @@ import {
 } from '@comp/ui/card';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@comp/ui/form';
 import { Input } from '@comp/ui/input';
+import { T, useGT } from 'gt-next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
@@ -25,12 +26,13 @@ export function UpdateOrganizationWebsite({
 }: {
   organizationWebsite: string;
 }) {
+  const t = useGT();
   const updateOrganizationWebsite = useAction(updateOrganizationWebsiteAction, {
     onSuccess: () => {
-      toast.success('Organization website updated');
+      toast.success(t('Organization website updated'));
     },
     onError: () => {
-      toast.error('Error updating organization website');
+      toast.error(t('Error updating organization website'));
     },
   });
 
@@ -50,11 +52,11 @@ export function UpdateOrganizationWebsite({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle>{'Organization Website'}</CardTitle>
+            <CardTitle><T>Organization Website</T></CardTitle>
 
             <CardDescription>
               <div className="max-w-[600px]">
-                {"This is your organization's official website. Include https:// in the URL."}
+                <T>This is your organization's official website. Include https:// in the URL.</T>
               </div>
             </CardDescription>
           </CardHeader>
@@ -73,7 +75,7 @@ export function UpdateOrganizationWebsite({
                       autoCorrect="off"
                       spellCheck="false"
                       maxLength={255}
-                      placeholder="https://example.com"
+                      placeholder={t('https://example.com')}
                     />
                   </FormControl>
                   <FormMessage />
@@ -83,13 +85,13 @@ export function UpdateOrganizationWebsite({
           </CardContent>
           <CardFooter className="flex justify-between">
             <div className="text-muted-foreground text-xs">
-              {'Please enter a valid URL including https://'}
+              <T>Please enter a valid URL including https://</T>
             </div>
             <Button type="submit" disabled={updateOrganizationWebsite.status === 'executing'}>
               {updateOrganizationWebsite.status === 'executing' ? (
                 <Loader2 className="mr-1 h-4 w-4 animate-spin" />
               ) : null}
-              {'Save'}
+              <T>Save</T>
             </Button>
           </CardFooter>
         </Card>

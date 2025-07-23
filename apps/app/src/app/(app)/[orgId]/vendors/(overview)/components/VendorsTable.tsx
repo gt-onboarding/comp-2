@@ -5,6 +5,7 @@ import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useParams } from 'next/navigation';
 import * as React from 'react';
+import { T } from 'gt-next';
 import { CreateVendorSheet } from '../../components/create-vendor-sheet';
 import type { GetAssigneesResult, GetVendorsResult } from '../data/queries';
 import { columns } from './VendorColumns';
@@ -41,7 +42,7 @@ export function VendorsTable({ promises }: VendorsTableProps) {
   return (
     <>
       <DataTable table={table} getRowId={(row) => row.id} rowClickBasePath={`/${orgId}/vendors`}>
-        <DataTableToolbar table={table} sheet="createVendorSheet" action="Add Vendor" />
+        <DataTableToolbar table={table} sheet="createVendorSheet" action={<T>Add Vendor</T>} />
       </DataTable>
       <CreateVendorSheet assignees={assignees} />
     </>

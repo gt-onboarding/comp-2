@@ -1,6 +1,7 @@
 'use client';
 
 import { updateResidualRiskAction } from '@/actions/risk/update-residual-risk-action';
+import { T, useGT, Var } from 'gt-next';
 import { updateResidualRiskSchema } from '@/actions/schema';
 import { Button } from '@comp/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@comp/ui/form';
@@ -31,6 +32,7 @@ export function VendorResidualRiskForm({
   initialImpact,
 }: ResidualRiskFormProps) {
   const [_, setOpen] = useQueryState('residual-risk-sheet');
+  const t = useGT();
 
   const form = useForm<z.infer<typeof updateResidualRiskSchema>>({
     resolver: zodResolver(updateResidualRiskSchema),
@@ -43,11 +45,11 @@ export function VendorResidualRiskForm({
 
   const updateResidualRisk = useAction(updateResidualRiskAction, {
     onSuccess: () => {
-      toast.success('Residual risk updated successfully');
+      toast.success(t('Residual risk updated successfully'));
       setOpen(null);
     },
     onError: () => {
-      toast.error('Failed to update residual risk');
+      toast.error(t('Failed to update residual risk'));
     },
   });
 
@@ -63,7 +65,9 @@ export function VendorResidualRiskForm({
           name="probability"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{'Probability'}</FormLabel>
+              <T>
+                <FormLabel>Probability</FormLabel>
+              </T>
               <FormControl>
                 <Slider
                   min={1}
@@ -74,7 +78,9 @@ export function VendorResidualRiskForm({
                   className="py-4"
                 />
               </FormControl>
-              <FormDescription className="text-right">{field.value} / 10</FormDescription>
+              <T>
+                <FormDescription className="text-right"><Var>{field.value}</Var> / 10</FormDescription>
+              </T>
             </FormItem>
           )}
         />
@@ -84,7 +90,9 @@ export function VendorResidualRiskForm({
           name="impact"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{'Impact'}</FormLabel>
+              <T>
+                <FormLabel>Impact</FormLabel>
+              </T>
               <FormControl>
                 <Slider
                   min={1}
@@ -95,7 +103,9 @@ export function VendorResidualRiskForm({
                   className="py-4"
                 />
               </FormControl>
-              <FormDescription className="text-right">{field.value} / 10</FormDescription>
+              <T>
+                <FormDescription className="text-right"><Var>{field.value}</Var> / 10</FormDescription>
+              </T>
             </FormItem>
           )}
         />
@@ -109,7 +119,7 @@ export function VendorResidualRiskForm({
             {updateResidualRisk.status === 'executing' ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              'Save'
+              <T>Save</T>
             )}
           </Button>
         </div>

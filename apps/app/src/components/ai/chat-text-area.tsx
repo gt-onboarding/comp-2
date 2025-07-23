@@ -3,6 +3,7 @@ import { Icons } from '@comp/ui/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@comp/ui/popover';
 import { Textarea as ShadcnTextarea } from '@comp/ui/textarea';
 import { useRouter } from 'next/navigation';
+import { T, useGT } from 'gt-next';
 
 interface InputProps {
   input: string;
@@ -16,6 +17,7 @@ interface InputProps {
 
 export const ChatTextarea = ({ input, handleInputChange, isLoading }: InputProps) => {
   const router = useRouter();
+  const t = useGT();
 
   const handleOpenUrl = (url: string) => {
     router.push(url);
@@ -26,7 +28,7 @@ export const ChatTextarea = ({ input, handleInputChange, isLoading }: InputProps
         className="mb-2 h-12 min-h-12 resize-none border-none pt-3"
         value={input}
         autoFocus
-        placeholder={'Ask Comp AI something...'}
+        placeholder={t('Ask Comp AI something...')}
         onChange={handleInputChange}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
@@ -62,7 +64,7 @@ export const ChatTextarea = ({ input, handleInputChange, isLoading }: InputProps
                   onClick={() => handleOpenUrl('https://x.com/compai')}
                 >
                   <Icons.X className="h-[16px] w-[16px]" />
-                  <span>Follow Comp AI</span>
+                  <T><span>Follow Comp AI</span></T>
                 </button>
               </li>
               <li>
@@ -72,7 +74,7 @@ export const ChatTextarea = ({ input, handleInputChange, isLoading }: InputProps
                   onClick={() => handleOpenUrl('https://discord.gg/compai')}
                 >
                   <Icons.Discord className="h-[16px] w-[16px]" />
-                  <span>Join our Discord</span>
+                  <T><span>Join our Discord</span></T>
                 </button>
               </li>
 
@@ -83,7 +85,7 @@ export const ChatTextarea = ({ input, handleInputChange, isLoading }: InputProps
                   onClick={() => handleOpenUrl('https://git.new/compai')}
                 >
                   <Icons.GithubOutline className="h-[16px] w-[16px]" />
-                  <span>GitHub</span>
+                  <T><span>GitHub</span></T>
                 </button>
               </li>
             </ul>
@@ -92,7 +94,7 @@ export const ChatTextarea = ({ input, handleInputChange, isLoading }: InputProps
 
         <div className="ml-auto flex space-x-4">
           <button className="flex items-center space-x-2 text-xs" type="submit">
-            <span>Submit</span>
+            <T><span>Submit</span></T>
             <kbd className="bg-accent pointer-events-none h-5 items-center gap-1 rounded-sm border px-1.5 font-mono text-[10px] font-medium select-none">
               <span>↵</span>
             </kbd>

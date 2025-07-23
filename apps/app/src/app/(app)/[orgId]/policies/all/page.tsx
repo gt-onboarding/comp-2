@@ -1,6 +1,7 @@
 import PageWithBreadcrumb from '@/components/pages/PageWithBreadcrumb';
 import { getValidFilters } from '@/lib/data-table';
 import type { SearchParams } from '@/types';
+import { getGT } from 'gt-next/server';
 import type { Metadata } from 'next';
 import { PoliciesTable } from './components/policies-table';
 import { getPolicies } from './data/queries';
@@ -14,6 +15,7 @@ export default async function PoliciesPage({ ...props }: PolicyTableProps) {
   const searchParams = await props.searchParams;
   const search = searchParamsCache.parse(searchParams);
   const validFilters = getValidFilters(search.filters);
+  const t = await getGT();
 
   const promises = Promise.all([
     getPolicies({
@@ -23,14 +25,15 @@ export default async function PoliciesPage({ ...props }: PolicyTableProps) {
   ]);
 
   return (
-    <PageWithBreadcrumb breadcrumbs={[{ label: 'Policies', current: true }]}>
+    <PageWithBreadcrumb breadcrumbs={[{ label: t('Policies'), current: true }]}>
       <PoliciesTable promises={promises} />
     </PageWithBreadcrumb>
   );
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
   return {
-    title: 'Policies',
+    title: t('Policies'),
   };
 }

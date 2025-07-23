@@ -4,6 +4,7 @@ import { Integration } from '@comp/db/types';
 import { Button } from '@comp/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@comp/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@comp/ui/tabs';
+import { T, Var, useGT } from 'gt-next';
 import { RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -45,6 +46,7 @@ export const TestsLayout = ({
   azureTests,
   cloudProviders,
 }: TestsLayoutProps) => {
+  const t = useGT();
   const [executing, setExecuting] = useState(false);
   const [timeToNextRun, setTimeToNextRun] = useState('');
 
@@ -63,7 +65,7 @@ export const TestsLayout = ({
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-      setTimeToNextRun(`Next scheduled run in ${hours}h ${minutes}m (daily at 5:00 AM UTC)`);
+      setTimeToNextRun(t('Next scheduled run in {hours}h {minutes}m (daily at 5:00 AM UTC)', { hours, minutes }));
     };
 
     calculateTimeToNextRun(); // Initial calculation
@@ -84,7 +86,7 @@ export const TestsLayout = ({
       await runTests();
     } catch (error) {
       console.error(error);
-      toast.error('Failed to run tests, please try again later or contact support.');
+      toast.error(t('Failed to run tests, please try again later or contact support.'));
     } finally {
       setExecuting(false);
     }
@@ -100,7 +102,7 @@ export const TestsLayout = ({
             handleRunTests={handleRunTests}
             executing={executing}
             isSingleProviderView={true}
-            mainTitle="Cloud Tests Results"
+            mainTitle={t('Cloud Tests Results')}
             timeToNextRunInfo={timeToNextRun}
           />
         );
@@ -113,7 +115,7 @@ export const TestsLayout = ({
             handleRunTests={handleRunTests}
             executing={executing}
             isSingleProviderView={true}
-            mainTitle="Cloud Tests Results"
+            mainTitle={t('Cloud Tests Results')}
             timeToNextRunInfo={timeToNextRun}
           />
         );
@@ -126,7 +128,7 @@ export const TestsLayout = ({
             handleRunTests={handleRunTests}
             executing={executing}
             isSingleProviderView={true}
-            mainTitle="Cloud Tests Results"
+            mainTitle={t('Cloud Tests Results')}
             timeToNextRunInfo={timeToNextRun}
           />
         );
@@ -141,12 +143,12 @@ export const TestsLayout = ({
       {activeProvidersCount > 1 && (
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Cloud Tests Results</h1>
+            <h1 className="text-2xl font-semibold tracking-tight"><T>Cloud Tests Results</T></h1>
             {timeToNextRun && <p className="text-muted-foreground mt-1 text-xs">{timeToNextRun}</p>}
           </div>
           <div className="flex flex-col items-end">
             <Button onClick={() => handleRunTests()} disabled={executing}>
-              Run Tests Again{' '}
+              <T>Run Tests Again</T>{' '}
               <RefreshCw className={`ml-2 h-4 w-4 ${executing ? 'animate-spin' : ''}`} />
             </Button>
           </div>
@@ -192,7 +194,7 @@ export const TestsLayout = ({
         <div className="mt-4">{renderProviderContent()}</div>
       ) : (
         <div className="text-muted-foreground mt-4 rounded-lg border border-dashed p-10 text-center">
-          <p>No cloud providers configured. Please add an integration.</p>
+          <p><T>No cloud providers configured. Please add an integration.</T></p>
         </div>
       )}
     </div>
@@ -208,6 +210,7 @@ function TestProviderTabContent({
   mainTitle,
   timeToNextRunInfo,
 }: TestProviderTabContentProps) {
+  const t = useGT();
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
 
   const uniqueStatuses = Array.from(
@@ -255,10 +258,10 @@ function TestProviderTabContent({
               {showFilter && (
                 <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                   <SelectTrigger className="bg-background w-[180px]">
-                    <SelectValue placeholder="Filter by status" />
+                    <SelectValue placeholder={t('Filter by status')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="all"><T>All Statuses</T></SelectItem>
                     {uniqueStatuses.map((status) => (
                       <SelectItem key={status} value={status}>
                         {status}
@@ -269,7 +272,7 @@ function TestProviderTabContent({
               )}
               {showRunButton && (
                 <Button onClick={handleRunTests!} disabled={executing!}>
-                  Run Tests Again{' '}
+                  <T>Run Tests Again</T>{' '}
                   <RefreshCw className={`ml-2 h-4 w-4 ${executing ? 'animate-spin' : ''}`} />
                 </Button>
               )}
@@ -287,8 +290,8 @@ function TestProviderTabContent({
       ) : (
         <div className="text-muted-foreground rounded-lg border border-dashed p-10 text-center">
           <p>
-            No {providerName} test results found
-            {selectedStatus !== 'all' && ` with status "${selectedStatus}"`}
+            <T>No <Var>{providerName}</Var> test results found</T>
+            {selectedStatus !== 'all' && t(' with status "{selectedStatus}"', { selectedStatus })}
           </p>
         </div>
       )}

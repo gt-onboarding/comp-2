@@ -15,6 +15,7 @@ import { cn } from '@comp/ui/cn';
 import { Loader2, Trash2 } from 'lucide-react';
 import React from 'react';
 import { getAttachmentIconAndColor } from '../utils/attachmentUtils';
+import { T, Var, useGT } from 'gt-next';
 
 interface PendingAttachment {
   id: string;
@@ -64,6 +65,7 @@ export function AttachmentItem({
   className,
   canDelete = true, // Default to true if not provided
 }: AttachmentItemProps) {
+  const t = useGT();
   const isExisting = !!attachment;
   const id = attachment?.id ?? pendingAttachment?.id ?? '';
   const name = attachment?.name ?? pendingAttachment?.name ?? '';
@@ -126,7 +128,7 @@ export function AttachmentItem({
               size="icon"
               className="text-muted-foreground hover:text-destructive h-7 w-7 shrink-0 disabled:opacity-50"
               disabled={isDisabled}
-              aria-label={`Remove attachment ${name}`}
+              aria-label={t('Remove attachment {name}', { name })}
             >
               {isBusy ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -137,18 +139,18 @@ export function AttachmentItem({
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <T><AlertDialogTitle>Are you sure?</AlertDialogTitle></T>
               <AlertDialogDescription>
                 {isExisting
-                  ? 'This action cannot be undone. This will permanently delete the attachment.'
-                  : "This will remove the attachment from your pending list. It won't be included when you submit."}
+                  ? <T>This action cannot be undone. This will permanently delete the attachment.</T>
+                  : <T>This will remove the attachment from your pending list. It won't be included when you submit.</T>}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel disabled={isBusy}>Cancel</AlertDialogCancel>
+              <T><AlertDialogCancel disabled={isBusy}>Cancel</AlertDialogCancel></T>
               <AlertDialogAction onClick={handleDelete} disabled={isBusy}>
                 {isBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                Remove
+                <T>Remove</T>
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

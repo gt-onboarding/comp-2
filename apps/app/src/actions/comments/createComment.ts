@@ -5,6 +5,7 @@ import { auth } from '@/utils/auth';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { db } from '@comp/db';
 import { AttachmentEntityType, CommentEntityType } from '@comp/db/types';
+import { getGT } from 'gt-next/server';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod';
@@ -35,33 +36,37 @@ const attachmentSchema = z.object({
   fileData: z.string(), // base64 encoded
 });
 
-// Define the input schema
-const createCommentSchema = z
-  .object({
-    content: z.string(),
-    entityId: z.string(),
-    entityType: z.nativeEnum(CommentEntityType),
-    attachments: z.array(attachmentSchema).optional(),
-    pathToRevalidate: z.string().optional(),
-  })
-  .refine(
-    (data) =>
-      // Check if content is non-empty after trimming OR if attachments exist
-      (data.content && data.content.trim().length > 0) ||
-      (data.attachments && data.attachments.length > 0),
-    {
-      message: 'Comment cannot be empty unless attachments are provided.',
-      path: ['content'],
-    },
-  );
+// Helper function to create validation schema with localized messages
+const createCommentSchemaWithMessages = (t: (content: string) => string) =>
+  z
+    .object({
+      content: z.string(),
+      entityId: z.string(),
+      entityType: z.nativeEnum(CommentEntityType),
+      attachments: z.array(attachmentSchema).optional(),
+      pathToRevalidate: z.string().optional(),
+    })
+    .refine(
+      (data) =>
+        // Check if content is non-empty after trimming OR if attachments exist
+        (data.content && data.content.trim().length > 0) ||
+        (data.attachments && data.attachments.length > 0),
+      {
+        message: t('Comment cannot be empty unless attachments are provided.'),
+        path: ['content'],
+      },
+    );
 
-export const createComment = async (input: z.infer<typeof createCommentSchema>) => {
+export const createComment = async (input: any) => {
+  const t = await getGT();
+  
   // Parse and validate the input
+  const createCommentSchema = createCommentSchemaWithMessages(t);
   const parseResult = createCommentSchema.safeParse(input);
   if (!parseResult.success) {
     return {
       success: false,
-      error: parseResult.error.errors[0]?.message || 'Invalid input',
+      error: parseResult.error.errors[0]?.message || t('Invalid input'),
       data: null,
     };
   }
@@ -75,7 +80,7 @@ export const createComment = async (input: z.infer<typeof createCommentSchema>) 
   if (!orgId) {
     return {
       success: false,
-      error: 'Not authorized - no active organization found.',
+      error: t('Not authorized - no active organization found.'),
       data: null,
     };
   }
@@ -84,7 +89,7 @@ export const createComment = async (input: z.infer<typeof createCommentSchema>) 
     console.error('Entity ID missing after validation in createComment');
     return {
       success: false,
-      error: 'Internal error: Entity ID missing.',
+      error: t('Internal error: Entity ID missing.'),
       data: null,
     };
   }
@@ -102,7 +107,7 @@ export const createComment = async (input: z.infer<typeof createCommentSchema>) 
     if (!member) {
       return {
         success: false,
-        error: 'Not authorized - member not found in organization.',
+        error: t('Not authorized - member not found in organization.'),
         data: null,
       };
     }
@@ -182,7 +187,7 @@ export const createComment = async (input: z.infer<typeof createCommentSchema>) 
     console.error('Failed to create comment with attachments transaction:', error);
     return {
       success: false,
-      error: 'Failed to save comment and link attachments.', // More specific error
+      error: t('Failed to save comment and link attachments.'), // More specific error
       data: null,
     };
   }

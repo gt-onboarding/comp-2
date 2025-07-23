@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { T, useGT } from 'gt-next';
 
 import { Badge } from '@comp/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@comp/ui/card';
@@ -35,15 +36,17 @@ const CHART_COLORS = {
 };
 
 export function PolicyAssigneeChart({ data }: PolicyAssigneeChartProps) {
+  const t = useGT();
+  
   if (!data || data.length === 0) {
     return (
       <Card className="flex flex-col overflow-hidden border">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">{'Policies by Assignee'}</CardTitle>
+            <CardTitle className="flex items-center gap-2">{t('Policies by Assignee')}</CardTitle>
 
             <Badge variant="outline" className="text-xs">
-              Distribution
+              <T>Distribution</T>
             </Badge>
           </div>
         </CardHeader>
@@ -52,9 +55,11 @@ export function PolicyAssigneeChart({ data }: PolicyAssigneeChartProps) {
             <div className="text-muted-foreground flex justify-center">
               <Users className="h-10 w-10 opacity-30" />
             </div>
-            <p className="text-muted-foreground text-center text-sm">
-              No policies assigned to users
-            </p>
+            <T>
+              <p className="text-muted-foreground text-center text-sm">
+                No policies assigned to users
+              </p>
+            </T>
           </div>
         </CardContent>
         <CardFooter className="bg-muted/30 border-t py-3">
@@ -82,19 +87,19 @@ export function PolicyAssigneeChart({ data }: PolicyAssigneeChartProps) {
 
   const chartConfig = {
     published: {
-      label: 'Published',
+      label: t('Published'),
       color: CHART_COLORS.published,
     },
     draft: {
-      label: 'Draft',
+      label: t('Draft'),
       color: CHART_COLORS.draft,
     },
     archived: {
-      label: 'Archived',
+      label: t('Archived'),
       color: CHART_COLORS.archived,
     },
     needs_review: {
-      label: 'Needs Review',
+      label: t('Needs Review'),
       color: CHART_COLORS.needs_review,
     },
   } satisfies ChartConfig;
@@ -114,10 +119,10 @@ export function PolicyAssigneeChart({ data }: PolicyAssigneeChartProps) {
     <Card className="flex flex-col overflow-hidden border">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">{'Policies by Assignee'}</CardTitle>
+          <CardTitle className="flex items-center gap-2">{t('Policies by Assignee')}</CardTitle>
           {topAssignee && (
             <Badge className="bg-blue-100 text-xs text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-              Top: {topAssignee.name}
+              {t('Top: {name}', { name: topAssignee.name })}
             </Badge>
           )}
         </div>
@@ -135,8 +140,8 @@ export function PolicyAssigneeChart({ data }: PolicyAssigneeChartProps) {
       <CardContent className="flex-1">
         <div className="flex h-full flex-col">
           <div className="text-muted-foreground mb-1 flex items-center justify-between px-1 text-xs">
-            <span>Assignee</span>
-            <span>Policy Count</span>
+            <span>{t('Assignee')}</span>
+            <span>{t('Policy Count')}</span>
           </div>
           <ChartContainer config={chartConfig}>
             <ResponsiveContainer width="100%" height={250}>

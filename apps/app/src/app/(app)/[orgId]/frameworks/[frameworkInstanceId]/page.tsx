@@ -1,5 +1,6 @@
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import PageWithBreadcrumb from '../../../../../components/pages/PageWithBreadcrumb';
@@ -16,6 +17,7 @@ interface PageProps {
 export default async function FrameworkPage({ params }: PageProps) {
   const { frameworkInstanceId } = await params;
 
+  const t = await getGT();
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -68,7 +70,7 @@ export default async function FrameworkPage({ params }: PageProps) {
   return (
     <PageWithBreadcrumb
       breadcrumbs={[
-        { label: 'Frameworks', href: `/${organizationId}/frameworks` },
+        { label: t('Frameworks'), href: `/${organizationId}/frameworks` },
         { label: frameworkName, current: true },
       ]}
     >

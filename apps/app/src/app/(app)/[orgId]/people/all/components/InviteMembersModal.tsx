@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { T, useGT } from 'gt-next';
 
 import type { ActionResponse } from '@/actions/types';
 import { authClient } from '@/utils/auth-client';
@@ -93,6 +94,7 @@ export function InviteMembersModal({
 }: InviteMembersModalProps) {
   const router = useRouter();
   const [mode, setMode] = useState<'manual' | 'csv'>('manual');
+  const t = useGT();
   const [isLoading, setIsLoading] = useState(false);
   const [csvFileName, setCsvFileName] = useState<string | null>(null);
   const [lastResult, setLastResult] = useState<ActionResponse<BulkInviteResultData> | null>(null);
@@ -409,16 +411,16 @@ mike@company.com,admin`;
         }}
       >
         <DialogHeader>
-          <DialogTitle>{'Add User'}</DialogTitle>
-          <DialogDescription>{'Add an employee to your organization.'}</DialogDescription>
+          <DialogTitle>{t('Add User')}</DialogTitle>
+          <DialogDescription>{t('Add an employee to your organization.')}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <Tabs value={mode} onValueChange={handleModeChange}>
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="manual">Manual</TabsTrigger>
-                <TabsTrigger value="csv">CSV</TabsTrigger>
+                <TabsTrigger value="manual">{t('Manual')}</TabsTrigger>
+                <TabsTrigger value="csv">{t('CSV')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="manual" className="space-y-4 pt-4">
@@ -429,11 +431,11 @@ mike@company.com,admin`;
                       name={`manualInvites.${index}.email`}
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          {index === 0 && <FormLabel>{'Email'}</FormLabel>}
+                          {index === 0 && <FormLabel>{t('Email')}</FormLabel>}
                           <FormControl>
                             <Input
                               className="h-10"
-                              placeholder={'Enter email address'}
+                              placeholder={t('Enter email address')}
                               {...field}
                               value={field.value || ''}
                             />
@@ -447,11 +449,11 @@ mike@company.com,admin`;
                       name={`manualInvites.${index}.roles`}
                       render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormItem className="w-[200px]">
-                          {index === 0 && <FormLabel>{'Role'}</FormLabel>}
+                          {index === 0 && <FormLabel>{t('Role')}</FormLabel>}
                           <MultiRoleCombobox
                             selectedRoles={value || []}
                             onSelectedRolesChange={onChange}
-                            placeholder={'Select a role'}
+                            placeholder={t('Select a role')}
                           />
                           <FormMessage>{error?.message}</FormMessage>
                         </FormItem>
@@ -464,7 +466,7 @@ mike@company.com,admin`;
                       onClick={() => fields.length > 1 && remove(index)}
                       disabled={fields.length <= 1}
                       className={`mt-${index === 0 ? '6' : '0'} self-center ${fields.length <= 1 ? 'cursor-not-allowed opacity-50' : ''}`}
-                      aria-label="Remove invite"
+                      aria-label={t('Remove invite')}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -483,9 +485,9 @@ mike@company.com,admin`;
                   }
                 >
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  Add Another
+                  {t('Add Another')}
                 </Button>
-                <FormDescription>{'Add an employee to your organization.'}</FormDescription>
+                <FormDescription>{t('Add an employee to your organization.')}</FormDescription>
               </TabsContent>
 
               <TabsContent value="csv" className="space-y-4 pt-4">
@@ -494,17 +496,17 @@ mike@company.com,admin`;
                   name="csvFile"
                   render={({ field: { onChange, value, ...fieldProps } }) => (
                     <FormItem>
-                      <FormLabel>{'CSV File'}</FormLabel>
+                      <FormLabel>{t('CSV File')}</FormLabel>
                       <div className="flex items-center gap-2">
                         <Button
                           type="button"
                           variant="outline"
                           onClick={() => document.getElementById('csvFileInput')?.click()}
                         >
-                          Choose File
+                          {t('Choose File')}
                         </Button>
                         <span className="text-muted-foreground truncate text-sm">
-                          {csvFileName || 'No file chosen'}
+                          {csvFileName || t('No file chosen')}
                         </span>
                       </div>
                       <FormControl className="relative">
@@ -522,16 +524,14 @@ mike@company.com,admin`;
                         />
                       </FormControl>
                       <FormDescription>
-                        {
-                          "Upload a CSV file with 'email' and 'role' columns. Use pipe (|) to separate multiple roles (e.g., employee|admin)."
-                        }
+                        {t("Upload a CSV file with 'email' and 'role' columns. Use pipe (|) to separate multiple roles (e.g., employee|admin).")}
                       </FormDescription>
                       <a
                         href={csvTemplateDataUri}
                         download="comp_invite_template.csv"
                         className="text-muted-foreground hover:text-foreground text-xs underline transition-colors"
                       >
-                        {'Download CSV template'}
+                        {t('Download CSV template')}
                       </a>
                       <FormMessage />
                     </FormItem>
@@ -548,11 +548,11 @@ mike@company.com,admin`;
                 disabled={isLoading}
                 className="w-full sm:w-auto"
               >
-                {'Cancel'}
+                {t('Cancel')}
               </Button>
               <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? 'Adding Employee...' : 'Invite'}
+                {isLoading ? t('Adding Employee...') : t('Invite')}
               </Button>
             </DialogFooter>
           </form>

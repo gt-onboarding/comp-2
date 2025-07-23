@@ -5,6 +5,7 @@ import { BUCKET_NAME, extractS3KeyFromUrl, s3Client } from '@/app/s3';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { db } from '@comp/db';
 import { AttachmentEntityType } from '@comp/db/types';
+import { getGT } from 'gt-next/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -19,13 +20,14 @@ export const deleteCommentAttachment = authActionClient
     track: { event: 'delete-comment-attachment', channel: 'server' },
   })
   .action(async ({ parsedInput, ctx }) => {
+    const t = await getGT();
     const { session, user } = ctx;
     const { attachmentId } = parsedInput;
     const organizationId = session.activeOrganizationId;
     const userId = user.id;
 
     if (!organizationId) {
-      return { success: false, error: 'Not authorized' } as const;
+      return { success: false, error: t('Not authorized') } as const;
     }
 
     try {
@@ -41,7 +43,7 @@ export const deleteCommentAttachment = authActionClient
       if (!attachmentToDelete) {
         return {
           success: false,
-          error: 'Attachment not found or access denied',
+          error: t('Attachment not found or access denied'),
         } as const;
       }
 
@@ -53,7 +55,7 @@ export const deleteCommentAttachment = authActionClient
         );
         return {
           success: false,
-          error: 'Invalid attachment type for deletion',
+          error: t('Invalid attachment type for deletion'),
         } as const;
       }
 
@@ -93,7 +95,7 @@ export const deleteCommentAttachment = authActionClient
         // Add role-based check here if admins should also be able to delete
         return {
           success: false,
-          error: 'Not authorized to delete this attachment',
+          error: t('Not authorized to delete this attachment'),
         } as const;
       }
 
@@ -133,7 +135,7 @@ export const deleteCommentAttachment = authActionClient
       console.error('Error deleting comment attachment:', attachmentId, error);
       return {
         success: false,
-        error: 'Failed to delete attachment.',
+        error: t('Failed to delete attachment.'),
       } as const;
     }
   });

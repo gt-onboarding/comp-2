@@ -6,6 +6,7 @@ import { MinimalUserMenu } from '@/components/layout/MinimalUserMenu';
 import type { Organization } from '@comp/db/types';
 import { Icons } from '@comp/ui/icons';
 import type { User } from 'better-auth';
+import { T, useGT, Var } from 'gt-next';
 import { ArrowLeft } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import Link from 'next/link';
@@ -24,6 +25,7 @@ export function MinimalHeader({
   currentOrganization,
   variant = 'upgrade',
 }: MinimalHeaderProps) {
+  const t = useGT();
   const router = useRouter();
 
   const changeOrgAction = useAction(changeOrganizationAction, {
@@ -42,7 +44,9 @@ export function MinimalHeader({
       <div className="flex items-center gap-4">
         <Link href="/" className="flex items-center gap-2">
           <Icons.Logo className="h-6 w-6" />
-          <span className="hidden sm:inline text-lg font-semibold">Comp AI</span>
+          <T>
+            <span className="hidden sm:inline text-lg font-semibold">Comp AI</span>
+          </T>
         </Link>
         {variant === 'upgrade' || variant === 'onboarding' ? (
           <div className="w-auto">
@@ -60,12 +64,18 @@ export function MinimalHeader({
             <ArrowLeft className="h-3.5 w-3.5" />
             <span className="hidden md:inline">
               {organizations.length === 1 ? (
-                <>Continue with {organizations[0].name || 'your organization'}</>
+                <T>
+                  Continue with <Var>{organizations[0].name || t('your organization')}</Var>
+                </T>
               ) : (
-                <>Back to your organizations</>
+                <T>
+                  Back to your organizations
+                </T>
               )}
             </span>
-            <span className="hidden sm:inline md:hidden">Back</span>
+            <T>
+              <span className="hidden sm:inline md:hidden">Back</span>
+            </T>
           </button>
         ) : null}
       </div>

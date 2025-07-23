@@ -5,11 +5,13 @@ import { Sheet, SheetContent } from '@comp/ui/sheet';
 
 import { Drawer, DrawerContent, DrawerTitle } from '@comp/ui/drawer';
 import '@comp/ui/editor.css';
+import { useGT } from 'gt-next';
 import { useQueryState } from 'nuqs';
 import Chat from '../ai/chat';
 
 export function AssistantSheet() {
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const t = useGT();
 
   const [isOpen, setIsOpen] = useQueryState('assistant', {
     history: 'push',
@@ -29,7 +31,7 @@ export function AssistantSheet() {
 
   return (
     <Drawer open={isOpen ?? false} onOpenChange={setIsOpen}>
-      <DrawerTitle hidden>Assistant</DrawerTitle>
+      <DrawerTitle hidden>{t('Assistant')}</DrawerTitle>
       <DrawerContent className="p-6">
         <Chat />
       </DrawerContent>

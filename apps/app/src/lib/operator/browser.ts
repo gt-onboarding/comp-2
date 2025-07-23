@@ -1,5 +1,6 @@
 'server only';
 import { type Browser, type Page, chromium } from 'playwright-core';
+import { getGT } from 'gt-next/server';
 
 interface BrowserSession {
   browser: Browser;
@@ -9,12 +10,13 @@ interface BrowserSession {
 const sessions = new Map<string, BrowserSession>();
 
 async function getBrowser(sessionId: string) {
+  const t = await getGT();
   const wsUrl = `wss://connect.browserbase.com?apiKey=${process.env.BROWSERBASE_API_KEY}&sessionId=${sessionId}`;
   const browser = await chromium.connectOverCDP(wsUrl);
   const context = browser.contexts()[0];
   const page = context?.pages()[0];
   if (!page) {
-    throw new Error('No page to use, error configuring browser session');
+    throw new Error(t('No page to use, error configuring browser session'));
   }
   return { browser, page };
 }

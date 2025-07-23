@@ -10,6 +10,16 @@ import {
   TaskStatus,
 } from '@comp/db/types';
 import { z } from 'zod';
+import { getGT } from 'gt-next/server';
+
+export const createOrganizationSchema = async () => {
+  const t = await getGT();
+  return z.object({
+    frameworkIds: z
+      .array(z.string())
+      .min(1, t('Please select at least one framework to get started with')),
+  });
+};
 
 export const organizationSchema = z.object({
   frameworkIds: z
@@ -19,12 +29,35 @@ export const organizationSchema = z.object({
 
 export type OrganizationSchema = z.infer<typeof organizationSchema>;
 
+export const createOrganizationNameSchema = async () => {
+  const t = await getGT();
+  return z.object({
+    name: z
+      .string()
+      .min(1, t('Organization name is required'))
+      .max(255, t('Organization name cannot exceed 255 characters')),
+  });
+};
+
 export const organizationNameSchema = z.object({
   name: z
     .string()
     .min(1, 'Organization name is required')
     .max(255, 'Organization name cannot exceed 255 characters'),
 });
+
+export const createSubdomainAvailabilitySchema = async () => {
+  const t = await getGT();
+  return z.object({
+    subdomain: z
+      .string()
+      .min(1, t('Subdomain is required'))
+      .max(255, t('Subdomain cannot exceed 255 characters'))
+      .regex(/^[a-z0-9-]+$/, {
+        message: t('Subdomain can only contain lowercase letters, numbers, and hyphens'),
+      }),
+  });
+};
 
 export const subdomainAvailabilitySchema = z.object({
   subdomain: z
@@ -57,6 +90,18 @@ export const updaterMenuSchema = z.array(
   }),
 );
 
+export const createOrganizationWebsiteSchema = async () => {
+  const t = await getGT();
+  return z.object({
+    website: z
+      .string()
+      .url({
+        message: t('Please enter a valid website that starts with https://'),
+      })
+      .max(255, t('Website cannot exceed 255 characters')),
+  });
+};
+
 export const organizationWebsiteSchema = z.object({
   website: z
     .string()
@@ -67,6 +112,39 @@ export const organizationWebsiteSchema = z.object({
 });
 
 // Risks
+export const createRiskSchemaI18n = async () => {
+  const t = await getGT();
+  return z.object({
+    title: z
+      .string({
+        required_error: t('Risk name is required'),
+      })
+      .min(1, {
+        message: t('Risk name should be at least 1 character'),
+      })
+      .max(100, {
+        message: t('Risk name should be at most 100 characters'),
+      }),
+    description: z
+      .string({
+        required_error: t('Risk description is required'),
+      })
+      .min(1, {
+        message: t('Risk description should be at least 1 character'),
+      })
+      .max(255, {
+        message: t('Risk description should be at most 255 characters'),
+      }),
+    category: z.nativeEnum(RiskCategory, {
+      required_error: t('Risk category is required'),
+    }),
+    department: z.nativeEnum(Departments, {
+      required_error: t('Risk department is required'),
+    }),
+    assigneeId: z.string().optional().nullable(),
+  });
+};
+
 export const createRiskSchema = z.object({
   title: z
     .string({
@@ -255,6 +333,19 @@ export const updateResidualRiskEnumSchema = z.object({
 // ADD END
 
 // Policies
+export const createPolicySchemaI18n = async () => {
+  const t = await getGT();
+  return z.object({
+    title: z.string({ required_error: t('Title is required') }).min(1, t('Title is required')),
+    description: z
+      .string({ required_error: t('Description is required') })
+      .min(1, t('Description is required')),
+    frameworkIds: z.array(z.string()).optional(),
+    controlIds: z.array(z.string()).optional(),
+    entityId: z.string().optional(),
+  });
+};
+
 export const createPolicySchema = z.object({
   title: z.string({ required_error: 'Title is required' }).min(1, 'Title is required'),
   description: z

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@comp/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@comp/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { T, useGT } from 'gt-next';
 import { ArrowRightIcon, Loader2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useForm } from 'react-hook-form';
@@ -27,7 +28,7 @@ export default function SecondaryFields({
       <Card>
         <CardHeader>
           <CardTitle>
-            <div className="flex items-center justify-between gap-2">Task Details</div>
+            <div className="flex items-center justify-between gap-2"><T>Task Details</T></div>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -47,12 +48,13 @@ function TaskSecondaryFieldsForm({
   };
   assignees: (Member & { user: User })[];
 }) {
+  const t = useGT();
   const updateTask = useAction(updateVendorTaskAction, {
     onSuccess: () => {
-      toast.success('Task updated successfully');
+      toast.success(t('Task updated successfully'));
     },
     onError: () => {
-      toast.error('Failed to update task');
+      toast.error(t('Failed to update task'));
     },
   });
 
@@ -108,7 +110,7 @@ function TaskSecondaryFieldsForm({
             name="assigneeId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Assignee</FormLabel>
+                <FormLabel><T>Assignee</T></FormLabel>
                 <FormControl>
                   <SelectAssignee
                     assigneeId={field.value}
@@ -128,7 +130,7 @@ function TaskSecondaryFieldsForm({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel><T>Status</T></FormLabel>
                 <FormControl>
                   <Select
                     value={field.value}
@@ -138,7 +140,7 @@ function TaskSecondaryFieldsForm({
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select status">
+                      <SelectValue placeholder={t('Select status')}>
                         {field.value && renderStatus(field.value)}
                       </SelectValue>
                     </SelectTrigger>
@@ -161,7 +163,7 @@ function TaskSecondaryFieldsForm({
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <div className="flex items-center">
-                Save
+                <T>Save</T>
                 <ArrowRightIcon className="ml-2 h-4 w-4" />
               </div>
             )}

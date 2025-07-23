@@ -6,6 +6,7 @@ import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { db } from '@comp/db';
 import { AttachmentEntityType, AttachmentType } from '@comp/db/types';
+import { getGT } from 'gt-next/server';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { z } from 'zod';
@@ -36,6 +37,7 @@ const uploadAttachmentSchema = z.object({
 });
 
 export const uploadFile = async (input: z.infer<typeof uploadAttachmentSchema>) => {
+  const t = await getGT();
   const { fileName, fileType, fileData, entityId, entityType, pathToRevalidate } = input;
   const session = await auth.api.getSession({ headers: await headers() });
   const organizationId = session?.session.activeOrganizationId;
@@ -43,7 +45,7 @@ export const uploadFile = async (input: z.infer<typeof uploadAttachmentSchema>) 
   if (!organizationId) {
     return {
       success: false,
-      error: 'Not authorized - no organization found',
+      error: t('Not authorized - no organization found'),
       data: null,
     };
   }
@@ -56,7 +58,7 @@ export const uploadFile = async (input: z.infer<typeof uploadAttachmentSchema>) 
     if (fileBuffer.length > MAX_FILE_SIZE_BYTES) {
       return {
         success: false,
-        error: `File exceeds the ${MAX_FILE_SIZE_MB}MB limit.`,
+        error: t('File exceeds the {size}MB limit.', { size: MAX_FILE_SIZE_MB }),
         data: null,
       };
     }
@@ -121,7 +123,7 @@ export const uploadFile = async (input: z.infer<typeof uploadAttachmentSchema>) 
 
     return {
       success: false,
-      error: 'Failed to process file upload.',
+      error: t('Failed to process file upload.'),
       data: null,
     } as const;
   }

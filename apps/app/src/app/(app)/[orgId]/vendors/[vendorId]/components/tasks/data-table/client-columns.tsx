@@ -5,6 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useGT } from 'gt-next';
 
 export interface VendorTaskType {
   id: string;
@@ -23,11 +24,12 @@ export function useGetColumnHeaders(): ColumnDef<Task>[] {
     vendorId: string;
     orgId: string;
   }>();
+  const t = useGT();
 
   return [
     {
       accessorKey: 'title',
-      header: 'Title',
+      header: t('Title'),
       cell: ({ row }) => {
         const title = row.getValue('title') as string;
         return (
@@ -42,11 +44,11 @@ export function useGetColumnHeaders(): ColumnDef<Task>[] {
     },
     {
       accessorKey: 'description',
-      header: 'Description',
+      header: t('Description'),
     },
     {
       accessorKey: 'status',
-      header: 'Status',
+      header: t('Status'),
       cell: ({ row }) => {
         const status = row.getValue('status') as TaskStatus;
         return (
@@ -70,22 +72,22 @@ export function useGetColumnHeaders(): ColumnDef<Task>[] {
     },
     {
       accessorKey: 'dueDate',
-      header: 'Due Date',
+      header: t('Due Date'),
       cell: ({ row }) => {
         const date = row.getValue('dueDate') as string;
-        if (!date) return '-';
+        if (!date) return t('-');
         return format(new Date(date), 'PP');
       },
     },
     {
       accessorKey: 'owner',
-      header: 'Owner',
+      header: t('Owner'),
       cell: ({ row }) => {
         const owner = row.getValue('owner') as {
           name: string;
           image: string;
         };
-        if (!owner) return '-';
+        if (!owner) return t('-');
         return (
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">

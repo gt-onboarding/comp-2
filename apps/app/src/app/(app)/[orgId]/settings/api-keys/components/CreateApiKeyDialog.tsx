@@ -15,6 +15,7 @@ import { Input } from '@comp/ui/input';
 import { ScrollArea } from '@comp/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@comp/ui/select';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@comp/ui/sheet';
+import { T, useGT, Branch } from 'gt-next';
 import { Check, Copy, X } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
@@ -27,6 +28,7 @@ interface CreateApiKeyDialogProps {
 }
 
 export function CreateApiKeyDialog({ open, onOpenChange, onSuccess }: CreateApiKeyDialogProps) {
+  const t = useGT();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [name, setName] = useState('');
   const [expiration, setExpiration] = useState<'never' | '30days' | '90days' | '1year'>('never');
@@ -41,7 +43,7 @@ export function CreateApiKeyDialog({ open, onOpenChange, onSuccess }: CreateApiK
       }
     },
     onError: (error) => {
-      toast.error('Failed to create API key');
+      toast.error(t('Failed to create API key'));
     },
   });
 
@@ -69,14 +71,14 @@ export function CreateApiKeyDialog({ open, onOpenChange, onSuccess }: CreateApiK
       try {
         await navigator.clipboard.writeText(createdApiKey);
         setCopied(true);
-        toast.success('API key copied to clipboard');
+        toast.success(t('API key copied to clipboard'));
 
         // Reset copied state after 2 seconds
         setTimeout(() => {
           setCopied(false);
         }, 2000);
       } catch (err) {
-        toast.error('Error');
+        toast.error(t('Error'));
       }
     }
   };
@@ -86,19 +88,19 @@ export function CreateApiKeyDialog({ open, onOpenChange, onSuccess }: CreateApiK
     <div className="scrollbar-hide h-[calc(100vh-250px)] overflow-auto">
       <Accordion type="multiple" defaultValue={['api-key']}>
         <AccordionItem value="api-key">
-          <AccordionTrigger>{'API Key'}</AccordionTrigger>
+          <AccordionTrigger><T>API Key</T></AccordionTrigger>
           <AccordionContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="name" className="text-sm leading-none font-medium">
-                  {'Name'}
+                  <T>Name</T>
                 </label>
                 <div className="mt-3">
                   <Input
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder={'Enter a name for this API key'}
+                    placeholder={t('Enter a name for this API key')}
                     required
                     className="w-full"
                   />
@@ -106,7 +108,7 @@ export function CreateApiKeyDialog({ open, onOpenChange, onSuccess }: CreateApiK
               </div>
               <div className="space-y-2">
                 <label htmlFor="expiration" className="text-sm leading-none font-medium">
-                  {'Expiration'}
+                  <T>Expiration</T>
                 </label>
                 <div className="mt-3">
                   <Select
@@ -116,19 +118,19 @@ export function CreateApiKeyDialog({ open, onOpenChange, onSuccess }: CreateApiK
                     }
                   >
                     <SelectTrigger id="expiration" className="w-full">
-                      <SelectValue placeholder={'Select expiration'} />
+                      <SelectValue placeholder={t('Select expiration')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="never">{'Never'}</SelectItem>
-                      <SelectItem value="30days">{'30 days'}</SelectItem>
-                      <SelectItem value="90days">{'90 days'}</SelectItem>
-                      <SelectItem value="1year">{'1 year'}</SelectItem>
+                      <SelectItem value="never"><T>Never</T></SelectItem>
+                      <SelectItem value="30days"><T>30 days</T></SelectItem>
+                      <SelectItem value="90days"><T>90 days</T></SelectItem>
+                      <SelectItem value="1year"><T>1 year</T></SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <Button type="submit" className="justify-self-end w-full">
-                {'Create'}
+                <T>Create</T>
               </Button>
             </form>
           </AccordionContent>
@@ -142,7 +144,7 @@ export function CreateApiKeyDialog({ open, onOpenChange, onSuccess }: CreateApiK
     <>
       <div className="space-y-4 py-4">
         <div className="space-y-2">
-          <p className="text-sm font-medium">{'API Key'}</p>
+          <p className="text-sm font-medium"><T>API Key</T></p>
           <div className="flex items-center">
             <div className="relative w-full">
               <div className="bg-muted overflow-hidden rounded-sm p-3 pr-10">
@@ -162,13 +164,13 @@ export function CreateApiKeyDialog({ open, onOpenChange, onSuccess }: CreateApiK
             </div>
           </div>
           <p className="text-muted-foreground mt-2 text-xs">
-            {'This key will only be shown once. Make sure to copy it now.'}
+            <T>This key will only be shown once. Make sure to copy it now.</T>
           </p>
         </div>
       </div>
       <div className="flex justify-end">
         <Button onClick={handleClose} className="w-full sm:w-auto">
-          {'Done'}
+          <T>Done</T>
         </Button>
       </div>
     </>
@@ -183,7 +185,15 @@ export function CreateApiKeyDialog({ open, onOpenChange, onSuccess }: CreateApiK
         <SheetContent stack className="rounded-sm">
           <SheetHeader className="mb-8 flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <SheetTitle>{createdApiKey ? 'API Key Created' : 'New API Key'}</SheetTitle>
+              <SheetTitle>
+                <T>
+                  <Branch
+                    branch={createdApiKey ? 'created' : 'new'}
+                    created="API Key Created"
+                    new="New API Key"
+                  />
+                </T>
+              </SheetTitle>
               <Button
                 size="icon"
                 variant="ghost"
@@ -194,9 +204,13 @@ export function CreateApiKeyDialog({ open, onOpenChange, onSuccess }: CreateApiK
               </Button>
             </div>
             <SheetDescription>
-              {createdApiKey
-                ? "Your API key has been created. Make sure to copy it now as you won't be able to see it again."
-                : "Create a new API key for programmatic access to your organization's data."}
+              <T>
+                <Branch
+                  branch={createdApiKey ? 'created' : 'new'}
+                  created="Your API key has been created. Make sure to copy it now as you won't be able to see it again."
+                  new="Create a new API key for programmatic access to your organization's data."
+                />
+              </T>
             </SheetDescription>
           </SheetHeader>
           <ScrollArea className="h-full p-0 pb-[100px]" hideScrollbar>
@@ -210,11 +224,23 @@ export function CreateApiKeyDialog({ open, onOpenChange, onSuccess }: CreateApiK
     <Drawer open={open} onOpenChange={handleClose}>
       <DrawerContent className="rounded-sm p-6">
         <DrawerHeader>
-          <DrawerTitle>{createdApiKey ? 'API Key Created' : 'New API Key'}</DrawerTitle>
+          <DrawerTitle>
+            <T>
+              <Branch
+                branch={createdApiKey ? 'created' : 'new'}
+                created="API Key Created"
+                new="New API Key"
+              />
+            </T>
+          </DrawerTitle>
           <DrawerDescription>
-            {createdApiKey
-              ? "Your API key has been created. Make sure to copy it now as you won't be able to see it again."
-              : "Create a new API key for programmatic access to your organization's data."}
+            <T>
+              <Branch
+                branch={createdApiKey ? 'created' : 'new'}
+                created="Your API key has been created. Make sure to copy it now as you won't be able to see it again."
+                new="Create a new API key for programmatic access to your organization's data."
+              />
+            </T>
           </DrawerDescription>
         </DrawerHeader>
         {createdApiKey ? <>{renderCreatedKeyContent()}</> : <>{renderFormContent()}</>}

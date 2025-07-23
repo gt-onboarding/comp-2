@@ -26,6 +26,7 @@ import {
 } from '@comp/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@comp/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@comp/ui/select';
+import { T, Branch, useGT } from 'gt-next';
 
 const OPEN_MENU_SHORTCUT = 's';
 const REMOVE_SORT_SHORTCUTS = ['backspace', 'delete'];
@@ -45,6 +46,7 @@ export function DataTableSortList<TData>({
   const descriptionId = React.useId();
   const [open, setOpen] = React.useState(false);
   const addButtonRef = React.useRef<HTMLButtonElement>(null);
+  const t = useGT();
 
   const sortParam = tableId ? `${tableId}_sort` : 'sort';
   const [urlSorting, setUrlSorting] = useQueryState(sortParam);
@@ -243,7 +245,7 @@ export function DataTableSortList<TData>({
             className="items-center gap-1.5"
           >
             <ArrowDownUp className="hidden size-4 md:block" />
-            Sort
+            <T>Sort</T>
             {sorting.length > 0 && (
               <Badge
                 variant="secondary"
@@ -262,15 +264,25 @@ export function DataTableSortList<TData>({
         >
           <div className="relative flex flex-col gap-1">
             <h4 id={labelId} className="leading-none font-medium">
-              {sorting.length > 0 ? 'Sort by' : 'No sorting applied'}
+              <T>
+                <Branch
+                  branch={(sorting.length > 0).toString()}
+                  true="Sort by"
+                  false="No sorting applied"
+                />
+              </T>
             </h4>
             <p
               id={descriptionId}
               className={cn('text-muted-foreground text-sm', sorting.length > 0 && 'sr-only')}
             >
-              {sorting.length > 0
-                ? 'Modify sorting to organize your rows.'
-                : 'Add sorting to organize your rows.'}
+              <T>
+                <Branch
+                  branch={(sorting.length > 0).toString()}
+                  true="Modify sorting to organize your rows."
+                  false="Add sorting to organize your rows."
+                />
+              </T>
             </p>
           </div>
           {sorting.length > 0 && (
@@ -297,11 +309,11 @@ export function DataTableSortList<TData>({
               onClick={onSortAdd}
               disabled={columns.length === 0}
             >
-              Add sort
+              <T>Add sort</T>
             </Button>
             {sorting.length > 0 && (
               <Button variant="outline" size="sm" onClick={onSortingReset}>
-                Reset sorting
+                <T>Reset sorting</T>
               </Button>
             )}
           </div>
@@ -389,9 +401,9 @@ function DataTableSortItem({
             className="w-[var(--radix-popover-trigger-width)] origin-[var(--radix-popover-content-transform-origin)] p-0"
           >
             <Command>
-              <CommandInput placeholder="Search fields..." />
+              <CommandInput placeholder={t('Search fields...')} />
               <CommandList>
-                <CommandEmpty>No fields found.</CommandEmpty>
+                <CommandEmpty><T>No fields found.</T></CommandEmpty>
                 <CommandGroup>
                   {columns.map((column) => (
                     <CommandItem

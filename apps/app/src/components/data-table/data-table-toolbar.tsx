@@ -3,6 +3,7 @@
 import type { Column, Table } from '@tanstack/react-table';
 import { Plus, Search, X } from 'lucide-react';
 import * as React from 'react';
+import { T } from 'gt-next';
 
 import { Button } from '@comp/ui/button';
 import { cn } from '@comp/ui/cn';
@@ -53,7 +54,7 @@ export function DataTableToolbar<TData>({
         {isFiltered && (
           <Button variant="outline" size="sm" onClick={onReset}>
             <X className="h-4 w-4" />
-            <span className="ml-2 hidden md:inline">Reset</span>
+            <T><span className="ml-2 hidden md:inline">Reset</span></T>
           </Button>
         )}
       </div>

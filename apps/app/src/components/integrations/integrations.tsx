@@ -3,6 +3,7 @@
 import { Integration } from '@comp/db/types';
 import { integrations } from '@comp/integrations';
 import { Button } from '@comp/ui/button';
+import { T, useGT } from 'gt-next';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { IntegrationsCard } from './integrations-card';
 
@@ -17,6 +18,7 @@ export function OrganizationIntegration({
 }: {
   installed: ExtendedOrganizationIntegrations[];
 }) {
+  const t = useGT();
   const searchParams = useSearchParams();
   const isInstalledPage = searchParams.get('tab') === 'installed';
   const search = searchParams.get('q');
@@ -60,14 +62,18 @@ export function OrganizationIntegration({
   if (search && Object.keys(integrationsByCategory).length === 0) {
     return (
       <div className="flex h-[calc(100vh-400px)] flex-col items-center justify-center">
-        <h3 className="text-foreground text-lg font-semibold">No integrations found</h3>
-        <p className="text-muted-foreground mt-2 max-w-md text-center text-sm">
-          No integrations found for your search, let us know if you want to see a specific
-          integration.
-        </p>
+        <T>
+          <h3 className="text-foreground text-lg font-semibold">No integrations found</h3>
+        </T>
+        <T>
+          <p className="text-muted-foreground mt-2 max-w-md text-center text-sm">
+            No integrations found for your search, let us know if you want to see a specific
+            integration.
+          </p>
+        </T>
 
         <Button onClick={() => router.push('/integrations')} className="mt-4" variant="outline">
-          Clear search
+          <T>Clear search</T>
         </Button>
       </div>
     );
@@ -76,11 +82,15 @@ export function OrganizationIntegration({
   if (!search && Object.keys(integrationsByCategory).length === 0) {
     return (
       <div className="flex h-[calc(100vh-400px)] flex-col items-center justify-center">
-        <h3 className="text-foreground text-lg font-semibold">No integrations installed</h3>
-        <p className="text-muted-foreground mt-2 max-w-md text-center text-sm">
-          You haven't installed any integrations yet. Go to the 'All Integrations' tab to browse
-          available integrations.
-        </p>
+        <T>
+          <h3 className="text-foreground text-lg font-semibold">No integrations installed</h3>
+        </T>
+        <T>
+          <p className="text-muted-foreground mt-2 max-w-md text-center text-sm">
+            You haven't installed any integrations yet. Go to the 'All Integrations' tab to browse
+            available integrations.
+          </p>
+        </T>
       </div>
     );
   }

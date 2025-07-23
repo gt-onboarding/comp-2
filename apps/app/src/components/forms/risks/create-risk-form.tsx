@@ -12,6 +12,7 @@ import { Input } from '@comp/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@comp/ui/select';
 import { Textarea } from '@comp/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { T, useGT } from 'gt-next';
 import { ArrowRightIcon } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useQueryState } from 'nuqs';
@@ -20,6 +21,8 @@ import { toast } from 'sonner';
 import type { z } from 'zod';
 
 export function CreateRisk({ assignees }: { assignees: (Member & { user: User })[] }) {
+  const t = useGT();
+  
   // Get the same query parameters as the table
   const [search] = useQueryState('search');
   const [page] = useQueryState('page', {
@@ -47,11 +50,11 @@ export function CreateRisk({ assignees }: { assignees: (Member & { user: User })
 
   const createRisk = useAction(createRiskAction, {
     onSuccess: async () => {
-      toast.success('Risk created successfully');
+      toast.success(t('Risk created successfully'));
       setCreateRiskSheet(null);
     },
     onError: () => {
-      toast.error('Failed to create risk');
+      toast.error(t('Failed to create risk'));
     },
   });
 
@@ -77,7 +80,9 @@ export function CreateRisk({ assignees }: { assignees: (Member & { user: User })
           <div>
             <Accordion type="multiple" defaultValue={['risk']}>
               <AccordionItem value="risk">
-                <AccordionTrigger>{'Risk Details'}</AccordionTrigger>
+                <AccordionTrigger>
+                  <T>Risk Details</T>
+                </AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-4">
                     <FormField
@@ -85,13 +90,15 @@ export function CreateRisk({ assignees }: { assignees: (Member & { user: User })
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{'Risk Title'}</FormLabel>
+                          <FormLabel>
+                            <T>Risk Title</T>
+                          </FormLabel>
                           <FormControl>
                             <Input
                               {...field}
                               autoFocus
                               className="mt-3"
-                              placeholder={'A short, descriptive title for the risk.'}
+                              placeholder={t('A short, descriptive title for the risk.')}
                               autoCorrect="off"
                             />
                           </FormControl>
@@ -104,14 +111,16 @@ export function CreateRisk({ assignees }: { assignees: (Member & { user: User })
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{'Description'}</FormLabel>
+                          <FormLabel>
+                            <T>Description</T>
+                          </FormLabel>
                           <FormControl>
                             <Textarea
                               {...field}
                               className="mt-3 min-h-[80px]"
-                              placeholder={
+                              placeholder={t(
                                 'A detailed description of the risk, its potential impact, and its causes.'
-                              }
+                              )}
                             />
                           </FormControl>
                           <FormMessage />
@@ -123,12 +132,14 @@ export function CreateRisk({ assignees }: { assignees: (Member & { user: User })
                       name="category"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{'Category'}</FormLabel>
+                          <FormLabel>
+                            <T>Category</T>
+                          </FormLabel>
                           <FormControl>
                             <div className="mt-3">
                               <Select {...field} value={field.value} onValueChange={field.onChange}>
                                 <SelectTrigger>
-                                  <SelectValue placeholder={'Select a category'} />
+                                  <SelectValue placeholder={t('Select a category')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {Object.values(RiskCategory).map((category) => {
@@ -156,12 +167,14 @@ export function CreateRisk({ assignees }: { assignees: (Member & { user: User })
                       name="department"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{'Department'}</FormLabel>
+                          <FormLabel>
+                            <T>Department</T>
+                          </FormLabel>
                           <FormControl>
                             <div className="mt-3">
                               <Select {...field} value={field.value} onValueChange={field.onChange}>
                                 <SelectTrigger>
-                                  <SelectValue placeholder={'Select a department'} />
+                                  <SelectValue placeholder={t('Select a department')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {Object.values(Departments).map((department) => {
@@ -186,7 +199,9 @@ export function CreateRisk({ assignees }: { assignees: (Member & { user: User })
                       name="assigneeId"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{'Assignee'}</FormLabel>
+                          <FormLabel>
+                            <T>Assignee</T>
+                          </FormLabel>
                           <FormControl>
                             <div className="mt-3">
                               <SelectAssignee
@@ -211,7 +226,7 @@ export function CreateRisk({ assignees }: { assignees: (Member & { user: User })
           <div className="mt-4 flex justify-end">
             <Button type="submit" variant="default" disabled={createRisk.status === 'executing'}>
               <div className="flex items-center justify-center">
-                {'Create'}
+                <T>Create</T>
                 <ArrowRightIcon className="ml-2 h-4 w-4" />
               </div>
             </Button>

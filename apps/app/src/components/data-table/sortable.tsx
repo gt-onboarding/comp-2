@@ -39,6 +39,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Slot } from '@radix-ui/react-slot';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { useGT } from 'gt-next';
 
 const orientationConfig = {
   vertical: {
@@ -127,6 +128,7 @@ function Sortable<T>(props: SortableProps<T>) {
   } = props;
   const id = React.useId();
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
+  const t = useGT();
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -173,7 +175,11 @@ function Sortable<T>(props: SortableProps<T>) {
     () => ({
       onDragStart({ active }) {
         const activeValue = active.id.toString();
-        return `Grabbed sortable item "${activeValue}". Current position is ${active.data.current?.sortable.index + 1} of ${value.length}. Use arrow keys to move, space to drop.`;
+        return t('Grabbed sortable item "{activeValue}". Current position is {position} of {total}. Use arrow keys to move, space to drop.', {
+          activeValue,
+          position: active.data.current?.sortable.index + 1,
+          total: value.length
+        });
       },
       onDragOver({ active, over }) {
         if (over) {
@@ -181,22 +187,35 @@ function Sortable<T>(props: SortableProps<T>) {
           const activeIndex = active.data.current?.sortable.index ?? 0;
           const moveDirection = overIndex > activeIndex ? 'down' : 'up';
           const activeValue = active.id.toString();
-          return `Sortable item "${activeValue}" moved ${moveDirection} to position ${overIndex + 1} of ${value.length}.`;
+          return t('Sortable item "{activeValue}" moved {direction} to position {position} of {total}.', {
+            activeValue,
+            direction: moveDirection,
+            position: overIndex + 1,
+            total: value.length
+          });
         }
-        return 'Sortable item is no longer over a droppable area. Press escape to cancel.';
+        return t('Sortable item is no longer over a droppable area. Press escape to cancel.');
       },
       onDragEnd({ active, over }) {
         const activeValue = active.id.toString();
         if (over) {
           const overIndex = over.data.current?.sortable.index ?? 0;
-          return `Sortable item "${activeValue}" dropped at position ${overIndex + 1} of ${value.length}.`;
+          return t('Sortable item "{activeValue}" dropped at position {position} of {total}.', {
+            activeValue,
+            position: overIndex + 1,
+            total: value.length
+          });
         }
-        return `Sortable item "${activeValue}" dropped. No changes were made.`;
+        return t('Sortable item "{activeValue}" dropped. No changes were made.', { activeValue });
       },
       onDragCancel({ active }) {
         const activeIndex = active.data.current?.sortable.index ?? 0;
         const activeValue = active.id.toString();
-        return `Sorting cancelled. Sortable item "${activeValue}" returned to position ${activeIndex + 1} of ${value.length}.`;
+        return t('Sorting cancelled. Sortable item "{activeValue}" returned to position {position} of {total}.', {
+          activeValue,
+          position: activeIndex + 1,
+          total: value.length
+        });
       },
       onDragMove({ active, over }) {
         if (over) {
@@ -204,9 +223,14 @@ function Sortable<T>(props: SortableProps<T>) {
           const activeIndex = active.data.current?.sortable.index ?? 0;
           const moveDirection = overIndex > activeIndex ? 'down' : 'up';
           const activeValue = active.id.toString();
-          return `Sortable item "${activeValue}" is moving ${moveDirection} to position ${overIndex + 1} of ${value.length}.`;
+          return t('Sortable item "{activeValue}" is moving {direction} to position {position} of {total}.', {
+            activeValue,
+            direction: moveDirection,
+            position: overIndex + 1,
+            total: value.length
+          });
         }
-        return 'Sortable item is no longer over a droppable area. Press escape to cancel.';
+        return t('Sortable item is no longer over a droppable area. Press escape to cancel.');
       },
     }),
     [value],
@@ -214,13 +238,11 @@ function Sortable<T>(props: SortableProps<T>) {
 
   const screenReaderInstructions: ScreenReaderInstructions = React.useMemo(
     () => ({
-      draggable: `
-        To pick up a sortable item, press space or enter.
-        While dragging, use the ${orientation === 'vertical' ? 'up and down' : orientation === 'horizontal' ? 'left and right' : 'arrow'} keys to move the item.
-        Press space or enter again to drop the item in its new position, or press escape to cancel.
-      `,
+      draggable: t('To pick up a sortable item, press space or enter. While dragging, use the {keys} keys to move the item. Press space or enter again to drop the item in its new position, or press escape to cancel.', {
+        keys: orientation === 'vertical' ? t('up and down') : orientation === 'horizontal' ? t('left and right') : t('arrow')
+      }),
     }),
-    [orientation],
+    [orientation, t],
   );
 
   const contextValue = React.useMemo(

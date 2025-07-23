@@ -9,6 +9,7 @@ import {
   CommandList,
 } from '@comp/ui/command';
 import type { Role } from '@prisma/client'; // Assuming Role is from prisma
+import { T, useGT } from 'gt-next';
 import { Check } from 'lucide-react';
 
 import { cn } from '@comp/ui/cn';
@@ -32,16 +33,18 @@ export function MultiRoleComboboxContent({
   selectedRoles,
   onCloseDialog,
 }: MultiRoleComboboxContentProps) {
+  const t = useGT();
+  
   const getRoleDisplayLabel = (roleValue: Role) => {
     switch (roleValue) {
       case 'owner':
-        return 'Owner';
+        return t('Owner');
       case 'admin':
-        return 'Admin';
+        return t('Admin');
       case 'auditor':
-        return 'Auditor';
+        return t('Auditor');
       case 'employee':
-        return 'Employee';
+        return t('Employee');
       default:
         return roleValue;
     }
@@ -50,13 +53,13 @@ export function MultiRoleComboboxContent({
   const getRoleDescription = (roleValue: Role) => {
     switch (roleValue) {
       case 'owner':
-        return 'Can manage users, policies, tasks, and settings, and delete organization.';
+        return t('Can manage users, policies, tasks, and settings, and delete organization.');
       case 'admin':
-        return 'Can manage users, policies, tasks, and settings.';
+        return t('Can manage users, policies, tasks, and settings.');
       case 'auditor':
-        return 'Read-only access for compliance checks.';
+        return t('Read-only access for compliance checks.');
       case 'employee':
-        return 'Can sign policies and complete training.';
+        return t('Can sign policies and complete training.');
       default:
         return '';
     }
@@ -64,9 +67,9 @@ export function MultiRoleComboboxContent({
 
   return (
     <Command>
-      <CommandInput placeholder="Search..." value={searchTerm} onValueChange={setSearchTerm} />
+      <CommandInput placeholder={t('Search...')} value={searchTerm} onValueChange={setSearchTerm} />
       <CommandList>
-        <CommandEmpty>{'No results found'}</CommandEmpty>
+        <CommandEmpty>{t('No results found')}</CommandEmpty>
         <CommandGroup>
           {filteredRoles.map((role) => (
             <CommandItem
@@ -98,9 +101,11 @@ export function MultiRoleComboboxContent({
                 />
                 <span className="flex-grow">{getRoleDisplayLabel(role.value)}</span>
                 {lockedRoles.includes(role.value) && selectedRoles.includes(role.value) && (
-                  <span className="text-muted-foreground ml-auto shrink-0 pl-2 text-xs">
-                    (Locked)
-                  </span>
+                  <T>
+                    <span className="text-muted-foreground ml-auto shrink-0 pl-2 text-xs">
+                      (Locked)
+                    </span>
+                  </T>
                 )}
               </div>
               <div className="text-muted-foreground mt-1 ml-6 text-xs">

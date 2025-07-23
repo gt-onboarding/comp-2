@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@comp/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@comp/ui/select';
 import { Textarea } from '@comp/ui/textarea';
+import { T, useGT } from 'gt-next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
@@ -19,14 +20,15 @@ import type { z } from 'zod';
 
 export function UpdatePolicyForm({ policy }: { policy: Policy }) {
   const [open, setOpen] = useQueryState('policy-overview-sheet');
+  const t = useGT();
 
   const updatePolicy = useAction(updatePolicyOverviewAction, {
     onSuccess: () => {
-      toast.success('Policy updated successfully');
+      toast.success(t('Policy updated successfully'));
       setOpen(null);
     },
     onError: () => {
-      toast.error('Failed to update policy');
+      toast.error(t('Failed to update policy'));
     },
   });
 
@@ -57,7 +59,7 @@ export function UpdatePolicyForm({ policy }: { policy: Policy }) {
       <div className="scrollbar-hide h-[calc(100vh-250px)] overflow-auto">
         <Accordion type="multiple" defaultValue={['policy']}>
           <AccordionItem value="policy">
-            <AccordionTrigger>{'Policy'}</AccordionTrigger>
+            <AccordionTrigger><T>Policy</T></AccordionTrigger>
             <AccordionContent>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="space-y-4">
@@ -66,13 +68,13 @@ export function UpdatePolicyForm({ policy }: { policy: Policy }) {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{'Policy Title'}</FormLabel>
+                        <FormLabel><T>Policy Title</T></FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             autoFocus
                             className="mt-3"
-                            placeholder={'Policy Title'}
+                            placeholder={t('Policy Title')}
                             autoCorrect="off"
                           />
                         </FormControl>
@@ -85,12 +87,12 @@ export function UpdatePolicyForm({ policy }: { policy: Policy }) {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel><T>Description</T></FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
                             className="mt-3 min-h-[80px]"
-                            placeholder={"A brief summary of the policy's purpose."}
+                            placeholder={t("A brief summary of the policy's purpose.")}
                           />
                         </FormControl>
                         <FormMessage />
@@ -102,16 +104,16 @@ export function UpdatePolicyForm({ policy }: { policy: Policy }) {
                     name="isRequiredToSign"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{'Signature Requirement'}</FormLabel>
+                        <FormLabel><T>Signature Requirement</T></FormLabel>
                         <FormControl>
                           <div className="mt-3">
                             <Select value={field.value} onValueChange={field.onChange}>
                               <SelectTrigger>
-                                <SelectValue placeholder={'Select signature requirement'} />
+                                <SelectValue placeholder={t('Select signature requirement')} />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="required">{'Required'}</SelectItem>
-                                <SelectItem value="not_required">{'Not Required'}</SelectItem>
+                                <SelectItem value="required"><T>Required</T></SelectItem>
+                                <SelectItem value="not_required"><T>Not Required</T></SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -129,7 +131,7 @@ export function UpdatePolicyForm({ policy }: { policy: Policy }) {
                     {updatePolicy.status === 'executing' ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      'Save'
+                      <T>Save</T>
                     )}
                   </Button>
                 </div>

@@ -4,6 +4,7 @@ import { db } from '@comp/db';
 import { PolicyStatus } from '@comp/db/types';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
+import { getGT } from 'gt-next/server';
 import { authActionClient } from '../safe-action';
 
 const acceptRequestedPolicyChangesSchema = z.object({
@@ -26,13 +27,14 @@ export const acceptRequestedPolicyChangesAction = authActionClient
   .action(async ({ parsedInput, ctx }) => {
     const { id, approverId, comment } = parsedInput;
     const { user, session } = ctx;
+    const t = await getGT();
 
     if (!user.id || !session.activeOrganizationId) {
-      throw new Error('Unauthorized');
+      throw new Error(t('Unauthorized'));
     }
 
     if (!approverId) {
-      throw new Error('Approver is required');
+      throw new Error(t('Approver is required'));
     }
 
     try {
@@ -44,11 +46,11 @@ export const acceptRequestedPolicyChangesAction = authActionClient
       });
 
       if (!policy) {
-        throw new Error('Policy not found');
+        throw new Error(t('Policy not found'));
       }
 
       if (policy.approverId !== approverId) {
-        throw new Error('Approver is not the same');
+        throw new Error(t('Approver is not the same'));
       }
 
       // Update policy status
@@ -75,7 +77,7 @@ export const acceptRequestedPolicyChangesAction = authActionClient
         if (member) {
           await db.comment.create({
             data: {
-              content: `Policy changes accepted: ${comment}`,
+              content: t('Policy changes accepted: {comment}', { comment }),
               entityId: id,
               entityType: 'policy',
               organizationId: session.activeOrganizationId,

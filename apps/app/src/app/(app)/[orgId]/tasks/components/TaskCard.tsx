@@ -1,6 +1,7 @@
 'use client';
 
 import type { Member, Task, TaskStatus, User } from '@comp/db/types';
+import { T, useGT } from 'gt-next';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -46,6 +47,7 @@ export function TaskCard({
   onDropReorder,
   handleDropTaskInternal,
 }: TaskCardProps) {
+  const t = useGT();
   const dragRef = useRef<HTMLDivElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
 
@@ -208,19 +210,19 @@ export function TaskCard({
       </div>
       <span className="min-w-0 flex-grow truncate py-2 text-sm">{task.title}</span>
       <div className="ml-auto flex shrink-0 items-center space-x-3 pl-2">
-        <span className="text-muted-foreground text-xs whitespace-nowrap">Apr 15</span>
+        <T><span className="text-muted-foreground text-xs whitespace-nowrap">Apr 15</span></T>
         <div className="bg-muted flex h-5 w-5 items-center justify-center overflow-hidden rounded-full border">
           {assignedMember?.user?.image ? (
             <Image
               src={assignedMember.user.image}
-              alt={assignedMember.user.name ?? 'Assignee'}
+              alt={assignedMember.user.name ?? t('Assignee')}
               width={20}
               height={20}
               className="object-cover"
             />
           ) : (
             <span className="text-muted-foreground text-[10px]">
-              {assignedMember?.user?.name?.charAt(0) ?? '?'}
+              {assignedMember?.user?.name?.charAt(0) ?? t('?')}
             </span>
           )}
         </div>

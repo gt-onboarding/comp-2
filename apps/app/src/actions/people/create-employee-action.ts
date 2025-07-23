@@ -2,6 +2,7 @@
 
 import { completeEmployeeCreation } from '@/lib/db/employee';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { getGT } from 'gt-next/server';
 import { authActionClient } from '../safe-action';
 import { createEmployeeSchema } from '../schema';
 import type { ActionResponse } from '../types';
@@ -18,11 +19,12 @@ export const createEmployeeAction = authActionClient
   .action(async ({ parsedInput, ctx }): Promise<ActionResponse> => {
     const { name, email, department, externalEmployeeId } = parsedInput;
     const { user, session } = ctx;
+    const t = await getGT();
 
     if (!session.activeOrganizationId) {
       return {
         success: false,
-        error: 'Not authorized - no organization found',
+        error: t('Not authorized - no organization found'),
       };
     }
 
@@ -45,13 +47,13 @@ export const createEmployeeAction = authActionClient
       if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
         return {
           success: false,
-          error: 'An employee with this email already exists in your organization',
+          error: t('An employee with this email already exists in your organization'),
         };
       }
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to create employee',
+        error: error instanceof Error ? error.message : t('Failed to create employee'),
       };
     }
   });

@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { AssistantButton } from './ai/chat-button';
 import { MobileMenu } from './mobile-menu';
+import { LocaleSelector } from 'gt-next';
 
 export async function Header() {
   const session = await auth.api.getSession({
@@ -27,7 +28,8 @@ export async function Header() {
 
       <AssistantButton />
 
-      <div className="ml-auto flex space-x-2">
+      <div className="ml-auto flex items-center space-x-2">
+        <LocaleSelector />
         <Suspense fallback={<Skeleton className="h-8 w-8 rounded-full" />}>
           <UserMenu />
         </Suspense>

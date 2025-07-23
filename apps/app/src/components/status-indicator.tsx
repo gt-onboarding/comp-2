@@ -1,4 +1,7 @@
+'use client';
+
 import { cn } from '@comp/ui/cn';
+import { useGT } from 'gt-next';
 
 // Consolidated status types from Prisma schema
 export const STATUS_TYPES = [
@@ -51,28 +54,28 @@ export const STATUS_COLORS: Record<StatusType, string> = {
 } as const;
 
 // Updated status translation mapping
-export const getStatusTranslation = (status: StatusType) => {
+export const getStatusTranslation = (status: StatusType, t: (key: string) => string) => {
   switch (status) {
     case 'draft':
-      return 'Draft';
+      return t('Draft');
     case 'todo':
-      return 'Todo';
+      return t('Todo');
     case 'in_progress':
-      return 'In Progress';
+      return t('In Progress');
     case 'done':
-      return 'Done';
+      return t('Done');
     case 'published':
-      return 'Published';
+      return t('Published');
     case 'archived':
-      return 'Archived';
+      return t('Archived');
     case 'needs_review':
-      return 'Needs Review';
+      return t('Needs Review');
     case 'open':
-      return 'Open';
+      return t('Open');
     case 'pending':
-      return 'Pending';
+      return t('Pending');
     case 'closed':
-      return 'Closed';
+      return t('Closed');
 
     default: {
       // Fallback for unmapped statuses
@@ -91,6 +94,8 @@ interface StatusIndicatorProps {
 }
 
 export function StatusIndicator({ status, className, withLabel = true }: StatusIndicatorProps) {
+  const t = useGT();
+
   // Handle null or undefined status
   if (!status) {
     const defaultColor = '#808080'; // Gray color for unknown/null status
@@ -105,7 +110,7 @@ export function StatusIndicator({ status, className, withLabel = true }: StatusI
 
   // Proceed with valid status
   const color = STATUS_COLORS[status] ?? '#808080';
-  const label = getStatusTranslation(status);
+  const label = getStatusTranslation(status, t);
 
   return (
     <div className={cn('flex items-center gap-2 text-sm', className)}>

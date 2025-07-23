@@ -3,46 +3,51 @@
 import { sleep } from '@/lib/utils';
 import type { Page } from 'playwright-core';
 import { viewPort } from './session';
+import { getGT } from 'gt-next/server';
 
 export async function scrollDownPage(page: Page, amount?: number) {
+  const t = await getGT();
+  
   if (amount !== undefined) {
     if (amount > 0) {
       await page.evaluate((amt: number) => {
         // Simple approach without explicit window typing
         window.scrollBy(0, amt);
       }, amount);
-      return `Scrolled down ${amount}px.`;
+      return t('Scrolled down {amount}px.', { amount });
     }
     // Negative amount - scroll to bottom
     await page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight);
     });
-    return 'Scrolled to bottom of page.';
+    return t('Scrolled to bottom of page.');
   }
   // No amount specified - use PageDown (original behavior)
   await page.keyboard.press('PageDown');
-  return 'Scrolled down one page.';
+  return t('Scrolled down one page.');
 }
 
 /**
  * 6) Go to some URL
  */
 export async function goToUrlPage(page: Page, url: string) {
+  const t = await getGT();
   const urlToGoTo = url.startsWith('http') ? url : `https://${url}`;
   await page.goto(urlToGoTo, {
     waitUntil: 'commit',
     timeout: 25000,
   });
-  return `Navigated to ${urlToGoTo}`;
+  return t('Navigated to {url}', { url: urlToGoTo });
 }
 
 /**
  * 7) Example: "search on google"
  */
 export async function searchGooglePage(page: Page, query: string) {
+  const t = await getGT();
   const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
   await page.goto(googleUrl);
-  return `Searched Google for "${query}".`;
+  return t('Searched Google for "{query}".', { query });
 }
 
 export async function takeScreenshot(page: Page) {
@@ -60,7 +65,8 @@ export async function takeScreenshot(page: Page) {
 }
 
 export async function handleKeyboardAction(page: Page, action: 'key' | 'type', text?: string) {
-  if (!text) throw new Error('Text required for keyboard actions');
+  const t = await getGT();
+  if (!text) throw new Error(t('Text required for keyboard actions'));
 
   switch (action) {
     case 'key':
@@ -148,17 +154,19 @@ export async function clickTargetOnPage(
   // Move and click after painting
   await page.mouse.move(x, y);
   await page.mouse.click(x, y);
-  return `Clicked at coordinates: ${x}, ${y}`;
+  const t = await getGT();
+  return t('Clicked at coordinates: {x}, {y}', { x, y });
 }
 
 /**
  * Opens a new tab and returns its page object
  */
 export async function openNewTab(page: Page) {
+  const t = await getGT();
   const context = page.context();
   const newPage = await context.newPage();
   return {
-    message: 'Opened new tab',
+    message: t('Opened new tab'),
     newPage,
   };
 }
@@ -167,17 +175,21 @@ export async function openNewTab(page: Page) {
  * Switches to a specific tab by index (0-based)
  */
 export async function switchToTab(page: Page, index: number) {
+  const t = await getGT();
   const context = page.context();
   const pages = context.pages();
 
   if (index < 0 || index >= pages.length) {
-    throw new Error(`Tab index ${index} is out of bounds (0-${pages.length - 1})`);
+    throw new Error(t('Tab index {index} is out of bounds (0-{maxIndex})', {
+      index,
+      maxIndex: pages.length - 1
+    }));
   }
 
   const targetPage = pages[index];
   await targetPage.bringToFront();
   return {
-    message: `Switched to tab ${index}`,
+    message: t('Switched to tab {index}', { index }),
     page: targetPage,
   };
 }
@@ -186,14 +198,16 @@ export async function switchToTab(page: Page, index: number) {
  * Navigates back in browser history
  */
 export async function goBack(page: Page) {
+  const t = await getGT();
   await page.goBack();
-  return 'Navigated back';
+  return t('Navigated back');
 }
 
 /**
  * Navigates forward in browser history
  */
 export async function goForward(page: Page) {
+  const t = await getGT();
   await page.goForward();
-  return 'Navigated forward';
+  return t('Navigated forward');
 }

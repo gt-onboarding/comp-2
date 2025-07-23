@@ -9,6 +9,7 @@ import { Input } from '@comp/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@comp/ui/select';
 import { Textarea } from '@comp/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { T, useGT } from 'gt-next';
 import { ArrowRightIcon } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useParams } from 'next/navigation';
@@ -25,16 +26,17 @@ interface UpdateTaskSheetProps {
 }
 
 export function UpdateTaskSheet({ task, assignees }: UpdateTaskSheetProps) {
+  const t = useGT();
   const [_, setTaskOverviewSheet] = useQueryState('task-overview-sheet');
   const params = useParams<{ taskId: string }>();
 
   const updateTask = useAction(updateVendorTaskAction, {
     onSuccess: () => {
-      toast.success('Task updated successfully');
+      toast.success(t('Task updated successfully'));
       setTaskOverviewSheet(null);
     },
     onError: () => {
-      toast.error('Failed to update task');
+      toast.error(t('Failed to update task'));
     },
   });
 
@@ -85,7 +87,7 @@ export function UpdateTaskSheet({ task, assignees }: UpdateTaskSheetProps) {
           <div>
             <Accordion type="multiple" defaultValue={['task']}>
               <AccordionItem value="task">
-                <AccordionTrigger>Task Details</AccordionTrigger>
+                <AccordionTrigger><T>Task Details</T></AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-4">
                     <FormField
@@ -93,13 +95,13 @@ export function UpdateTaskSheet({ task, assignees }: UpdateTaskSheetProps) {
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Title</FormLabel>
+                          <FormLabel><T>Title</T></FormLabel>
                           <FormControl>
                             <Input
                               {...field}
                               autoFocus
                               className="mt-3"
-                              placeholder="Enter title"
+                              placeholder={t('Enter title')}
                               autoCorrect="off"
                             />
                           </FormControl>
@@ -113,9 +115,9 @@ export function UpdateTaskSheet({ task, assignees }: UpdateTaskSheetProps) {
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Description</FormLabel>
+                          <FormLabel><T>Description</T></FormLabel>
                           <FormControl>
-                            <Textarea {...field} className="mt-3" placeholder="Enter description" />
+                            <Textarea {...field} className="mt-3" placeholder={t('Enter description')} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -127,7 +129,7 @@ export function UpdateTaskSheet({ task, assignees }: UpdateTaskSheetProps) {
                       name="status"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Status</FormLabel>
+                          <FormLabel><T>Status</T></FormLabel>
                           <FormControl>
                             <Select
                               value={field.value}
@@ -137,7 +139,7 @@ export function UpdateTaskSheet({ task, assignees }: UpdateTaskSheetProps) {
                               }}
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="Select status">
+                                <SelectValue placeholder={t('Select status')}>
                                   {field.value && renderStatus(field.value)}
                                 </SelectValue>
                               </SelectTrigger>
@@ -165,7 +167,7 @@ export function UpdateTaskSheet({ task, assignees }: UpdateTaskSheetProps) {
                       name="assigneeId"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Assignee</FormLabel>
+                          <FormLabel><T>Assignee</T></FormLabel>
                           <FormControl>
                             <SelectAssignee
                               assigneeId={field.value}
@@ -188,7 +190,7 @@ export function UpdateTaskSheet({ task, assignees }: UpdateTaskSheetProps) {
           <div className="mt-4 flex justify-end">
             <Button type="submit" variant="default" disabled={updateTask.status === 'executing'}>
               <div className="flex items-center justify-center">
-                Update
+                <T>Update</T>
                 <ArrowRightIcon className="ml-2 h-4 w-4" />
               </div>
             </Button>

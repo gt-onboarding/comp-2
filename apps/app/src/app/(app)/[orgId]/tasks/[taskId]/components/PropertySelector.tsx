@@ -10,6 +10,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@comp/ui/popover';
 import { Check } from 'lucide-react';
 import { ReactNode, useState } from 'react';
+import { T, useGT } from 'gt-next';
 
 export interface PropertySelectorProps<T> {
   trigger: ReactNode;
@@ -34,15 +35,20 @@ export function PropertySelector<T>({
   getKey,
   renderOption,
   onSelect,
-  searchPlaceholder = 'Search...',
-  emptyText = 'No results found.',
+  searchPlaceholder,
+  emptyText,
   contentWidth = 'w-56', // Default width
   disabled = false,
   allowUnassign = false,
   unassignValue = 'unassigned',
-  unassignLabel = 'Unassigned',
+  unassignLabel,
 }: PropertySelectorProps<T>) {
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const t = useGT();
+
+  const defaultSearchPlaceholder = searchPlaceholder ?? t('Search...');
+  const defaultEmptyText = emptyText ?? t('No results found.');
+  const defaultUnassignLabel = unassignLabel ?? t('Unassigned');
 
   return (
     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
@@ -51,9 +57,9 @@ export function PropertySelector<T>({
       </PopoverTrigger>
       <PopoverContent className={`${contentWidth} p-0`} side="left">
         <Command>
-          <CommandInput placeholder={searchPlaceholder} />
+          <CommandInput placeholder={defaultSearchPlaceholder} />
           <CommandList>
-            <CommandEmpty>{emptyText}</CommandEmpty>
+            <CommandEmpty>{defaultEmptyText}</CommandEmpty>
             <CommandGroup>
               {/* Optional Unassign Item */}
               {allowUnassign && (
@@ -71,7 +77,7 @@ export function PropertySelector<T>({
                       value === null || value === undefined ? 'opacity-100' : 'opacity-0',
                     )}
                   />
-                  <span className="text-muted-foreground">{unassignLabel}</span>
+                  <span className="text-muted-foreground">{defaultUnassignLabel}</span>
                 </CommandItem>
               )}
               {/* Dynamic Options */}
