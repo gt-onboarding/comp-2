@@ -5,6 +5,7 @@ import { Sheet, SheetContent } from '@comp/ui/sheet';
 
 import { Drawer, DrawerContent, DrawerTitle } from '@comp/ui/drawer';
 import '@comp/ui/editor.css';
+import { T } from 'gt-next';
 import { useQueryState } from 'nuqs';
 import Chat from '../ai/chat';
 
@@ -29,7 +30,7 @@ export function AssistantSheet() {
 
   return (
     <Drawer open={isOpen ?? false} onOpenChange={setIsOpen}>
-      <DrawerTitle hidden>Assistant</DrawerTitle>
+      <DrawerTitle hidden><T>Assistant</T></DrawerTitle>
       <DrawerContent className="p-6">
         <Chat />
       </DrawerContent>

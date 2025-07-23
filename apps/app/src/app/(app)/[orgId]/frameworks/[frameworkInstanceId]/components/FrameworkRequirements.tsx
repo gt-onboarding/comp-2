@@ -6,6 +6,7 @@ import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
 import { useDataTable } from '@/hooks/use-data-table';
 import type { FrameworkEditorRequirement } from '@comp/db/types';
 import { ColumnDef } from '@tanstack/react-table';
+import { T, useGT, Var } from 'gt-next';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import type { FrameworkInstanceWithControls } from '../../types';
@@ -25,6 +26,7 @@ export function FrameworkRequirements({
     orgId: string;
     frameworkInstanceId: string;
   }>();
+  const t = useGT();
 
   const items = useMemo(() => {
     return requirementDefinitions.map((def) => {
@@ -44,7 +46,7 @@ export function FrameworkRequirements({
     () => [
       {
         accessorKey: 'name',
-        header: ({ column }) => <DataTableColumnHeader column={column} title={'Name'} />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={t('Name')} />,
         cell: ({ row }) => (
           <span className="line-clamp-2 max-w-[300px] truncate">{row.original.name}</span>
         ),
@@ -53,15 +55,15 @@ export function FrameworkRequirements({
         minSize: 150,
         maxSize: 250,
         meta: {
-          label: 'Requirement Name',
-          placeholder: 'Search...',
+          label: t('Requirement Name'),
+          placeholder: t('Search...'),
           variant: 'text',
         },
         enableColumnFilter: true,
       },
       {
         accessorKey: 'description',
-        header: ({ column }) => <DataTableColumnHeader column={column} title={'Description'} />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={t('Description')} />,
         cell: ({ row }) => (
           <span className="line-clamp-2 max-w-[300px] truncate">{row.original.description}</span>
         ),
@@ -73,7 +75,7 @@ export function FrameworkRequirements({
       },
       {
         accessorKey: 'mappedControlsCount',
-        header: ({ column }) => <DataTableColumnHeader column={column} title={'Controls'} />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={t('Controls')} />,
         cell: ({ row }) => (
           <span className="text-muted-foreground text-sm">{row.original.mappedControlsCount}</span>
         ),
@@ -84,7 +86,7 @@ export function FrameworkRequirements({
         enableResizing: true,
       },
     ],
-    [],
+    [t],
   );
 
   const table = useDataTable({
@@ -104,9 +106,11 @@ export function FrameworkRequirements({
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-bold">
-        Requirements ({table.table.getFilteredRowModel().rows.length})
-      </h2>
+      <T>
+        <h2 className="text-lg font-bold">
+          Requirements (<Var>{table.table.getFilteredRowModel().rows.length}</Var>)
+        </h2>
+      </T>
       <DataTable
         table={table.table}
         rowClickBasePath={`/${orgId}/frameworks/${frameworkInstanceId}/requirements/`}

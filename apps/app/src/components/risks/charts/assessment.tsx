@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@comp/ui/card';
 import { type ChartConfig, ChartContainer, ChartTooltip } from '@comp/ui/chart';
 import { Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
+import { useGT } from 'gt-next';
 
 interface AssessmentChartProps {
   data: Array<{
@@ -21,12 +22,13 @@ const riskData = [
 ];
 
 export function AssessmentChart() {
+  const t = useGT();
   const config = {} satisfies ChartConfig;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Risk Assessment</CardTitle>
+        <CardTitle>{t('Risk Assessment')}</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={config}>

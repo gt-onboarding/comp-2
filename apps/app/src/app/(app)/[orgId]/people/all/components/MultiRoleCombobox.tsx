@@ -4,6 +4,7 @@ import type { Role } from '@prisma/client';
 import * as React from 'react';
 
 import { Dialog, DialogContent } from '@comp/ui/dialog';
+import { useGT } from 'gt-next';
 import { MultiRoleComboboxContent } from './MultiRoleComboboxContent';
 import { MultiRoleComboboxTrigger } from './MultiRoleComboboxTrigger';
 
@@ -85,35 +86,39 @@ export function MultiRoleCombobox({
     onSelectedRolesChange(newSelectedRoles);
   };
 
+  const t = useGT();
+  
   const getRoleLabel = (roleValue: Role) => {
     switch (roleValue) {
       case 'owner':
-        return 'Owner';
+        return t('Owner');
       case 'admin':
-        return 'Admin';
+        return t('Admin');
       case 'auditor':
-        return 'Auditor';
+        return t('Auditor');
       case 'employee':
-        return 'Employee';
+        return t('Employee');
       default:
         return roleValue;
     }
   };
 
   const triggerText =
-    selectedRoles.length > 0 ? `${selectedRoles.length} selected` : placeholder || 'Select role(s)';
+    selectedRoles.length > 0 
+      ? t('{count} selected', { count: selectedRoles.length }) 
+      : placeholder || t('Select role(s)');
 
   const filteredRoles = availableRoles.filter((role) => {
     const label = (() => {
       switch (role.value) {
         case 'admin':
-          return 'Admin';
+          return t('Admin');
         case 'auditor':
-          return 'Auditor';
+          return t('Auditor');
         case 'employee':
-          return 'Employee';
+          return t('Employee');
         case 'owner':
-          return 'Owner';
+          return t('Owner');
         default:
           return role.value;
       }

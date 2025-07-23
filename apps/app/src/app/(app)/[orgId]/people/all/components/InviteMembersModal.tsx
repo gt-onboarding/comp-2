@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { T, useGT } from 'gt-next';
 
 import type { ActionResponse } from '@/actions/types';
 import { authClient } from '@/utils/auth-client';
@@ -96,6 +97,7 @@ export function InviteMembersModal({
   const [isLoading, setIsLoading] = useState(false);
   const [csvFileName, setCsvFileName] = useState<string | null>(null);
   const [lastResult, setLastResult] = useState<ActionResponse<BulkInviteResultData> | null>(null);
+  const t = useGT();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -133,7 +135,7 @@ export function InviteMembersModal({
         console.log('Processing manual mode');
         if (!values.manualInvites || values.manualInvites.length === 0) {
           console.error('Manual mode validation failed: No invites.');
-          toast.error('Please add at least one member to invite.');
+          toast.error(t('Please add at least one member to invite.'));
           setIsLoading(false);
           return;
         }
@@ -146,7 +148,9 @@ export function InviteMembersModal({
             `Manual mode validation failed: No roles selected for: ${invalidInvites.map((i) => i.email || 'invite').join(', ')}`,
           );
           toast.error(
-            `Please select at least one role for: ${invalidInvites.map((i) => i.email || 'invite').join(', ')}`,
+            t('Please select at least one role for: {emails}', {
+              emails: invalidInvites.map((i) => i.email || 'invite').join(', ')
+            }),
           );
           setIsLoading(false);
           return;
@@ -185,7 +189,7 @@ export function InviteMembersModal({
 
         // Handle results
         if (successCount > 0) {
-          toast.success(`Successfully invited ${successCount} member(s).`);
+          toast.success(t('Successfully invited {count} member(s).', { count: successCount }));
 
           // Revalidate the page to refresh the member list
           router.refresh();
@@ -198,7 +202,10 @@ export function InviteMembersModal({
 
         if (failedInvites.length > 0) {
           toast.error(
-            `Failed to invite ${failedInvites.length} member(s): ${failedInvites.map((f) => f.email).join(', ')}`,
+            t('Failed to invite {count} member(s): {emails}', {
+              count: failedInvites.length,
+              emails: failedInvites.map((f) => f.email).join(', ')
+            }),
           );
         }
       } else if (values.mode === 'csv') {
@@ -213,7 +220,7 @@ export function InviteMembersModal({
         ) {
           console.error('CSV mode validation failed: No valid file selected.');
           form.setError('csvFile', {
-            message: 'A valid CSV file is required.',
+            message: t('A valid CSV file is required.'),
           });
           setIsLoading(false);
           return;
@@ -225,7 +232,7 @@ export function InviteMembersModal({
             type: file.type,
           });
           form.setError('csvFile', {
-            message: 'File must be a CSV.',
+            message: t('File must be a CSV.'),
           });
           setIsLoading(false);
           return;
@@ -236,7 +243,7 @@ export function InviteMembersModal({
             size: file.size,
           });
           form.setError('csvFile', {
-            message: 'File size must be less than 5MB.',
+            message: t('File size must be less than 5MB.'),
           });
           setIsLoading(false);
           return;
@@ -251,7 +258,7 @@ export function InviteMembersModal({
           const header = lines[0].toLowerCase();
           if (!header.includes('email') || !header.includes('role')) {
             toast.error(
-              "Invalid CSV format. The first row must include 'email' and 'role' columns.",
+              t("Invalid CSV format. The first row must include 'email' and 'role' columns."),
             );
             setIsLoading(false);
             return;
@@ -263,7 +270,7 @@ export function InviteMembersModal({
           const roleIndex = headers.findIndex((h) => h === 'role');
 
           if (emailIndex === -1 || roleIndex === -1) {
-            toast.error("CSV must contain 'email' and 'role' columns.");
+            toast.error(t("CSV must contain 'email' and 'role' columns."));
             setIsLoading(false);
             return;
           }
@@ -272,7 +279,7 @@ export function InviteMembersModal({
           const dataRows = lines.slice(1).filter((line) => line.trim() !== '');
 
           if (dataRows.length === 0) {
-            toast.error('CSV file does not contain any data rows.');
+            toast.error(t('CSV file does not contain any data rows.'));
             setIsLoading(false);
             return;
           }
@@ -344,7 +351,7 @@ export function InviteMembersModal({
 
           // Handle results
           if (successCount > 0) {
-            toast.success(`Successfully invited ${successCount} member(s).`);
+            toast.success(t('Successfully invited {count} member(s).', { count: successCount }));
 
             // Revalidate the page to refresh the member list
             router.refresh();
@@ -357,17 +364,20 @@ export function InviteMembersModal({
 
           if (failedInvites.length > 0) {
             toast.error(
-              `Failed to invite ${failedInvites.length} member(s): ${failedInvites.map((f) => f.email).join(', ')}`,
+              t('Failed to invite {count} member(s): {emails}', {
+                count: failedInvites.length,
+                emails: failedInvites.map((f) => f.email).join(', ')
+              }),
             );
           }
         } catch (csvError) {
           console.error('Error parsing CSV:', csvError);
-          toast.error('Failed to parse CSV file. Please check the format.');
+          toast.error(t('Failed to parse CSV file. Please check the format.'));
         }
       }
     } catch (error) {
       console.error('Error processing invitations:', error);
-      toast.error('An unexpected error occurred while processing invitations.');
+      toast.error(t('An unexpected error occurred while processing invitations.'));
     } finally {
       setIsLoading(false);
     }
@@ -409,16 +419,16 @@ mike@company.com,admin`;
         }}
       >
         <DialogHeader>
-          <DialogTitle>{'Add User'}</DialogTitle>
-          <DialogDescription>{'Add an employee to your organization.'}</DialogDescription>
+          <DialogTitle>{t('Add User')}</DialogTitle>
+          <DialogDescription>{t('Add an employee to your organization.')}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <Tabs value={mode} onValueChange={handleModeChange}>
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="manual">Manual</TabsTrigger>
-                <TabsTrigger value="csv">CSV</TabsTrigger>
+                <TabsTrigger value="manual">{t('Manual')}</TabsTrigger>
+                <TabsTrigger value="csv">{t('CSV')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="manual" className="space-y-4 pt-4">
@@ -429,11 +439,11 @@ mike@company.com,admin`;
                       name={`manualInvites.${index}.email`}
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          {index === 0 && <FormLabel>{'Email'}</FormLabel>}
+                          {index === 0 && <FormLabel>{t('Email')}</FormLabel>}
                           <FormControl>
                             <Input
                               className="h-10"
-                              placeholder={'Enter email address'}
+                              placeholder={t('Enter email address')}
                               {...field}
                               value={field.value || ''}
                             />
@@ -447,11 +457,11 @@ mike@company.com,admin`;
                       name={`manualInvites.${index}.roles`}
                       render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormItem className="w-[200px]">
-                          {index === 0 && <FormLabel>{'Role'}</FormLabel>}
+                          {index === 0 && <FormLabel>{t('Role')}</FormLabel>}
                           <MultiRoleCombobox
                             selectedRoles={value || []}
                             onSelectedRolesChange={onChange}
-                            placeholder={'Select a role'}
+                            placeholder={t('Select a role')}
                           />
                           <FormMessage>{error?.message}</FormMessage>
                         </FormItem>
@@ -464,7 +474,7 @@ mike@company.com,admin`;
                       onClick={() => fields.length > 1 && remove(index)}
                       disabled={fields.length <= 1}
                       className={`mt-${index === 0 ? '6' : '0'} self-center ${fields.length <= 1 ? 'cursor-not-allowed opacity-50' : ''}`}
-                      aria-label="Remove invite"
+                      aria-label={t('Remove invite')}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -483,9 +493,9 @@ mike@company.com,admin`;
                   }
                 >
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  Add Another
+                  {t('Add Another')}
                 </Button>
-                <FormDescription>{'Add an employee to your organization.'}</FormDescription>
+                <FormDescription>{t('Add an employee to your organization.')}</FormDescription>
               </TabsContent>
 
               <TabsContent value="csv" className="space-y-4 pt-4">
@@ -494,17 +504,17 @@ mike@company.com,admin`;
                   name="csvFile"
                   render={({ field: { onChange, value, ...fieldProps } }) => (
                     <FormItem>
-                      <FormLabel>{'CSV File'}</FormLabel>
+                      <FormLabel>{t('CSV File')}</FormLabel>
                       <div className="flex items-center gap-2">
                         <Button
                           type="button"
                           variant="outline"
                           onClick={() => document.getElementById('csvFileInput')?.click()}
                         >
-                          Choose File
+                          {t('Choose File')}
                         </Button>
                         <span className="text-muted-foreground truncate text-sm">
-                          {csvFileName || 'No file chosen'}
+                          {csvFileName || t('No file chosen')}
                         </span>
                       </div>
                       <FormControl className="relative">
@@ -522,16 +532,14 @@ mike@company.com,admin`;
                         />
                       </FormControl>
                       <FormDescription>
-                        {
-                          "Upload a CSV file with 'email' and 'role' columns. Use pipe (|) to separate multiple roles (e.g., employee|admin)."
-                        }
+                        {t("Upload a CSV file with 'email' and 'role' columns. Use pipe (|) to separate multiple roles (e.g., employee|admin).")}
                       </FormDescription>
                       <a
                         href={csvTemplateDataUri}
                         download="comp_invite_template.csv"
                         className="text-muted-foreground hover:text-foreground text-xs underline transition-colors"
                       >
-                        {'Download CSV template'}
+                        {t('Download CSV template')}
                       </a>
                       <FormMessage />
                     </FormItem>
@@ -548,11 +556,11 @@ mike@company.com,admin`;
                 disabled={isLoading}
                 className="w-full sm:w-auto"
               >
-                {'Cancel'}
+                {t('Cancel')}
               </Button>
               <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? 'Adding Employee...' : 'Invite'}
+                {isLoading ? t('Adding Employee...') : t('Invite')}
               </Button>
             </DialogFooter>
           </form>

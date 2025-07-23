@@ -16,6 +16,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { mapPolicyToControls } from '../actions/mapPolicyToControls';
+import { T, useGT } from 'gt-next';
 
 export const PolicyControlMappingModal = ({
   allControls,
@@ -28,6 +29,7 @@ export const PolicyControlMappingModal = ({
   const mappedControlIds = new Set(mappedControls.map((c) => c.id));
   const [selectedControls, setSelectedControls] = useState<Option[]>([]);
   const { policyId } = useParams<{ policyId: string }>();
+  const t = useGT();
 
   // Filter out controls that are already mapped
   const filteredControls = allControls.filter((control) => !mappedControlIds.has(control.id));
@@ -47,11 +49,14 @@ export const PolicyControlMappingModal = ({
       });
       setOpen(false);
       toast.success(
-        `Controls ${selectedControls.map((c) => c.label)} mapped successfully to policy ${policyId}`,
+        t('Controls {controlNames} mapped successfully to policy {policyId}', { 
+          controlNames: selectedControls.map((c) => c.label).join(', '), 
+          policyId 
+        }),
       );
     } catch (error) {
       console.error(error);
-      toast.error('Failed to map controls');
+      toast.error(t('Failed to map controls'));
     }
   };
 
@@ -70,16 +75,16 @@ export const PolicyControlMappingModal = ({
           onClick={() => setOpen(true)}
         >
           <PlusIcon className="mr-2 h-3 w-3" />
-          Link Controls
+          <T>Link Controls</T>
         </Badge>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Link New Controls</DialogTitle>
+          <DialogTitle><T>Link New Controls</T></DialogTitle>
         </DialogHeader>
-        <DialogDescription>Select controls you want to link to this policy</DialogDescription>
+        <DialogDescription><T>Select controls you want to link to this policy</T></DialogDescription>
         <MultipleSelector
-          placeholder="Search or select controls..."
+          placeholder={t('Search or select controls...')}
           value={selectedControls}
           onChange={setSelectedControls}
           options={preparedOptions}
@@ -97,9 +102,9 @@ export const PolicyControlMappingModal = ({
         />
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
+            <T>Cancel</T>
           </Button>
-          <Button onClick={handleMapControls}>Map</Button>
+          <Button onClick={handleMapControls}><T>Map</T></Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,6 +1,7 @@
 'use server';
 
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
 // Adjust safe-action import for colocalized structure
@@ -21,10 +22,11 @@ export const removeMember = authActionClient
   })
   .inputSchema(removeMemberSchema)
   .action(async ({ parsedInput, ctx }): Promise<ActionResponse<{ removed: boolean }>> => {
+    const t = await getGT();
     if (!ctx.session.activeOrganizationId) {
       return {
         success: false,
-        error: 'User does not have an organization',
+        error: t('User does not have an organization'),
       };
     }
 
@@ -45,7 +47,7 @@ export const removeMember = authActionClient
       ) {
         return {
           success: false,
-          error: "You don't have permission to remove members",
+          error: t("You don't have permission to remove members"),
         };
       }
 
@@ -60,7 +62,7 @@ export const removeMember = authActionClient
       if (!targetMember) {
         return {
           success: false,
-          error: 'Member not found in this organization',
+          error: t('Member not found in this organization'),
         };
       }
 
@@ -68,7 +70,7 @@ export const removeMember = authActionClient
       if (targetMember.role.includes('owner')) {
         return {
           success: false,
-          error: 'Cannot remove the organization owner',
+          error: t('Cannot remove the organization owner'),
         };
       }
 
@@ -76,7 +78,7 @@ export const removeMember = authActionClient
       if (targetMember.userId === ctx.user.id) {
         return {
           success: false,
-          error: 'You cannot remove yourself from the organization',
+          error: t('You cannot remove yourself from the organization'),
         };
       }
 
@@ -106,7 +108,7 @@ export const removeMember = authActionClient
       console.error('Error removing member:', error);
       return {
         success: false,
-        error: 'Failed to remove member', // Keep generic message for client
+        error: t('Failed to remove member'), // Keep generic message for client
       };
     }
   });

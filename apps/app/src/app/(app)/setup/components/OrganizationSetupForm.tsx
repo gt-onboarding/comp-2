@@ -5,6 +5,7 @@ import { LogoSpinner } from '@/components/logo-spinner';
 import type { Organization } from '@comp/db/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@comp/ui/card';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@comp/ui/form';
+import { T, useGT, Num } from 'gt-next';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -27,6 +28,7 @@ export function OrganizationSetupForm({
 }: OrganizationSetupFormProps) {
   const [isLoadingFrameworks, setIsLoadingFrameworks] = useState(false);
   const router = useRouter();
+  const t = useGT();
 
   const changeOrgAction = useAction(changeOrganizationAction, {
     onSuccess: (result) => {
@@ -106,7 +108,7 @@ export function OrganizationSetupForm({
             <div className="flex flex-col items-center gap-2">
               <LogoSpinner />
               <div className="text-muted-foreground text-sm">
-                Step {stepIndex + 1} of {steps.length}
+                <T>Step <Num>{stepIndex + 1}</Num> of <Num>{steps.length}</Num></T>
               </div>
               <CardTitle className="flex min-h-[56px] items-center justify-center text-center">
                 {step.question}
@@ -174,7 +176,7 @@ export function OrganizationSetupForm({
                     />
                   </svg>
                   <span className="max-w-[280px] sm:max-w-none">
-                    AI personalizes your plan based on your answers
+                    <T>AI personalizes your plan based on your answers</T>
                   </span>
                 </span>
               </p>

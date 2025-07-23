@@ -1,6 +1,7 @@
 'use client';
 
 import type { Member, Task, User } from '@comp/db/types';
+import { useGT } from 'gt-next';
 import { useAction } from 'next-safe-action/hooks';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { useCallback, useMemo } from 'react';
@@ -36,6 +37,22 @@ export function TaskList({
   tasks: Task[];
   members: (Member & { user: User })[];
 }) {
+  const t = useGT();
+  
+  // Helper to get translated status title
+  const getStatusTitle = (statusId: StatusId) => {
+    switch (statusId) {
+      case 'in_progress':
+        return t('In Progress');
+      case 'todo':
+        return t('Todo');
+      case 'done':
+        return t('Done');
+      default:
+        return statusId;
+    }
+  };
+
   // Hook to execute the server action for updating a task's status.
   const { execute: updateTaskExecute, status: updateTaskStatus } = useAction(updateTaskAction, {});
 
@@ -103,6 +120,13 @@ export function TaskList({
     [updateTaskExecute, updateTaskStatus, tasksByStatus],
   );
 
+  // Create dynamic statuses array with translated titles
+  const translatedStatuses = useMemo(() => [
+    { id: 'in_progress' as const, title: getStatusTitle('in_progress') },
+    { id: 'todo' as const, title: getStatusTitle('todo') },
+    { id: 'done' as const, title: getStatusTitle('done') },
+  ], [t]);
+
   return (
     <div className="flex flex-col gap-2">
       <TaskFilterHeader />
@@ -110,7 +134,7 @@ export function TaskList({
       <DndProvider backend={HTML5Backend}>
         <div className="w-full rounded-sm border">
           {/* Render a StatusGroup for each defined status. */}
-          {statuses.map((status) => (
+          {translatedStatuses.map((status) => (
             <StatusGroup
               key={status.id}
               status={status}

@@ -15,6 +15,7 @@ import {
   CommandSeparator,
 } from '@comp/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@comp/ui/popover';
+import { T, Var } from 'gt-next';
 
 type FacetedValue<Multiple extends boolean> = Multiple extends true ? string[] : string;
 
@@ -157,7 +158,7 @@ function FacetedBadgeList(props: FacetedBadgeListProps) {
     <div {...badgeListProps} className={cn('flex flex-wrap items-center gap-1', className)}>
       {values.length > max ? (
         <Badge variant="secondary" className={cn('rounded-sm px-1 font-normal', badgeClassName)}>
-          {values.length} selected
+          <T><Var>{values.length}</Var> selected</T>
         </Badge>
       ) : (
         values.map((value) => (

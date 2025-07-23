@@ -3,6 +3,7 @@
 import type { Task } from '@comp/db/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@comp/ui/table';
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { T } from 'gt-next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useGetColumnHeaders } from './client-columns';
 
@@ -66,7 +67,7 @@ export function DataTable({ data, pageCount, currentPage }: DataTableProps) {
             ) : (
               <TableRow>
                 <TableCell colSpan={columnHeaders.length} className="h-24 text-center">
-                  No results.
+                  <T>No results.</T>
                 </TableCell>
               </TableRow>
             )}

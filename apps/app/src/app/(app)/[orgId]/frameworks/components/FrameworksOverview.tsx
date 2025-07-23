@@ -4,6 +4,7 @@ import type { FrameworkEditorFramework } from '@comp/db/types';
 import { Control, Task } from '@comp/db/types';
 import { Button } from '@comp/ui/button';
 import { Dialog } from '@comp/ui/dialog';
+import { useGT } from 'gt-next';
 import { PlusIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
@@ -24,6 +25,7 @@ export function FrameworksOverview({
 }: FrameworksOverviewProps) {
   const params = useParams<{ orgId: string }>();
   const organizationId = params.orgId;
+  const t = useGT();
   const [isAddFrameworkModalOpen, setIsAddFrameworkModalOpen] = useState(false);
 
   const instancedFrameworkIds = frameworksWithControls.map((fw) => fw.frameworkId);
@@ -37,7 +39,7 @@ export function FrameworksOverview({
         <FrameworkList frameworksWithControls={frameworksWithControls} tasks={tasks} />
         <div className="flex items-center justify-center">
           <Button onClick={() => setIsAddFrameworkModalOpen(true)} variant="outline">
-            {'Add Framework'} <PlusIcon className="h-4 w-4" />
+            {t('Add Framework')} <PlusIcon className="h-4 w-4" />
           </Button>
         </div>
       </div>

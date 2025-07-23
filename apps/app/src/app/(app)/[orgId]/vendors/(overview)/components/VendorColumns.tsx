@@ -2,6 +2,7 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { VendorStatus } from '@/components/vendor-status';
 import { Avatar, AvatarFallback, AvatarImage } from '@comp/ui/avatar';
 import { Badge } from '@comp/ui/badge';
+import { T, useGT } from 'gt-next';
 import type { ColumnDef } from '@tanstack/react-table';
 import { UserIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -9,12 +10,15 @@ import type { GetVendorsResult } from '../data/queries';
 
 type VendorRow = GetVendorsResult['data'][number];
 
-export const columns: ColumnDef<VendorRow>[] = [
+export const useVendorColumns = (): ColumnDef<VendorRow>[] => {
+  const t = useGT();
+  
+  return [
   {
     id: 'name',
     accessorKey: 'name',
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Vendor Name" />;
+      return <DataTableColumnHeader column={column} title={t("Vendor Name")} />;
     },
     cell: ({ row }) => {
       return (
@@ -24,8 +28,8 @@ export const columns: ColumnDef<VendorRow>[] = [
       );
     },
     meta: {
-      label: 'Vendor Name',
-      placeholder: 'Search for vendor name...',
+      label: t('Vendor Name'),
+      placeholder: t('Search for vendor name...'),
       variant: 'text',
     },
     size: 250,
@@ -37,14 +41,14 @@ export const columns: ColumnDef<VendorRow>[] = [
     id: 'status',
     accessorKey: 'status',
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Status" />;
+      return <DataTableColumnHeader column={column} title={t("Status")} />;
     },
     cell: ({ row }) => {
       return <VendorStatus status={row.original.status} />;
     },
     meta: {
-      label: 'Status',
-      placeholder: 'Search by status...',
+      label: t('Status'),
+      placeholder: t('Search by status...'),
       variant: 'select',
     },
   },
@@ -52,18 +56,18 @@ export const columns: ColumnDef<VendorRow>[] = [
     id: 'category',
     accessorKey: 'category',
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Category" />;
+      return <DataTableColumnHeader column={column} title={t("Category")} />;
     },
     cell: ({ row }) => {
       const categoryMap: Record<string, string> = {
-        cloud: 'Cloud',
-        infrastructure: 'Infrastructure',
-        software_as_a_service: 'SaaS',
-        finance: 'Finance',
-        marketing: 'Marketing',
-        sales: 'Sales',
-        hr: 'HR',
-        other: 'Other',
+        cloud: t('Cloud'),
+        infrastructure: t('Infrastructure'),
+        software_as_a_service: t('SaaS'),
+        finance: t('Finance'),
+        marketing: t('Marketing'),
+        sales: t('Sales'),
+        hr: t('HR'),
+        other: t('Other'),
       };
 
       return (
@@ -73,8 +77,8 @@ export const columns: ColumnDef<VendorRow>[] = [
       );
     },
     meta: {
-      label: 'Category',
-      placeholder: 'Search by category...',
+      label: t('Category'),
+      placeholder: t('Search by category...'),
       variant: 'select',
     },
   },
@@ -82,7 +86,7 @@ export const columns: ColumnDef<VendorRow>[] = [
     id: 'assignee',
     accessorKey: 'assignee',
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Assignee" />;
+      return <DataTableColumnHeader column={column} title={t("Assignee")} />;
     },
     enableSorting: false,
     cell: ({ row }) => {
@@ -93,7 +97,7 @@ export const columns: ColumnDef<VendorRow>[] = [
             <div className="bg-muted flex h-8 w-8 items-center justify-center rounded-full">
               <UserIcon className="text-muted-foreground h-4 w-4" />
             </div>
-            <p className="text-muted-foreground text-sm font-medium">None</p>
+            <p className="text-muted-foreground text-sm font-medium"><T>None</T></p>
           </div>
         );
       }
@@ -120,9 +124,10 @@ export const columns: ColumnDef<VendorRow>[] = [
       );
     },
     meta: {
-      label: 'Assignee',
-      placeholder: 'Search by assignee...',
+      label: t('Assignee'),
+      placeholder: t('Search by assignee...'),
       variant: 'select',
     },
   },
 ];
+};

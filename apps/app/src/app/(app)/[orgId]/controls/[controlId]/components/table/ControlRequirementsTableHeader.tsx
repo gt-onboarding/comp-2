@@ -2,6 +2,7 @@
 
 import { TableHead, TableHeader, TableRow } from '@comp/ui/table';
 import type { Table } from '@tanstack/react-table';
+import { T } from 'gt-next';
 import type { RequirementTableData } from './ControlRequirementsTable';
 
 type Props = {
@@ -21,15 +22,19 @@ export function ControlRequirementsTableHeader({ table, loading }: Props) {
     <TableHeader>
       <TableRow className="hover:bg-transparent">
         {isVisible('type') && (
-          <TableHead className="h-11 px-4 text-left align-middle font-medium">Type</TableHead>
+          <TableHead className="h-11 px-4 text-left align-middle font-medium">
+            <T>Type</T>
+          </TableHead>
         )}
         {isVisible('description') && (
           <TableHead className="h-11 px-4 text-left align-middle font-medium">
-            Description
+            <T>Description</T>
           </TableHead>
         )}
         {isVisible('status') && (
-          <TableHead className="h-11 px-4 text-left align-middle font-medium">Status</TableHead>
+          <TableHead className="h-11 px-4 text-left align-middle font-medium">
+            <T>Status</T>
+          </TableHead>
         )}
       </TableRow>
     </TableHeader>

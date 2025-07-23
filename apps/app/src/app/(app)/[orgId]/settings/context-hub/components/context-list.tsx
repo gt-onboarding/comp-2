@@ -34,10 +34,12 @@ import { Pencil, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { ContextForm } from './context-form';
+import { T, useGT } from 'gt-next';
 
 export function ContextList({ entries, locale }: { entries: Context[]; locale: string }) {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState<Record<string, boolean>>({});
+  const t = useGT();
 
   const handleEditOpen = (id: string, open: boolean) => {
     setEditDialogOpen((prev) => ({ ...prev, [id]: open }));
@@ -49,9 +51,9 @@ export function ContextList({ entries, locale }: { entries: Context[]; locale: s
         <CardHeader>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-1">
-              <CardTitle>Context Entries</CardTitle>
+              <CardTitle><T>Context Entries</T></CardTitle>
               <CardDescription>
-                Add, edit, or remove context entries for your organization.
+                <T>Add, edit, or remove context entries for your organization.</T>
               </CardDescription>
             </div>
             <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
@@ -61,13 +63,13 @@ export function ContextList({ entries, locale }: { entries: Context[]; locale: s
                   className="flex items-center gap-1 self-start"
                 >
                   <Plus className="h-4 w-4" />
-                  Add Entry
+                  <T>Add Entry</T>
                 </Button>
               </DialogTrigger>
               <DialogContent className="w-full max-w-lg">
                 <DialogHeader>
-                  <DialogTitle>Add New Entry</DialogTitle>
-                  <DialogDescription>Create a new context entry</DialogDescription>
+                  <DialogTitle><T>Add New Entry</T></DialogTitle>
+                  <DialogDescription><T>Create a new context entry</T></DialogDescription>
                 </DialogHeader>
                 <ContextForm onSuccess={() => setAddDialogOpen(false)} />
               </DialogContent>
@@ -77,7 +79,7 @@ export function ContextList({ entries, locale }: { entries: Context[]; locale: s
         <CardContent>
           {entries.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <p className="text-muted-foreground mb-6">No context entries yet</p>
+              <p className="text-muted-foreground mb-6"><T>No context entries yet</T></p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -95,7 +97,7 @@ export function ContextList({ entries, locale }: { entries: Context[]; locale: s
                             size="icon"
                             variant="ghost"
                             className="rounded-sm"
-                            aria-label="Edit"
+                            aria-label={t('Edit')}
                             onClick={() => handleEditOpen(entry.id, true)}
                           >
                             <Pencil className="h-4 w-4" />
@@ -103,8 +105,8 @@ export function ContextList({ entries, locale }: { entries: Context[]; locale: s
                         </DialogTrigger>
                         <DialogContent className="w-full max-w-lg">
                           <DialogHeader>
-                            <DialogTitle>Edit Entry</DialogTitle>
-                            <DialogDescription>Update your context entry</DialogDescription>
+                            <DialogTitle><T>Edit Entry</T></DialogTitle>
+                            <DialogDescription><T>Update your context entry</T></DialogDescription>
                           </DialogHeader>
                           <ContextForm
                             entry={entry}
@@ -124,18 +126,18 @@ export function ContextList({ entries, locale }: { entries: Context[]; locale: s
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="destructive" className="rounded-sm">
-                            Delete
+                            <T>Delete</T>
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogTitle><T>Are you sure?</T></AlertDialogTitle>
                             <AlertDialogDescription>
-                              This action cannot be undone.
+                              <T>This action cannot be undone.</T>
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel><T>Cancel</T></AlertDialogCancel>
                             <AlertDialogAction
                               onClick={async () => {
                                 try {
@@ -143,14 +145,14 @@ export function ContextList({ entries, locale }: { entries: Context[]; locale: s
                                     id: entry.id,
                                   });
                                   if (result?.data?.success) {
-                                    toast.success('Context entry deleted');
+                                    toast.success(t('Context entry deleted'));
                                   }
                                 } catch (error) {
-                                  toast.error('Something went wrong');
+                                  toast.error(t('Something went wrong'));
                                 }
                               }}
                             >
-                              Delete
+                              <T>Delete</T>
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>

@@ -5,6 +5,7 @@
 import { authActionClient } from '@/actions/safe-action';
 import { db } from '@comp/db';
 import type { TaskStatus } from '@comp/db/types';
+import { getGT } from 'gt-next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { updateVendorTaskSchema } from '../schema';
 
@@ -20,13 +21,14 @@ export const updateVendorTaskAction = authActionClient
   .action(async ({ parsedInput, ctx }) => {
     const { id, title, description, dueDate, status, assigneeId } = parsedInput;
     const { session } = ctx;
+    const t = await getGT();
 
     if (!session.activeOrganizationId) {
-      throw new Error('Invalid user input');
+      throw new Error(t('Invalid user input'));
     }
 
     if (!assigneeId) {
-      throw new Error('Assignee ID is required');
+      throw new Error(t('Assignee ID is required'));
     }
 
     try {
@@ -43,7 +45,7 @@ export const updateVendorTaskAction = authActionClient
         },
       });
       if (!task) {
-        throw new Error('Task not found');
+        throw new Error(t('Task not found'));
       }
 
       await db.task.update({

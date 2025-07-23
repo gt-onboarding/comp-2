@@ -18,14 +18,16 @@ import { useAction } from 'next-safe-action/hooks';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import type { z } from 'zod';
+import { T, useGT } from 'gt-next';
 
 export function UpdateTaskForm({ task, users }: { task: Task; users: User[] }) {
+  const t = useGT();
   const updateTask = useAction(updateTaskAction, {
     onSuccess: () => {
-      toast.success('Task updated successfully');
+      toast.success(t('Task updated successfully'));
     },
     onError: () => {
-      toast.error('Something went wrong, please try again.');
+      toast.error(t('Something went wrong, please try again.'));
     },
   });
 
@@ -56,7 +58,7 @@ export function UpdateTaskForm({ task, users }: { task: Task; users: User[] }) {
             name="assigneeId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Assignee'}</FormLabel>
+                <FormLabel><T>Assignee</T></FormLabel>
                 <FormControl>
                   <Select
                     value={field.value ?? ''}
@@ -64,7 +66,7 @@ export function UpdateTaskForm({ task, users }: { task: Task; users: User[] }) {
                     onOpenChange={() => form.handleSubmit(onSubmit)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={'Select assignee'} />
+                      <SelectValue placeholder={t('Select assignee')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectUser
@@ -85,11 +87,11 @@ export function UpdateTaskForm({ task, users }: { task: Task; users: User[] }) {
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Status'}</FormLabel>
+                <FormLabel><T>Status</T></FormLabel>
                 <FormControl>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder={'Select a status'}>
+                      <SelectValue placeholder={t('Select a status')}>
                         {field.value && <StatusIndicator status={field.value} />}
                       </SelectValue>
                     </SelectTrigger>
@@ -112,7 +114,7 @@ export function UpdateTaskForm({ task, users }: { task: Task; users: User[] }) {
             name="dueDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>{'Due Date'}</FormLabel>
+                <FormLabel><T>Due Date</T></FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -123,7 +125,7 @@ export function UpdateTaskForm({ task, users }: { task: Task; users: User[] }) {
                           !field.value && 'text-muted-foreground',
                         )}
                       >
-                        {field.value ? format(field.value, 'PPP') : <span>{'Pick a date'}</span>}
+                        {field.value ? format(field.value, 'PPP') : <span>{t('Pick a date')}</span>}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
                     </FormControl>
@@ -148,7 +150,7 @@ export function UpdateTaskForm({ task, users }: { task: Task; users: User[] }) {
             {updateTask.status === 'executing' ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              'Save'
+              t('Save')
             )}
           </Button>
         </div>

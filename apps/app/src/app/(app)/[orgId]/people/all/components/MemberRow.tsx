@@ -4,6 +4,7 @@ import { Edit, MoreHorizontal, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useRef, useState } from 'react';
+import { T, Var, useGT } from 'gt-next';
 
 import {
   AlertDialog,
@@ -63,6 +64,7 @@ function getInitials(name?: string | null, email?: string | null): string {
 export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
   const params = useParams<{ orgId: string }>();
   const { orgId } = params;
+  const t = useGT();
 
   const [isRemoveAlertOpen, setIsRemoveAlertOpen] = useState(false);
   const [isUpdateRolesOpen, setIsUpdateRolesOpen] = useState(false);
@@ -147,7 +149,7 @@ export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
                   href={`/${orgId}/people/${memberId}`}
                   className="text-xs text-blue-600 hover:underline"
                 >
-                  ({'View Profile'})
+                  ({t('View Profile')})
                 </Link>
               )}
             </div>
@@ -161,13 +163,13 @@ export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
                 {(() => {
                   switch (role) {
                     case 'owner':
-                      return 'Owner';
+                      return t('Owner');
                     case 'admin':
-                      return 'Admin';
+                      return t('Admin');
                     case 'auditor':
-                      return 'Auditor';
+                      return t('Auditor');
                     case 'employee':
-                      return 'Employee';
+                      return t('Employee');
                     default:
                       return '???';
                   }
@@ -209,44 +211,46 @@ export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
                       }}
                     >
                       <Edit className="mr-2 h-4 w-4" />
-                      <span>{'Edit Roles'}</span>
+                      <span>{t('Edit Roles')}</span>
                     </DropdownMenuItem>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>{'Edit Member Roles'}</DialogTitle>
+                      <DialogTitle>{t('Edit Member Roles')}</DialogTitle>
                       <DialogDescription>
-                        {'Change roles for'} {memberName}
+                        <T>
+                          Change roles for <Var>{memberName}</Var>
+                        </T>
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor={`role-${memberId}`}>{'Roles'}</Label>
+                        <Label htmlFor={`role-${memberId}`}>{t('Roles')}</Label>
                         <MultiRoleCombobox
                           selectedRoles={selectedRoles}
                           onSelectedRolesChange={setSelectedRoles}
-                          placeholder={'Select a role'}
+                          placeholder={t('Select a role')}
                           lockedRoles={isOwner ? ['owner'] : []}
                         />
                         {isOwner && (
                           <p className="text-muted-foreground mt-1 text-xs">
-                            {'The owner role cannot be removed.'}
+                            {t('The owner role cannot be removed.')}
                           </p>
                         )}
                         <p className="text-muted-foreground mt-1 text-xs">
-                          {'Members must have at least one role.'}
+                          {t('Members must have at least one role.')}
                         </p>
                       </div>
                     </div>
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setIsUpdateRolesOpen(false)}>
-                        Cancel
+                        {t('Cancel')}
                       </Button>
                       <Button
                         onClick={handleUpdateRolesClick}
                         disabled={isUpdating || selectedRoles.length === 0}
                       >
-                        {'Update'}
+                        {t('Update')}
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -258,7 +262,7 @@ export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
                   onSelect={() => setIsRemoveAlertOpen(true)}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
-                  <span>{'Remove Member'}</span>
+                  <span>{t('Remove Member')}</span>
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
@@ -269,16 +273,17 @@ export function MemberRow({ member, onRemove, onUpdateRole }: MemberRowProps) {
       <AlertDialog open={isRemoveAlertOpen} onOpenChange={setIsRemoveAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{'Remove Team Member'}</AlertDialogTitle>
+            <AlertDialogTitle>{t('Remove Team Member')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {'Are you sure you want to remove'} {memberName}?{' '}
-              {'They will no longer have access to this organization.'}
+              <T>
+                Are you sure you want to remove <Var>{memberName}</Var>? They will no longer have access to this organization.
+              </T>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{'Cancel'}</AlertDialogCancel>
+            <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleRemoveClick} disabled={isRemoving}>
-              {'Remove'}
+              {t('Remove')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

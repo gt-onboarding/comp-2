@@ -5,6 +5,7 @@ import { steps } from '@/app/(app)/setup/lib/constants';
 import { createFleetLabelForOrg } from '@/jobs/tasks/device/create-fleet-label-for-org';
 import { onboardOrganization as onboardOrganizationTask } from '@/jobs/tasks/onboarding/onboard-organization';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { revalidatePath } from 'next/cache';
 import { cookies, headers } from 'next/headers';
@@ -36,6 +37,7 @@ export const completeOnboarding = authActionClient
   .action(async ({ parsedInput, ctx }) => {
     try {
       const { activeOrganizationId } = ctx.session;
+      const t = await getGT();
 
       // Verify the organization ID matches the active org
       if (parsedInput.organizationId !== activeOrganizationId) {
@@ -138,7 +140,7 @@ export const completeOnboarding = authActionClient
 
       return {
         success: false,
-        error: 'Failed to complete onboarding',
+        error: t('Failed to complete onboarding'),
       };
     }
   });

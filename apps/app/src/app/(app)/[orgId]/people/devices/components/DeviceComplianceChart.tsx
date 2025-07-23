@@ -7,6 +7,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@comp/ui/chart';
+import { T, useGT } from 'gt-next';
 import * as React from 'react';
 import { Cell, Label, Pie, PieChart } from 'recharts';
 import type { Host } from '../types';
@@ -21,6 +22,7 @@ const CHART_COLORS = {
 };
 
 export function DeviceComplianceChart({ devices }: DeviceComplianceChartProps) {
+  const t = useGT();
   const { pieDisplayData, legendDisplayData } = React.useMemo(() => {
     if (!devices || devices.length === 0) {
       return { pieDisplayData: [], legendDisplayData: [] };
@@ -76,14 +78,18 @@ export function DeviceComplianceChart({ devices }: DeviceComplianceChartProps) {
     return (
       <Card className="my-6 flex flex-col overflow-hidden border">
         <CardHeader className="pb-2">
-          <CardTitle>Device Compliance</CardTitle>
+          <CardTitle>
+            <T>Device Compliance</T>
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-1 items-center justify-center py-10">
           <div className="space-y-2 text-center">
-            <p className="text-muted-foreground text-center text-sm">
-              No device data available. Please make sure your employees access the portal and
-              install the device agent.
-            </p>
+            <T>
+              <p className="text-muted-foreground text-center text-sm">
+                No device data available. Please make sure your employees access the portal and
+                install the device agent.
+              </p>
+            </T>
           </div>
         </CardContent>
         <CardFooter className="bg-muted/30 border-t py-3">
@@ -96,7 +102,9 @@ export function DeviceComplianceChart({ devices }: DeviceComplianceChartProps) {
   return (
     <Card className="my-6 flex flex-col overflow-hidden border">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Device Compliance</CardTitle>
+        <CardTitle>
+          <T>Device Compliance</T>
+        </CardTitle>
         {/* Optional: Add a subtitle or small description here if needed */}
       </CardHeader>
       <CardContent className="flex-1 pb-0">
@@ -141,7 +149,7 @@ export function DeviceComplianceChart({ devices }: DeviceComplianceChartProps) {
                           y={(viewBox.cy || 0) + 20}
                           className="text-muted-foreground text-sm"
                         >
-                          Devices
+                          {t('Devices')}
                         </tspan>
                       </text>
                     );

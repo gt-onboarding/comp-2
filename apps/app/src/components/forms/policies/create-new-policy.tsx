@@ -7,6 +7,7 @@ import { Button } from '@comp/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@comp/ui/form';
 import { Input } from '@comp/ui/input';
 import { Textarea } from '@comp/ui/textarea';
+import { T, useGT } from 'gt-next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRightIcon } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
@@ -16,14 +17,15 @@ import { toast } from 'sonner';
 
 export function CreateNewPolicyForm() {
   const [_, setCreatePolicySheet] = useQueryState('create-policy-sheet');
+  const t = useGT();
 
   const createPolicy = useAction(createPolicyAction, {
     onSuccess: () => {
-      toast.success('Policy successfully created');
+      toast.success(t('Policy successfully created'));
       setCreatePolicySheet(null);
     },
     onError: () => {
-      toast.error('Failed to create policy');
+      toast.error(t('Failed to create policy'));
     },
   });
 
@@ -46,7 +48,7 @@ export function CreateNewPolicyForm() {
           <div>
             <Accordion type="multiple" defaultValue={['policy']}>
               <AccordionItem value="policy">
-                <AccordionTrigger>{'Policy Details'}</AccordionTrigger>
+                <AccordionTrigger><T>Policy Details</T></AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-4">
                     <FormField
@@ -54,13 +56,13 @@ export function CreateNewPolicyForm() {
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{'Title'}</FormLabel>
+                          <FormLabel><T>Title</T></FormLabel>
                           <FormControl>
                             <Input
                               {...field}
                               autoFocus
                               className="mt-3"
-                              placeholder={'Title'}
+                              placeholder={t('Title')}
                               autoCorrect="off"
                             />
                           </FormControl>
@@ -73,12 +75,12 @@ export function CreateNewPolicyForm() {
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{'Description'}</FormLabel>
+                          <FormLabel><T>Description</T></FormLabel>
                           <FormControl>
                             <Textarea
                               {...field}
                               className="mt-3 min-h-[80px]"
-                              placeholder={'Description'}
+                              placeholder={t('Description')}
                             />
                           </FormControl>
                           <FormMessage />
@@ -93,7 +95,7 @@ export function CreateNewPolicyForm() {
           <div className="mt-4 flex justify-end">
             <Button type="submit" variant="default" disabled={createPolicy.status === 'executing'}>
               <div className="flex items-center justify-center">
-                {'Create'}
+                <T>Create</T>
                 <ArrowRightIcon className="ml-2 h-4 w-4" />
               </div>
             </Button>

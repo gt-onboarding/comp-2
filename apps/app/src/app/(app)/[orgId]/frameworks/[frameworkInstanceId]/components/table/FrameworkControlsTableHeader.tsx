@@ -5,6 +5,7 @@ import { TableHead, TableHeader, TableRow } from '@comp/ui/table';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
+import { T } from 'gt-next';
 
 type Props = {
   table?: {
@@ -62,7 +63,7 @@ export function FrameworkControlsTableHeader({ table, loading }: Props) {
               variant="ghost"
               onClick={() => createSortQuery('name')}
             >
-              <span>{'Control'}</span>
+              <T><span>Control</span></T>
               {'name' === column && value === 'asc' && <ArrowDown size={16} />}
               {'name' === column && value === 'desc' && <ArrowUp size={16} />}
             </Button>
@@ -76,7 +77,7 @@ export function FrameworkControlsTableHeader({ table, loading }: Props) {
               variant="ghost"
               onClick={() => createSortQuery('category')}
             >
-              <span>{'Category'}</span>
+              <T><span>Category</span></T>
               {'category' === column && value === 'asc' && <ArrowDown size={16} />}
               {'category' === column && value === 'desc' && <ArrowUp size={16} />}
             </Button>
@@ -90,7 +91,7 @@ export function FrameworkControlsTableHeader({ table, loading }: Props) {
               variant="ghost"
               onClick={() => createSortQuery('status')}
             >
-              <span>{'Status'}</span>
+              <T><span>Status</span></T>
               {'status' === column && value === 'asc' && <ArrowDown size={16} />}
               {'status' === column && value === 'desc' && <ArrowUp size={16} />}
             </Button>

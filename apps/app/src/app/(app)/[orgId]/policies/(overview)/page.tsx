@@ -2,6 +2,7 @@ import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
+import { getGT } from 'gt-next/server';
 import { Suspense } from 'react';
 import { PolicyAssigneeChart } from './components/policy-assignee-chart';
 import { PolicyStatusChart } from './components/policy-status-chart';
@@ -156,7 +157,8 @@ const getPoliciesOverview = async () => {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
   return {
-    title: 'Policies',
+    title: t('Policies'),
   };
 }

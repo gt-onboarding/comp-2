@@ -14,6 +14,8 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { useGT, T } from 'gt-next';
+
 export function CreateCommentForm({
   entityId,
   entityType,
@@ -21,13 +23,14 @@ export function CreateCommentForm({
   entityId: string;
   entityType: CommentEntityType;
 }) {
+  const t = useGT();
   const addComment = useAction(addCommentAction, {
     onSuccess: () => {
-      toast.success('Comment added successfully');
+      toast.success(t('Comment added successfully'));
       form.reset();
     },
     onError: () => {
-      toast.error('Error adding comment');
+      toast.error(t('Error adding comment'));
     },
   });
 
@@ -56,7 +59,7 @@ export function CreateCommentForm({
           <div>
             <Accordion type="multiple" defaultValue={['comment']}>
               <AccordionItem value="comment">
-                <AccordionTrigger>Comment</AccordionTrigger>
+                <AccordionTrigger><T>Comment</T></AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-4">
                     <FormField
@@ -79,7 +82,7 @@ export function CreateCommentForm({
                       disabled={addComment.status === 'executing'}
                     >
                       <div className="flex items-center justify-center">
-                        {'Create'}
+                        <T>Create</T>
                         <ArrowRightIcon className="ml-2 h-4 w-4" />
                       </div>
                     </Button>

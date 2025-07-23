@@ -13,6 +13,7 @@ import { useParams, useRouter } from 'next/navigation';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useGT } from 'gt-next';
 import { AttachmentItem } from '../../app/(app)/[orgId]/tasks/[taskId]/components/AttachmentItem';
 
 interface CommentFormProps {
@@ -28,6 +29,7 @@ interface PendingAttachment {
 }
 
 export function CommentForm({ entityId, entityType }: CommentFormProps) {
+  const t = useGT();
   const session = authClient.useSession();
   const router = useRouter();
   const params = useParams();
@@ -77,7 +79,7 @@ export function CommentForm({ entityId, entityType }: CommentFormProps) {
           const MAX_FILE_SIZE_MB = 5;
           const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
           if (file.size > MAX_FILE_SIZE_BYTES) {
-            toast.error(`File "${file.name}" exceeds the ${MAX_FILE_SIZE_MB}MB limit.`);
+            toast.error(t('File "{fileName}" exceeds the {maxSize}MB limit.', { fileName: file.name, maxSize: MAX_FILE_SIZE_MB }));
             return resolve(); // Skip processing this file
           }
 
@@ -86,7 +88,7 @@ export function CommentForm({ entityId, entityType }: CommentFormProps) {
             const dataUrlResult = reader.result as string;
             const base64Data = dataUrlResult?.split(',')[1];
             if (!base64Data) {
-              toast.error(`Failed to read file data for ${file.name}`);
+              toast.error(t('Failed to read file data for {fileName}', { fileName: file.name }));
               return resolve();
             }
 
@@ -100,12 +102,12 @@ export function CommentForm({ entityId, entityType }: CommentFormProps) {
                 fileData: base64Data,
               },
             ]);
-            toast.success(`File "${file.name}" ready for attachment.`);
+            toast.success(t('File "{fileName}" ready for attachment.', { fileName: file.name }));
             setIsLoading(false);
             resolve();
           };
           reader.onerror = () => {
-            toast.error(`Error reading file: ${file.name}`);
+            toast.error(t('Error reading file: {fileName}', { fileName: file.name }));
             setIsLoading(false);
             resolve();
           };
@@ -127,14 +129,14 @@ export function CommentForm({ entityId, entityType }: CommentFormProps) {
 
   const handleRemovePendingAttachment = (attachmentIdToRemove: string) => {
     setPendingAttachments((prev) => prev.filter((att) => att.id !== attachmentIdToRemove));
-    toast.info('Attachment removed from comment draft.');
+    toast.info(t('Attachment removed from comment draft.'));
   };
 
   const handlePendingAttachmentClick = (attachmentId: string) => {
     const pendingAttachment = pendingAttachments.find((att) => att.id === attachmentId);
     if (!pendingAttachment) {
       console.error('Could not find pending attachment for ID:', attachmentId);
-      toast.error('Could not find attachment data.');
+      toast.error(t('Could not find attachment data.'));
       return;
     }
 
@@ -165,7 +167,7 @@ export function CommentForm({ entityId, entityType }: CommentFormProps) {
     });
 
     if (success && data) {
-      toast.success('Comment added!');
+      toast.success(t('Comment added!'));
       setNewComment('');
       setPendingAttachments([]);
     }
@@ -216,7 +218,7 @@ export function CommentForm({ entityId, entityType }: CommentFormProps) {
         />
         <div className="flex-1 space-y-3">
           <Textarea
-            placeholder="Leave a comment..."
+            placeholder={t('Leave a comment...')}
             className="resize-none border-none p-4 shadow-none"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
@@ -227,7 +229,7 @@ export function CommentForm({ entityId, entityType }: CommentFormProps) {
 
           {pendingAttachments.length > 0 && (
             <div className="space-y-2 px-4 pt-2">
-              <Label className="text-muted-foreground text-xs">Pending Attachments:</Label>
+              <Label className="text-muted-foreground text-xs">{t('Pending Attachments:')}</Label>
               {pendingAttachments.map((pendingAttachment) => (
                 <AttachmentItem
                   key={pendingAttachment.id}
@@ -248,14 +250,14 @@ export function CommentForm({ entityId, entityType }: CommentFormProps) {
                 className="mt-2 w-full justify-center gap-2"
                 onClick={triggerFileInput}
                 disabled={isLoading}
-                aria-label="Add another attachment"
+                aria-label={t('Add another attachment')}
               >
                 {isUploading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <Paperclip className="h-4 w-4" />
                 )}
-                Add attachment
+                {t('Add attachment')}
               </Button>
             </div>
           )}
@@ -273,7 +275,7 @@ export function CommentForm({ entityId, entityType }: CommentFormProps) {
                 className="text-muted-foreground h-8 w-8 rounded-full"
                 onClick={triggerFileInput}
                 disabled={isLoading}
-                aria-label="Add attachment"
+                aria-label={t('Add attachment')}
               >
                 {isUploading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -289,7 +291,7 @@ export function CommentForm({ entityId, entityType }: CommentFormProps) {
               className="border-muted-foreground/50 cursor-pointer rounded-full px-2"
               onClick={handleCommentSubmit}
               disabled={isLoading || (!newComment.trim() && pendingAttachments.length === 0)}
-              aria-label="Submit comment"
+              aria-label={t('Submit comment')}
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

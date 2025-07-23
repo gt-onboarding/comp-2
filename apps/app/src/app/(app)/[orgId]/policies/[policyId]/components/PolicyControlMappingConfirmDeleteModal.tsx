@@ -14,11 +14,13 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { unmapPolicyFromControl } from '../actions/unmapPolicyFromControl';
+import { T, useGT, Var } from 'gt-next';
 
 export const PolicyControlMappingConfirmDeleteModal = ({ control }: { control: Control }) => {
   const { policyId } = useParams<{ policyId: string }>();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const t = useGT();
 
   const handleUnmap = async () => {
     console.log('Unmapping control', control.id, 'from policy', policyId);
@@ -28,10 +30,10 @@ export const PolicyControlMappingConfirmDeleteModal = ({ control }: { control: C
         policyId,
         controlId: control.id,
       });
-      toast.success(`Control: ${control.name} unmapped successfully from policy ${policyId}`);
+      toast.success(t('Control: {controlName} unmapped successfully from policy {policyId}', { controlName: control.name, policyId }));
     } catch (error) {
       console.error(error);
-      toast.error('Failed to unlink control');
+      toast.error(t('Failed to unlink control'));
     } finally {
       setLoading(false);
       setOpen(false);
@@ -45,19 +47,23 @@ export const PolicyControlMappingConfirmDeleteModal = ({ control }: { control: C
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirm Unlink</DialogTitle>
+          <DialogTitle>
+            <T>Confirm Unlink</T>
+          </DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Are you sure you want to unlink{' '}
-          <span className="text-foreground font-semibold">{control.name}</span> from this policy?{' '}
-          {'\n'} You can link it back again later.
+          <T>
+            Are you sure you want to unlink{' '}
+            <span className="text-foreground font-semibold"><Var>{control.name}</Var></span> from this policy?{' '}
+            {'\n'} You can link it back again later.
+          </T>
         </DialogDescription>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
-            Cancel
+            <T>Cancel</T>
           </Button>
           <Button onClick={handleUnmap} disabled={loading}>
-            Unmap
+            <T>Unmap</T>
           </Button>
         </DialogFooter>
       </DialogContent>

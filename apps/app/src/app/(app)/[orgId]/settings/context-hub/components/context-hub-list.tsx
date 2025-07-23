@@ -1,15 +1,18 @@
 import { Badge } from '@comp/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@comp/ui/card';
 import type { Context } from '@prisma/client';
+import { T } from 'gt-next';
 
 export async function ContextHubList({ entries }: { entries: Context[] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Context</CardTitle>
+        <CardTitle><T>Context</T></CardTitle>
         <CardDescription>
-          You can add context to the Comp AI platform to help it better understand your
-          organization/processes.
+          <T>
+            You can add context to the Comp AI platform to help it better understand your
+            organization/processes.
+          </T>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

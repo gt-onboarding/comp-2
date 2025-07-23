@@ -8,36 +8,44 @@ import { Loader2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { T, useGT } from 'gt-next';
 
 export function FeedbackForm() {
+  const t = useGT();
   const [value, setValue] = useState('');
   const action = useAction(sendFeebackAction, {
     onSuccess: () => {
-      toast.success('Thank you for your feedback!');
+      toast.success(t('Thank you for your feedback!'));
       setValue('');
     },
     onError: () => {
-      toast.error('Error sending feedback - try again?');
+      toast.error(t('Error sending feedback - try again?'));
     },
   });
 
   return (
     <Popover>
       <PopoverTrigger asChild className="hidden md:block">
-        <Button
-          variant="outline"
-          className="text-muted-foreground h-[32px] rounded-full p-0 px-3 text-xs font-normal"
-        >
-          {'Feedback'}
-        </Button>
+        <T>
+          <Button
+            variant="outline"
+            className="text-muted-foreground h-[32px] rounded-full p-0 px-3 text-xs font-normal"
+          >
+            Feedback
+          </Button>
+        </T>
       </PopoverTrigger>
       <PopoverContent className="h-[200px] w-[320px]" sideOffset={10} align="end">
         {action.status === 'hasSucceeded' ? (
           <div className="mt-10 flex flex-col items-center justify-center space-y-1 text-center">
-            <p className="text-sm font-medium">{'Thank you for your feedback!'}</p>
-            <p className="text-muted-foreground text-sm">
-              {'We will be back with you as soon as possible'}
-            </p>
+            <T>
+              <p className="text-sm font-medium">Thank you for your feedback!</p>
+            </T>
+            <T>
+              <p className="text-muted-foreground text-sm">
+                We will be back with you as soon as possible
+              </p>
+            </T>
           </div>
         ) : (
           <form className="space-y-4">
@@ -46,7 +54,7 @@ export function FeedbackForm() {
               value={value}
               required
               autoFocus
-              placeholder={'Ideas to improve this page or issues you are experiencing.'}
+              placeholder={t('Ideas to improve this page or issues you are experiencing.')}
               className="h-[120px] resize-none"
               onChange={(evt) => setValue(evt.target.value)}
             />
@@ -60,7 +68,7 @@ export function FeedbackForm() {
                 {action.status === 'executing' ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  'Send Feedback'
+                  t('Send Feedback')
                 )}
               </Button>
             </div>

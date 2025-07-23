@@ -6,6 +6,7 @@ import { MagicLinkSignIn } from '@/components/magic-link';
 import { Button } from '@comp/ui/button';
 import { Card, CardContent, CardDescription, CardTitle } from '@comp/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@comp/ui/collapsible';
+import { T, Var } from 'gt-next';
 import { CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
@@ -31,18 +32,24 @@ export function LoginForm({ inviteCode, showGoogle, showGithub }: LoginFormProps
         <CardContent className="flex flex-col items-center justify-center text-center space-y-6 py-16 px-6">
           <CheckCircle2 className="h-16 w-16 text-green-500 dark:text-green-400" />
           <div className="space-y-2">
-            <CardTitle className="text-2xl font-semibold text-card-foreground">
-              Magic link sent
-            </CardTitle>
-            <CardDescription className="text-sm text-muted-foreground">
-              Check your inbox at{' '}
-              <span className="font-semibold text-foreground">{magicLinkState.email}</span> for a
-              magic link to sign in.
-            </CardDescription>
+            <T>
+              <CardTitle className="text-2xl font-semibold text-card-foreground">
+                Magic link sent
+              </CardTitle>
+            </T>
+            <T>
+              <CardDescription className="text-sm text-muted-foreground">
+                Check your inbox at{' '}
+                <span className="font-semibold text-foreground"><Var>{magicLinkState.email}</Var></span> for a
+                magic link to sign in.
+              </CardDescription>
+            </T>
           </div>
-          <Button variant="link" onClick={() => setMagicLinkState({ sent: false, email: '' })}>
-            Use another method
-          </Button>
+          <T>
+            <Button variant="link" onClick={() => setMagicLinkState({ sent: false, email: '' })}>
+              Use another method
+            </Button>
+          </T>
         </CardContent>
       </Card>
     );
@@ -91,18 +98,20 @@ export function LoginForm({ inviteCode, showGoogle, showGithub }: LoginFormProps
               <span className="w-full border-t" />
             </div>
             <CollapsibleTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="relative px-4 text-sm text-muted-foreground bg-background hover:bg-muted"
-              >
-                More options
-                {isOptionsOpen ? (
-                  <ChevronUp className="ml-1 h-4 w-4 transition-transform duration-200" />
-                ) : (
-                  <ChevronDown className="ml-1 h-4 w-4 transition-transform duration-200" />
-                )}
-              </Button>
+              <T>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="relative px-4 text-sm text-muted-foreground bg-background hover:bg-muted"
+                >
+                  More options
+                  <Var>{isOptionsOpen ? (
+                    <ChevronUp className="ml-1 h-4 w-4 transition-transform duration-200" />
+                  ) : (
+                    <ChevronDown className="ml-1 h-4 w-4 transition-transform duration-200" />
+                  )}</Var>
+                </Button>
+              </T>
             </CollapsibleTrigger>
           </div>
 

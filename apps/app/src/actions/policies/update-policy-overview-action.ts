@@ -4,6 +4,7 @@
 
 import { db } from '@comp/db';
 import { revalidatePath } from 'next/cache';
+import { getGT } from 'gt-next/server';
 import { authActionClient } from '../safe-action';
 import { updatePolicyOverviewSchema } from '../schema';
 
@@ -20,18 +21,19 @@ export const updatePolicyOverviewAction = authActionClient
   .action(async ({ parsedInput, ctx }) => {
     const { id, title, description, isRequiredToSign } = parsedInput;
     const { user, session } = ctx;
+    const t = await getGT();
 
     if (!user) {
       return {
         success: false,
-        error: 'Not authorized',
+        error: t('Not authorized'),
       };
     }
 
     if (!session.activeOrganizationId) {
       return {
         success: false,
-        error: 'Not authorized',
+        error: t('Not authorized'),
       };
     }
 
@@ -43,7 +45,7 @@ export const updatePolicyOverviewAction = authActionClient
       if (!policy) {
         return {
           success: false,
-          error: 'Policy not found',
+          error: t('Policy not found'),
         };
       }
 
@@ -72,7 +74,7 @@ export const updatePolicyOverviewAction = authActionClient
     } catch (error) {
       return {
         success: false,
-        error: 'Failed to update policy overview',
+        error: t('Failed to update policy overview'),
       };
     }
   });

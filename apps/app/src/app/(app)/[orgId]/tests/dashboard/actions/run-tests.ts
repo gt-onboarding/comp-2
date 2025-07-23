@@ -4,10 +4,12 @@ import { sendIntegrationResults } from '@/jobs/tasks/integration/integration-res
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
 import { runs, tasks } from '@trigger.dev/sdk/v3';
+import { getGT } from 'gt-next/server';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 export const runTests = async () => {
+  const t = await getGT();
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -15,7 +17,7 @@ export const runTests = async () => {
   if (!session) {
     return {
       success: false,
-      errors: ['Unauthorized'],
+      errors: [t('Unauthorized')],
     };
   }
 
@@ -23,7 +25,7 @@ export const runTests = async () => {
   if (!orgId) {
     return {
       success: false,
-      errors: ['No active organization'],
+      errors: [t('No active organization')],
     };
   }
 
@@ -52,7 +54,7 @@ export const runTests = async () => {
   if (!integrations) {
     return {
       success: false,
-      errors: ['No integrations found'],
+      errors: [t('No integrations found')],
     };
   }
 

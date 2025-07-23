@@ -1,5 +1,6 @@
 'use client';
 
+import { T } from 'gt-next';
 import { ReviewWidget } from './review-widget';
 
 interface ReviewSectionProps {
@@ -19,9 +20,9 @@ export function ReviewSection({
       <ReviewWidget rating={rating} reviewCount={reviewCount} />
 
       {/* Trust Signals - Simplified without icons */}
-      <div className="text-[10px] text-muted-foreground/70 text-center">
+      <T><div className="text-[10px] text-muted-foreground/70 text-center">
         100% money back guarantee • Cancel anytime
-      </div>
+      </div></T>
     </div>
   );
 }

@@ -5,7 +5,8 @@ import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-tabl
 import type { FrameworkEditorRequirement, Policy, Task } from '@comp/db/types';
 import { Table, TableBody, TableCell, TableRow } from '@comp/ui/table';
 import { useParams, useRouter } from 'next/navigation';
-import { ControlRequirementsTableColumns } from './ControlRequirementsTableColumns';
+import { T } from 'gt-next';
+import { useControlRequirementsTableColumns } from './ControlRequirementsTableColumns';
 import { ControlRequirementsTableHeader } from './ControlRequirementsTableHeader';
 
 // Define the type that matches what we receive from the hook
@@ -21,10 +22,11 @@ interface DataTableProps {
 export function ControlRequirementsTable({ data }: DataTableProps) {
   const router = useRouter();
   const { orgId } = useParams<{ orgId: string }>();
+  const columns = useControlRequirementsTableColumns();
 
   const table = useReactTable({
     data,
-    columns: ControlRequirementsTableColumns,
+    columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -69,10 +71,10 @@ export function ControlRequirementsTable({ data }: DataTableProps) {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={ControlRequirementsTableColumns.length}
+                  colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No requirements found.
+                  <T>No requirements found.</T>
                 </TableCell>
               </TableRow>
             )}

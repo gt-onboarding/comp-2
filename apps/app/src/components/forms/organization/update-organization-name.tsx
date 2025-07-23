@@ -13,6 +13,7 @@ import {
 } from '@comp/ui/card';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@comp/ui/form';
 import { Input } from '@comp/ui/input';
+import { T, useGT } from 'gt-next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
@@ -21,12 +22,13 @@ import { toast } from 'sonner';
 import type { z } from 'zod';
 
 export function UpdateOrganizationName({ organizationName }: { organizationName: string }) {
+  const t = useGT();
   const updateOrganizationName = useAction(updateOrganizationNameAction, {
     onSuccess: () => {
-      toast.success('Organization name updated');
+      toast.success(t('Organization name updated'));
     },
     onError: () => {
-      toast.error('Error updating organization name');
+      toast.error(t('Error updating organization name'));
     },
   });
 
@@ -46,13 +48,11 @@ export function UpdateOrganizationName({ organizationName }: { organizationName:
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle>{'Organization name'}</CardTitle>
+            <CardTitle><T>Organization name</T></CardTitle>
 
             <CardDescription>
               <div className="max-w-[600px]">
-                {
-                  'This is your organizations visible name. You should use the legal name of your organization.'
-                }
+                <T>This is your organizations visible name. You should use the legal name of your organization.</T>
               </div>
             </CardDescription>
           </CardHeader>
@@ -80,13 +80,13 @@ export function UpdateOrganizationName({ organizationName }: { organizationName:
           </CardContent>
           <CardFooter className="flex justify-between">
             <div className="text-muted-foreground text-xs">
-              {'Please use 32 characters at maximum.'}
+              <T>Please use 32 characters at maximum.</T>
             </div>
             <Button type="submit" disabled={updateOrganizationName.status === 'executing'}>
               {updateOrganizationName.status === 'executing' ? (
                 <Loader2 className="mr-1 h-4 w-4 animate-spin" />
               ) : null}
-              {'Save'}
+              <T>Save</T>
             </Button>
           </CardFooter>
         </Card>

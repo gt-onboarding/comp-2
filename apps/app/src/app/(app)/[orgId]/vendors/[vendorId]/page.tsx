@@ -8,6 +8,7 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
+import { getGT } from 'gt-next/server';
 import { Comments, CommentWithAuthor } from '../../../../../components/comments/Comments';
 import { VendorInherentRiskChart } from './components/VendorInherentRiskChart';
 import { VendorResidualRiskChart } from './components/VendorResidualRiskChart';
@@ -22,6 +23,7 @@ export default async function VendorPage({ params }: PageProps) {
   const vendor = await getVendor(vendorId);
   const assignees = await getAssignees();
   const comments = await getComments(vendorId);
+  const t = await getGT();
 
   if (!vendor || !vendor.vendor) {
     redirect('/');
@@ -30,7 +32,7 @@ export default async function VendorPage({ params }: PageProps) {
   return (
     <PageWithBreadcrumb
       breadcrumbs={[
-        { label: 'Vendors', href: `/${orgId}/vendors` },
+        { label: t('Vendors'), href: `/${orgId}/vendors` },
         { label: vendor.vendor?.name ?? '', current: true },
       ]}
     >
@@ -166,7 +168,8 @@ const getAssignees = cache(async () => {
 });
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getGT();
   return {
-    title: 'Vendors',
+    title: t('Vendors'),
   };
 }

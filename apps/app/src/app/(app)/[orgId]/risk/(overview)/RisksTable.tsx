@@ -9,6 +9,7 @@ import type { Member, Risk, User } from '@comp/db/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { useQueryState } from 'nuqs';
 import { useMemo } from 'react';
+import { useGT } from 'gt-next';
 import { columns as getColumns } from './components/table/RiskColumns';
 
 export type RiskRow = Risk & { assignee: User | null };
@@ -25,6 +26,7 @@ export const RisksTable = ({
   const session = useSession();
   const orgId = session?.data?.session?.activeOrganizationId;
   const [_, setOpenSheet] = useQueryState('create-risk-sheet');
+  const t = useGT();
 
   const columns = useMemo<ColumnDef<RiskRow>[]>(() => getColumns(orgId ?? ''), [orgId]);
 
@@ -48,7 +50,7 @@ export const RisksTable = ({
   return (
     <>
       <DataTable table={table} getRowId={(row) => row.id} rowClickBasePath={`/${orgId}/risk`}>
-        <DataTableToolbar table={table} sheet="create-risk-sheet" action="Create Risk" />
+        <DataTableToolbar table={table} sheet="create-risk-sheet" action={t("Create Risk")} />
       </DataTable>
       <CreateRiskSheet assignees={assignees} />
     </>

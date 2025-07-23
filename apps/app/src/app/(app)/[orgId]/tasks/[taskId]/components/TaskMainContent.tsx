@@ -2,6 +2,7 @@
 
 import { CommentEntityType, type Attachment, type Task } from '@comp/db/types';
 import { Separator } from '@comp/ui/separator';
+import { T } from 'gt-next';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { CommentForm } from '../../../../../../components/comments/CommentForm';
@@ -61,7 +62,9 @@ export function TaskMainContent({ task, comments, attachments }: TaskMainContent
 
       {/* Comment Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Comments</h3>
+        <h3 className="text-lg font-medium">
+          <T>Comments</T>
+        </h3>
         <CommentForm entityId={task.id} entityType={CommentEntityType.task} />
         <CommentList comments={comments} />
       </div>

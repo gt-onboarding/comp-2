@@ -2,6 +2,7 @@ import PageWithBreadcrumb from '@/components/pages/PageWithBreadcrumb';
 import { CheckoutCompleteTracking } from '@/components/tracking/CheckoutCompleteTracking';
 import { auth } from '@/utils/auth';
 import { db } from '@comp/db';
+import { getGT } from 'gt-next/server';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
@@ -9,8 +10,9 @@ import { FrameworksOverview } from './components/FrameworksOverview';
 import { getAllFrameworkInstancesWithControls } from './data/getAllFrameworkInstancesWithControls';
 
 export async function generateMetadata() {
+  const t = await getGT();
   return {
-    title: 'Frameworks',
+    title: t('Frameworks'),
   };
 }
 
@@ -25,6 +27,7 @@ export default async function DashboardPage() {
     redirect('/');
   }
 
+  const t = await getGT();
   const tasks = await getControlTasks();
   const frameworksWithControls = await getAllFrameworkInstancesWithControls({
     organizationId,
@@ -37,7 +40,7 @@ export default async function DashboardPage() {
   });
 
   return (
-    <PageWithBreadcrumb breadcrumbs={[{ label: 'Frameworks', current: true }]}>
+    <PageWithBreadcrumb breadcrumbs={[{ label: t('Frameworks'), current: true }]}>
       <CheckoutCompleteTracking />
       <FrameworksOverview
         frameworksWithControls={frameworksWithControls}

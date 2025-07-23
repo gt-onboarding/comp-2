@@ -3,6 +3,7 @@
 import { Button } from '@comp/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@comp/ui/select';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { T, Plural, Var } from 'gt-next';
 
 interface DataTablePaginationProps {
   page: number;
@@ -32,9 +33,15 @@ export function DataTablePagination({
 
   return (
     <div className="flex items-center justify-between">
-      <div className="text-muted-foreground text-sm">
-        {totalCount} {totalCount === 1 ? 'item' : 'items'}
-      </div>
+      <T>
+        <div className="text-muted-foreground text-sm">
+          <Plural
+            n={totalCount}
+            one={<><Var>{totalCount}</Var> item</>}
+            other={<><Var>{totalCount}</Var> items</>}
+          />
+        </div>
+      </T>
       <div className="flex items-center gap-2">
         <Select value={pageSize.toString()} onValueChange={handlePageSizeChange}>
           <SelectTrigger className="h-8 w-[70px]">
@@ -58,9 +65,11 @@ export function DataTablePagination({
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <div className="text-sm font-medium">
-            Page {page} of {totalPages}
-          </div>
+          <T>
+            <div className="text-sm font-medium">
+              Page <Var>{page}</Var> of <Var>{totalPages}</Var>
+            </div>
+          </T>
           <Button
             variant="outline"
             size="sm"

@@ -4,6 +4,7 @@ import { Button } from '@comp/ui/button';
 import { Card } from '@comp/ui/card';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { T, Branch, useGT } from 'gt-next';
 
 export function BookingStep({
   email,
@@ -20,13 +21,14 @@ export function BookingStep({
   complianceFrameworks: string[];
   hasAccess: boolean;
 }) {
-  const title = !hasAccess ? `Let's get ${company} approved` : 'Talk to us to upgrade';
+  const t = useGT();
+  const title = !hasAccess ? t('Let\'s get {company} approved', { company }) : t('Talk to us to upgrade');
 
   const description = !hasAccess
-    ? `A quick 20-minute call with our team to understand your compliance needs and approve your organization for access.`
-    : `A quick 20-minute call with our team to understand your compliance needs and upgrade your plan.`;
+    ? t('A quick 20-minute call with our team to understand your compliance needs and approve your organization for access.')
+    : t('A quick 20-minute call with our team to understand your compliance needs and upgrade your plan.');
 
-  const cta = !hasAccess ? 'Book Your Demo' : 'Book a Call';
+  const cta = !hasAccess ? t('Book Your Demo') : t('Book a Call');
 
   return (
     <div className="flex justify-center w-full animate-in fade-in-50 duration-500">
@@ -53,9 +55,11 @@ export function BookingStep({
 
           {/* Already spoke to us section */}
           <div className="border-gray-200 dark:border-gray-800">
-            <p className="text-center text-sm text-muted-foreground">
-              Already had a demo? Ask your point of contact to activate your account.
-            </p>
+            <T>
+              <p className="text-center text-sm text-muted-foreground">
+                Already had a demo? Ask your point of contact to activate your account.
+              </p>
+            </T>
           </div>
         </div>
       </Card>

@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { Impact, Likelihood } from '@prisma/client';
 import { X } from 'lucide-react';
 import { useQueryState } from 'nuqs';
+import { T } from 'gt-next';
 
 export function VendorInherentRiskSheet({
   vendorId,
@@ -28,7 +29,7 @@ export function VendorInherentRiskSheet({
         <SheetContent stack>
           <SheetHeader className="mb-8">
             <div className="flex flex-row items-center justify-between">
-              <SheetTitle>{'Update Inherent Risk'}</SheetTitle>
+              <SheetTitle><T>Update Inherent Risk</T></SheetTitle>
               <Button
                 size="icon"
                 variant="ghost"
@@ -38,7 +39,7 @@ export function VendorInherentRiskSheet({
                 <X className="h-5 w-5" />
               </Button>
             </div>
-            <SheetDescription>{'Select the inherent risk level for this vendor'}</SheetDescription>
+            <SheetDescription><T>Select the inherent risk level for this vendor</T></SheetDescription>
           </SheetHeader>
 
           <ScrollArea className="h-full p-0 pb-[100px]" hideScrollbar>
@@ -55,7 +56,7 @@ export function VendorInherentRiskSheet({
 
   return (
     <Drawer open={isOpen === 'true'} onOpenChange={(value) => setOpen(value ? 'true' : null)}>
-      <DrawerTitle hidden>{'Update Inherent Risk'}</DrawerTitle>
+      <DrawerTitle hidden><T>Update Inherent Risk</T></DrawerTitle>
       <DrawerContent className="p-6">
         <InherentRiskForm
           vendorId={vendorId}
